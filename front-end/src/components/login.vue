@@ -1,23 +1,120 @@
+<script setup>
+import { ref, reactive } from 'vue'
+import router from '../router';
+import axios from 'axios'
+const FPath = 'http://localhost:5000/login'
+const loginForm = reactive({
+    username: '',
+    password: ''
+});
+
+const login = () => {
+    axios.post(FPath, loginForm).then(res => {
+        console.log(res)
+        if (res.data.login === 'success') {
+            alert('登入成功')
+            //router.push('/home')
+        } else {
+            alert('登入失敗')
+        }
+    })
+};
+
+</script>
+
 <template>
-    <center>
-        <div>
-            <img src="../assets/NUK_logo.svg" alt="logo" style="width: 200px; height: 200px;">
-            <h1>NUK SOCAMS</h1>
-            <h1>高雄大學學生校外住宿管理系統</h1>
-        </div>
-        <div>
-            <h1>登入 Login</h1>
-            <el-form :model="loginForm" :rules="loginRules" ref="loginForm" label-width="80px" class="demo-ruleForm">
-                <el-form-item label="帳號" prop="username">
-                    <el-input v-model="loginForm.username" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="密碼" prop="password">
-                    <el-input type="password" v-model="loginForm.password" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="login">登入</el-button>
-                    <el-button @click="resetForm('loginForm')">重置</el-button>
-                </el-form-item>
-            </el-form>
-    </center>
+    <div class="system_name">
+        <h2>高雄大學學生校外住宿管理系統</h2>
+        <h2>SOCAMS</h2>
+    </div>
+
+    <div class="login_page">
+        <div id="container1">
+            <div class="login">
+                <h3 style="color: #409eff;">登入 Login</h3>
+                <br>
+                <el-form v-model="loginForm" ref="loginFormRef" >
+                    <el-form-item label="帳號" required>
+                        <el-input v-model="loginForm.username" placeholder="請輸入帳號"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密碼" required>
+                        <el-input v-model="loginForm.password" placeholder="請輸入密碼" show-password></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                            <el-button type="primary" @click="login" width>登入</el-button>
+                    </el-form-item>
+                </el-form>
+
+                <el-button text type="primary" @click="router.push('/register')">房東註冊</el-button>
+
+            </div><!-- login end-->
+        </div><!-- container1 end-->
+    </div><!-- login_page end-->
 </template>
+
+<style>
+* {
+    font-family: 微軟正黑體;
+}
+
+body {
+    background-color: white;
+}
+
+#username,
+#password,
+#fullname,
+#comfirm_password,
+#username2,
+#password2 {
+    width: 200px;
+    height: 20px;
+    margin: 10px;
+    color: #409eff;
+}
+
+h5 {
+    margin: 20px;
+    color: #a3a2a3;
+}
+
+h5:hover {
+    color: black;
+}
+
+#container1 {
+    margin: 50px;
+    padding: 10px;
+    width: 350px;
+    height: 350px;
+    background-color: white;
+    border-radius: 5px;
+    border-top: 10px solid #409eff;
+    box-shadow: 0 0px 70px rgba(0, 0, 0, 0.1);
+
+    /*定位對齊*/
+    position: relative;
+    margin: auto;
+    top: 100px;
+    text-align:center;  
+    justify-content: center;
+}
+
+.system_name {
+    /*定位對齊*/
+    position: relative;
+    margin: auto;
+    top: 100px;
+    text-align: center;
+}
+
+input {
+    padding: 5px;
+    border: none;
+    border: solid 1px #ccc;
+    border-radius: 5px;
+}
+.el-form-item__content {
+    justify-content: center;
+}
+</style>

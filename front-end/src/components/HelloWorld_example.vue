@@ -13,7 +13,7 @@ const count = ref(0)
   <h1>{{ msg }}</h1>
 
   <div class="card">
-    <el-button type="primary" @click="router.push('/login')">login</el-button>
+    <el-button type="primary" @click="router.push('/login_example')">login</el-button>
     <button type="button" @click="count++">count is {{ count }}</button>
     <p>
       Edit
