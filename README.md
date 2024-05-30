@@ -11,10 +11,21 @@ This template should help get you started developing with Vue 3 in Vite. The tem
 請先安裝 python3, pip3, nodejs, npm
 
 ## Project setup
-```
+
+``` bash
 cd front-end
 npm install
 
 cd back-end
 pip3 install -r requirements.txt
+```
+
+## Compiles and hot-reloads for development
+
+``` bash
+cd front-end
+npm run dev
+
+cd back-end
+python3 app.py
 ```
