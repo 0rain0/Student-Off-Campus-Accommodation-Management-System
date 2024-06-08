@@ -9,15 +9,16 @@ const loginForm = reactive({
 });
 
 const login = () => {
-    axios.post(FPath, loginForm).then(res => {
-        console.log(res)
-        if (res.data.login === 'success') {
-            alert('登入成功')
-            //router.push('/home')
-        } else {
-            alert('登入失敗')
-        }
-    })
+    router.push('/menu');
+    // axios.post(FPath, loginForm).then(res => {
+    //     console.log(res)
+    //     if (res.data.login === 'success') {
+    //         alert('登入成功')
+    //         //router.push('/home')
+    //     } else {
+    //         alert('登入失敗')
+    //     }
+    // })
 };
 
 </script>

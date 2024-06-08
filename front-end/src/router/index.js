@@ -1,5 +1,7 @@
 import { pa } from "element-plus/es/locale/index.mjs";
 import { createRouter, createWebHistory } from "vue-router";  //导入路由
+import menu from "../components/menu.vue";
+
 const routes = [
     {
         path:'/', // 要路由到的url路径
@@ -15,6 +17,26 @@ const routes = [
         path:'/login_example', // 要路由到的url路径
         name:'login_example',
         component:()=>import('../components/login_example.vue'), //导入路由页面的路径
+    },
+    {
+        path: '/menu',
+        name: 'menu',
+        component: menu
+    },
+    {
+        path: '/SAS',
+        name: 'SAS',
+        component: () => import('../components/SAS.vue')
+    },
+    {
+        path: '/VSS',
+        name: 'VSS',
+        component: () => import('../components/VSS.vue')
+    },
+    {
+        path: '/RAS',
+        name: 'RAS',
+        component: () => import('../components/RAS.vue')
     }
 ];
 

@@ -1,10 +1,10 @@
 import pymysql
 
 db_settings = {
-    "host": "localhost",
-    "user": "你的帳號",
-    "password": "你的密碼",
-    "db": "你的資料庫名稱",
+    "host": "http://127.0.0.1:5051/",
+    "user": "root",
+    "password": "rainmysql314043",
+    "db": "test",
 }
 
 def connect_to_db():
