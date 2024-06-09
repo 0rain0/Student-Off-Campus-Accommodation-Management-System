@@ -13,10 +13,14 @@ const login = () => {
     axios.post(FPath, loginForm)
         .then(res => {
             console.log("Response data:", res.data)  
-            if (res.data.login === 'success') {
-                alert('登入成功')
-                // router.push('/home')
-            } else {
+            if (res.data.login === 'success_1') {
+                alert('歡迎管理員登入')
+                router.push('/ClassManage')
+            } 
+            else if (res.data.login === 'success_2') {
+                alert('歡迎登入')
+            }
+            else {
                 alert('登入失敗')
             }
         })
