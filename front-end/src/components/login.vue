@@ -1,25 +1,47 @@
 <script setup>
 import { ref, reactive } from 'vue'
-import router from '../router';
+import router from '../router'
 import axios from 'axios'
-const FPath = 'http://localhost:5000/login'
+
+const FPath = 'http://127.0.0.1:5000/login'
 const loginForm = reactive({
     username: '',
     password: ''
-});
+})
 
 const login = () => {
-    router.push('/menu');
-    // axios.post(FPath, loginForm).then(res => {
-    //     console.log(res)
-    //     if (res.data.login === 'success') {
-    //         alert('登入成功')
-    //         //router.push('/home')
-    //     } else {
-    //         alert('登入失敗')
-    //     }
-    // })
-};
+    axios.post(FPath, loginForm)
+        .then(res => {
+            console.log("Response data:", res.data)  
+            if (res.data.login === 'success_1') {
+                alert('歡迎管理員登入')
+                router.push('/ClassManage')
+            } 
+            else if (res.data.login === 'success_2') {
+                alert('歡迎登入')
+            }
+            else {
+                alert('登入失敗')
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                // 伺服器返回了狀態碼，狀態碼不是 2xx
+                console.error("Error response data:", error.response.data)
+                console.error("Error response status:", error.response.status)
+                console.error("Error response headers:", error.response.headers)
+            } else if (error.request) {
+                // 請求已發出，但沒有收到回應
+                console.error("Error request data:", error.request)
+            } else {
+                // 在設置請求時發生了錯誤
+                console.error("Error message:", error.message)
+            }
+            console.error("Error config:", error.config)
+            alert('登入出現錯誤')
+        })
+}
+
 
 </script>
 
@@ -34,7 +56,7 @@ const login = () => {
             <div class="login">
                 <h3 style="color: #409eff;">登入 Login</h3>
                 <br>
-                <el-form v-model="loginForm" ref="loginFormRef" >
+                <el-form v-model="loginForm" ref="loginFormRef">
                     <el-form-item label="帳號" required>
                         <el-input v-model="loginForm.username" placeholder="請輸入帳號"></el-input>
                     </el-form-item>
@@ -42,12 +64,11 @@ const login = () => {
                         <el-input v-model="loginForm.password" placeholder="請輸入密碼" show-password></el-input>
                     </el-form-item>
                     <el-form-item>
-                            <el-button type="primary" @click="login" width>登入</el-button>
+                        <el-button type="primary" @click="login" width>登入</el-button>
                     </el-form-item>
                 </el-form>
 
                 <el-button text type="primary" @click="router.push('/register')">房東註冊</el-button>
-
             </div><!-- login end-->
         </div><!-- container1 end-->
     </div><!-- login_page end-->
@@ -115,6 +136,7 @@ input {
     border: solid 1px #ccc;
     border-radius: 5px;
 }
+
 .el-form-item__content {
     justify-content: center;
 }
