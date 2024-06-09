@@ -15,6 +15,11 @@ const routes = [
         path:'/login', // 要路由到的url路径
         name:'Login',
         component:()=>import('../components/login.vue'), //导入路由页面的路径
+    },
+    {
+        path:'/ClassManage', // 要路由到的url路径
+        name:'Login',
+        component:()=>import('../components/ClassManage.vue'), //导入路由页面的路径
     }
 ];
 
