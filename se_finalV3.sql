@@ -79,7 +79,7 @@ CREATE TABLE `class` (
   `CID` varchar(15) NOT NULL,
   `Department` varchar(15) NOT NULL,
   `Section` varchar(5) DEFAULT NULL,
-  `Name` varchar(15) NOT NULL,
+  `Grade` varchar(15) NOT NULL,
   `TID` varchar(15) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
