@@ -203,18 +203,93 @@ def get_students():
                 return jsonify({"status": "fail", "message": str(ex)})
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
-
-
-@app.route('/api/classes/edit', methods=['POST'])
-def edit_class():
-    data = request.get_json()
-    if data:
-        department = data.get('department')
-        grade = data.get('grade')
-        class_name = data.get('class')
-        number = data.get('number')
-        teacher = data.get('teacher')
         
+        
+# 用於回傳所有teacher資訊
+@app.route('/api/teachers', methods=['GET'])
+def get_teachers():
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT tid, name FROM TEACHER")
+                teachers = cursor.fetchall()
+                teacher_list = [{"tid": teacher[0], "name": teacher[1]} for teacher in teachers]
+                return jsonify({"status": "success", "data": teacher_list})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+        
+        
+# 提交class修改
+import re
+@app.route('/api/classes/update', methods=['POST'])
+def update_class():
+    data = request.get_json()
+    original_data = data.get('originalData')
+    new_data = data.get('newData')
+    selected_students = data.get('selectedStudents')
+
+    original_department = original_data.get('department')
+    original_grade = original_data.get('grade')
+    original_section = original_data.get('section')
+    original_teacher = original_data.get('teacher')
+
+    new_department = new_data.get('department')
+    new_grade = new_data.get('grade')
+    new_section = new_data.get('section')
+    new_teacher = new_data.get('teacher')
+    
+
+    connection = connect.connect_to_db()
+    if connection is not None:
+        try:
+            with connection.cursor() as cursor:
+                # 查找原班级CID
+                cursor.execute(
+                    "SELECT cid FROM CLASS WHERE department=%s AND grade=%s AND section=%s",
+                    (original_department, original_grade, original_section)
+                )
+                cid = cursor.fetchone()
+                if not cid:
+                    return jsonify({"status": "fail", "message": "Class not found"})
+                cid = cid[0]
+                
+                if str(original_teacher) == str(new_teacher):
+                    cursor.execute("SELECT tid FROM CLASS WHERE cid=%s", (cid,))
+                    new_teacher = cursor.fetchone()[0]
+                    print(new_teacher)
+
+                # 更新 CLASS 表
+                cursor.execute(
+                    "UPDATE CLASS SET department=%s, grade=%s, section=%s, tid=%s WHERE cid=%s",
+                    (new_department, new_grade, new_section, new_teacher, cid)
+                )
+
+                # 清空该班级的所有学生
+                cursor.execute(
+                    "UPDATE STUDENT SET class=NULL WHERE class=%s", (cid,)
+                )
+
+                # 添加选中的学生到该班级
+                for student in selected_students:
+                    cursor.execute(
+                        "UPDATE STUDENT SET class=%s WHERE sid=%s",
+                        (cid, student['sid'])
+                    )
+
+                connection.commit()
+                return jsonify({"status": "success"})
+        except Exception as ex:
+            connection.rollback()
+            print(ex)
+            return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
     
 
 
