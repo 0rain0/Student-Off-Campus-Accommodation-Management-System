@@ -95,17 +95,26 @@
   const filterTableData = computed(() =>
   tableData.value.filter(
     (data) =>
-      !search.value ||
+    !search.value ||
       data.department.toLowerCase().includes(search.value.toLowerCase()) ||
-      data.grade.toLowerCase().includes(search.value.toLowerCase()) ||
-      data.class.toLowerCase().includes(search.value.toLowerCase()) ||
       data.teacher.toLowerCase().includes(search.value.toLowerCase())
   )
 )
   
   const handleEdit = (index: number, row: Class) => {
     console.log('Edit:', index, row)
-  }
+    router.push({ 
+    path: '/EditClass', 
+    query: { 
+      index: index.toString(), 
+      department: row.department,
+      grade: row.grade,
+      class: row.class,
+      number: row.number.toString(),
+      teacher: row.teacher
+    }
+  })
+}
   
   const handleDelete = async (index: number, row: Class) => {
   console.log(index, row)
