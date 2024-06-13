@@ -2,11 +2,10 @@ import pymysql
 
 # 資料庫設定
 db_settings = {
-
-    "host": "http://127.0.0.1:5051/",
+    "host": "localhost",
     "user": "root",
-    "password": "rainmysql314043",
-    "db": "test",
+    "password": "",
+    "db": "SOCAMS2",
 }
 
 def connect_to_db():
@@ -27,7 +26,7 @@ def test_db_connection():
             # 建立Cursor物件
             cursor = conn.cursor()
             # 執行簡單的查詢
-            cursor.execute("SELECT * FROM user WHERE username = 'a1103306' AND password = '12345'")
+            cursor.execute("SELECT * FROM account WHERE ID = 'a1103306' AND Password = '12345'")
             # 取得結果
             result = cursor.fetchone()
             if result:
