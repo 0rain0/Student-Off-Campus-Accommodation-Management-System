@@ -42,7 +42,6 @@ const login = () => {
         })
 }
 
-
 </script>
 
 <template>

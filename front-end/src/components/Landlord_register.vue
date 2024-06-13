@@ -10,11 +10,17 @@
           <h3 style="color: #409eff;">房東註冊</h3>
           <br>
           <el-form :model="registerForm" ref="registerFormRef" label-width="100px">
+            <el-form-item label="帳號" required>
+              <el-input v-model="registerForm.account" placeholder="請輸入帳號"></el-input>
+            </el-form-item>
             <el-form-item label="姓名" required>
               <el-input v-model="registerForm.name" placeholder="請輸入姓名"></el-input>
             </el-form-item>
             <el-form-item label="電子郵件" required>
               <el-input v-model="registerForm.email" placeholder="請輸入電子郵件"></el-input>
+            </el-form-item>
+            <el-form-item label="電話" required>
+              <el-input v-model="registerForm.tel" placeholder="請輸入電話"></el-input>
             </el-form-item>
             <el-form-item label="密碼" required>
               <el-input type="password" v-model="registerForm.password" placeholder="請輸入密碼"></el-input>
@@ -41,8 +47,10 @@
   const FPath = 'http://127.0.0.1:5000/register'
   
   const registerForm = reactive({
+    account: '',
     name: '',
     email: '',
+    tel: '',
     password: '',
     confirmPassword: ''
   })
