@@ -2,11 +2,11 @@ import pymysql
 
 # 資料庫設定
 db_settings = {
-
-    "host": "http://127.0.0.1:5051/",
+    "host": "127.0.0.1",
     "user": "root",
-    "password": "rainmysql314043",
-    "db": "test",
+    "password": "12345678",
+    "db": "stt",
+    "charset": "utf8"
 }
 
 def connect_to_db():
@@ -42,6 +42,26 @@ def test_db_connection():
             conn.close()
     else:
         print("無法連接到資料庫")
+
+#查詢表單資料
+def query_data(sql):
+    conn = connect_to_db()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(sql)
+        return cursor.fetchall()
+    finally:
+        conn.close()
+
+#更新表單資料
+def update(sql):
+    conn = connect_to_db()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(sql)
+        conn.commit()
+    finally:
+        conn.close()
 
 # 執行測試
 test_db_connection()

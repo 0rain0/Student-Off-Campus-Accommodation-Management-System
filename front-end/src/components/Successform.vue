@@ -1,8 +1,8 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import router from '../router';
-const visit_form = () => {
-    router.push('/EditRentalSurveyForm');
+const back_vss = () => {
+    router.push('/VSS');
 };
 
 </script>
@@ -27,7 +27,11 @@ const visit_form = () => {
             <el-container>
                 <el-aside id="aside" width="200px"> </el-aside>
                 <el-main id="main">
-                   <el-button size="large" round @click="visit_form">新增/編輯表單</el-button>
+                  <div id='success'>
+                    <h1>成功編輯表單!</h1>
+                    <br>
+                    <el-button size="large" round @click="back_vss">回到主選單</el-button>
+                  </div>
                 </el-main>
             </el-container>
         </el-container>
@@ -64,5 +68,16 @@ const visit_form = () => {
 body {
     margin: 0;
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    background-color: white;
+    color: black;
+}
+
+h1{
+  font-size: 30px;
+}
+
+#success{
+  text-align: center;
+  padding-top: 300px;
 }
 </style>
