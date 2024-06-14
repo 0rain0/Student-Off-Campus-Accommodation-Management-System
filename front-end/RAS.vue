@@ -1,10 +1,6 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import router from '../router';
-const visit_form = () => {
-    router.push('/EditRentalSurveyForm');
-};
-
 </script>
 <template>
     <div id="common-layout">
@@ -20,15 +16,13 @@ const visit_form = () => {
                         </el-breadcrumb>
                     </template> -->
                     <template #content>
-                        <span class="text-large font-600 mr-3" style="color: white;"> 學生訪視 </span>
+                        <span class="text-large font-600 mr-3" style="color: white;"> 租屋廣告/留言板 </span>
                     </template>
                 </el-page-header>
             </el-header>
             <el-container>
                 <el-aside id="aside" width="200px"> </el-aside>
-                <el-main id="main">
-                   <el-button size="large" round @click="visit_form">新增/編輯表單</el-button>
-                </el-main>
+                <el-main id="main"> </el-main>
             </el-container>
         </el-container>
     </div>
