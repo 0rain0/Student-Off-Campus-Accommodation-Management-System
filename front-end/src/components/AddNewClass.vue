@@ -17,7 +17,7 @@
           <!-- Row for the title -->
           <el-row>
             <el-col :span="24">
-              <h2 style="text-align: center; margin: 20px 0;"> 修改班級</h2>
+              <h2 style="text-align: center; margin: 20px 0;"> 新增班級</h2>
             </el-col>
           </el-row>
           <!-- Row for the form and table -->
@@ -124,24 +124,7 @@ const form = ref({
   teacher: ''
 })
 
-const originalForm = ref({
-  department: '',
-  grade: '',
-  section: '',
-  teacher: ''
-})
-
 onMounted(() => {
-  form.value.department = route.query.department as string
-  form.value.grade = route.query.grade as string
-  form.value.section = route.query.class as string
-  form.value.teacher = route.query.teacher as string
-
-  originalForm.value.department = form.value.department
-  originalForm.value.grade = form.value.grade
-  originalForm.value.section = form.value.section
-  originalForm.value.teacher = form.value.teacher
-
   fetchStudentData()
   fetchTeacherData()
 })
@@ -149,16 +132,10 @@ onMounted(() => {
 const fetchStudentData = async (page = 1) => {
   try {
     const response = await axios.get(`http://127.0.0.1:5000/api/students`, {
-      params: {
-        department: form.value.department,
-        grade: form.value.grade,
-        section: form.value.section,
-        page: page
-      }
+      params: { page }
     })
     if (response.data.status === 'success') {
       tableData.value = response.data.student_all
-      selectedStudents.value = response.data.student_selected
       total.value = response.data.total
     } else {
       console.error('Failed to fetch student data:', response.data.message)
@@ -220,21 +197,23 @@ const manageClasses = () => {
 const submit = async () => {
   console.log('Submit clicked')
   try {
-    const response = await axios.post(`http://127.0.0.1:5000/api/classes/update`, {
-      originalData: originalForm.value,
-      newData: form.value,
+    const response = await axios.post(`http://127.0.0.1:5000/api/classes/create`, {
+      department: form.value.department,
+      grade: form.value.grade,
+      section: form.value.section,
+      teacher: form.value.teacher,
       selectedStudents: selectedStudents.value
     })
     if (response.data.status === 'success') {
-      console.log('Update successful')
-      alert('班級修改成功！')
+      console.log('Class creation successful')
+      alert('班級創建成功！')
       router.push('/ClassManage')
     } else {
       alert('資料錯誤')
-      console.error('Failed to update class:', response.data.message)
+      console.error('Failed to create class:', response.data.message)
     }
   } catch (error) {
-    console.error('Error updating class:', error)
+    console.error('Error creating class:', error)
   }
 }
 
