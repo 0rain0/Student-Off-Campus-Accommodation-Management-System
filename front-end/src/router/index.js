@@ -34,7 +34,7 @@ const routes = [
     {
         path: '/menu',
         name: 'menu',
-        component: menu
+        component: () => import('../components/menu.vue')
     },
     {
         path: '/SAS',
@@ -66,6 +66,8 @@ const routes = [
         path: '/Successform',
         name: 'Successform',
         component: () => import('../components/Successform.vue')
+    },
+    {
         path:'/AddNewClass', // 要路由到的url路径
         name:'AddNewClass',
         component:()=>import('../components/AddNewClass.vue'), //导入路由页面的路径
