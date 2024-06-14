@@ -4,7 +4,7 @@ import router from '../router';
 import { Tools, Comment, List } from '@element-plus/icons-vue';
 
 const toSAS = () => {
-    router.push('/ClassManage');
+    router.push('/sas');
 };
 
 const toVSS = () => {
