@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機: localhost
--- 產生時間： 2024-06-14 16:27:29
+-- 產生時間： 2024-06-14 16:36:07
 -- 伺服器版本: 5.7.17-log
 -- PHP 版本： 5.6.30
 
@@ -248,7 +248,9 @@ CREATE TABLE `visit_form` (
   `RentType` int(1) DEFAULT NULL,
   `RoomType` int(1) DEFAULT NULL,
   `Price` int(10) DEFAULT NULL,
-  `RoommateDes` text,
+  `RoommateN` varchar(15) DEFAULT NULL,
+  `RoommateP` varchar(15) DEFAULT NULL,
+  `RA` int(2) NOT NULL,
   `Deposit` int(10) DEFAULT NULL,
   `Recommend` int(1) DEFAULT NULL,
   `SA_01` int(1) DEFAULT NULL,
