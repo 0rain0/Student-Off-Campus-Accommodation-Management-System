@@ -34,7 +34,7 @@ def login():
     try:
         data = request.get_json()
         print("Received data:", data)  # 打印接收到的數據
-        connection = connect.connect.connect_to_db()
+        connection = connect.connect_to_db()
         if connection is not None:
             with connection.cursor() as cursor:
                 sql = "SELECT * FROM account WHERE ID = %s AND PassWord = %s"
