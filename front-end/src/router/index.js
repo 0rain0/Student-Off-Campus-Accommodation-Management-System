@@ -44,9 +44,25 @@ const routes = [
         component: () => import('../components/VSS.vue')
     },
     {
+        path: '/back_vss',
+        name: 'back_vss',
+        component: () => import('../components/VSS.vue')
+    },
+    {
         path: '/RAS',
         name: 'RAS',
         component: () => import('../components/RAS.vue')
+    },
+    {
+        path: '/EditRentalSurveyForm',
+        name: 'EditRentalSurveyForm',
+        component: () => import('../components/EditRentalSurveyForm.vue')
+    }
+    ,
+    {
+        path: '/Successform',
+        name: 'Successform',
+        component: () => import('../components/Successform.vue')
     }
 ];
 
