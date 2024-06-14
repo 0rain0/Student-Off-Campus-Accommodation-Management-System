@@ -15,7 +15,7 @@ const login = () => {
             console.log("Response data:", res.data)  
             if (res.data.login === 'success_1') {
                 alert('歡迎管理員登入')
-                router.push('/menu')
+                router.push('/ClassManage')
             } 
             else if (res.data.login === 'success_2') {
                 alert('歡迎登入')

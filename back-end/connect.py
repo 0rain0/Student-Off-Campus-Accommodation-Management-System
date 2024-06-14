@@ -31,7 +31,7 @@ def test_db_connection():
             # 建立Cursor物件
             cursor = conn.cursor()
             # 執行簡單的查詢
-            cursor.execute("SELECT * FROM user WHERE username = 'a1103306' AND password = '12345'")
+            cursor.execute("SELECT * FROM account WHERE ID = 'a1103306' AND Password = '12345'")
             # 取得結果
             result = cursor.fetchone()
             if result:
