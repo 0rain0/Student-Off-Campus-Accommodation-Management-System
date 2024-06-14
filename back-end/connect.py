@@ -1,12 +1,16 @@
 import pymysql
+from dotenv import load_dotenv
+import os
+
+# 載入 .env 檔案
+load_dotenv()
 
 # 資料庫設定
 db_settings = {
-
-    "host": "http://127.0.0.1:5051/",
-    "user": "root",
-    "password": "rainmysql314043",
-    "db": "test",
+    "host": os.getenv("DB_HOST"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
+    "db": os.getenv("DB_NAME"),
 }
 
 def connect_to_db():
