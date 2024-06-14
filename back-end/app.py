@@ -11,6 +11,19 @@ def convert_to_dict(tuples_list):
     dict_list = [dict(zip(keys, row)) for row in tuples_list]
     return dict_list
 
+def generate_new_cid(cursor):
+    cursor.execute("SELECT cid FROM CLASS ORDER BY cid DESC LIMIT 1")
+    result = cursor.fetchone()[0]
+    if result:
+        last_cid = result
+        new_cid_num = int(last_cid[1:]) + 1
+        print(new_cid_num)
+        new_cid = f"c{new_cid_num:03}"
+        print(new_cid)
+    else:
+        new_cid = "c001"
+    return new_cid
+
 @app.route('/')
 def index():
     return jsonify({"message": "Hello, this is a CORS-enabled Flask application!"})
@@ -180,24 +193,36 @@ def get_students():
     if connection is not None:
         with connection.cursor() as cursor:
             try:
-                cursor.execute("SELECT sid, name FROM STUDENT")
-                students = cursor.fetchall()
-                student_list = [{"sid": student[0], "name": student[1]} for student in students]
+                if department:
+                    cursor.execute("SELECT sid, name FROM STUDENT")
+                    students = cursor.fetchall()
+                    student_list = [{"sid": student[0], "name": student[1]} for student in students]
+                    
+                    cursor.execute("SELECT COUNT(*) FROM STUDENT")
+                    total = cursor.fetchone()[0]
+                    
+                    cursor.execute("SELECT cid FROM CLASS WHERE department=%s and grade=%s and section=%s", (department, grade, section,))
+                    cid = cursor.fetchone()[0]
+                    
+                    cursor.execute("SELECT sid, name FROM STUDENT WHERE CLASS = %s LIMIT %s OFFSET %s", (cid, per_page, offset))
+                    students = cursor.fetchall()
+                    
+                    # 将数据转换为字典列表
+                    student_selected = [{"sid": student[0], "name": student[1]} for student in students]
+                    print(student_selected)
+                    
+                    return jsonify({"status": "success", "student_all": student_list, "total": total, "student_selected": student_selected})
+            
+                else:
+                    cursor.execute("SELECT sid, name FROM STUDENT")
+                    students = cursor.fetchall()
+                    student_list = [{"sid": student[0], "name": student[1]} for student in students]
+                    
+                    cursor.execute("SELECT COUNT(*) FROM STUDENT")
+                    total = cursor.fetchone()[0]
+                    
+                    return jsonify({"status": "success", "student_all": student_list, "total": total})
                 
-                cursor.execute("SELECT COUNT(*) FROM STUDENT")
-                total = cursor.fetchone()[0]
-                
-                cursor.execute("SELECT cid FROM CLASS WHERE department=%s and grade=%s and section=%s", (department, grade, section,))
-                cid = cursor.fetchone()[0]
-                
-                cursor.execute("SELECT sid, name FROM STUDENT WHERE CLASS = %s LIMIT %s OFFSET %s", (cid, per_page, offset))
-                students = cursor.fetchall()
-                
-                # 将数据转换为字典列表
-                student_selected = [{"sid": student[0], "name": student[1]} for student in students]
-                print(student_selected)
-                
-                return jsonify({"status": "success", "student_all": student_list, "total": total, "student_selected": student_selected})
             except Exception as ex:
                 print(ex)
                 return jsonify({"status": "fail", "message": str(ex)})
@@ -269,12 +294,12 @@ def update_class():
                     (new_department, new_grade, new_section, new_teacher, cid)
                 )
 
-                # 清空该班级的所有学生
+                # 清空該班級的所有學生
                 cursor.execute(
                     "UPDATE STUDENT SET class=NULL WHERE class=%s", (cid,)
                 )
 
-                # 添加选中的学生到该班级
+                # 添加選中的學生到該班級
                 for student in selected_students:
                     cursor.execute(
                         "UPDATE STUDENT SET class=%s WHERE sid=%s",
@@ -291,6 +316,45 @@ def update_class():
         return jsonify({"status": "fail", "message": "sql connection fail"})
 
     
+# 提交AddNewClass的班級創建
+@app.route('/api/classes/create', methods=['POST'])
+def create_class():
+    data = request.get_json()
+    department = data.get('department')
+    grade = data.get('grade')
+    section = data.get('section')
+    teacher = data.get('teacher')
+    selected_students = data.get('selectedStudents')
+
+    connection = connect.connect_to_db()
+    if connection is not None:
+        try:
+            with connection.cursor() as cursor:
+                # 生成新的 CID
+                new_cid = generate_new_cid(cursor)
+                print(new_cid)
+                
+                # 插入新的班级
+                cursor.execute(
+                    "INSERT INTO CLASS (cid, department, grade, section, tid) VALUES (%s, %s, %s, %s, %s)",
+                    (new_cid, department, grade, section, teacher)
+                )
+                
+                # 更新學生的班级信息
+                for student in selected_students:
+                    cursor.execute(
+                        "UPDATE STUDENT SET class=%s WHERE sid=%s",
+                        (new_cid, student['sid'])
+                    )
+                
+                connection.commit()
+                return jsonify({"status": "success"})
+        except Exception as ex:
+            connection.rollback()
+            print(ex)
+            return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
 
 
 if __name__ == '__main__':
