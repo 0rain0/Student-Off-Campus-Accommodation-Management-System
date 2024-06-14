@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/vue,python
-# Edit at https://www.toptal.com/developers/gitignore?templates=vue,python
+# Created by https://www.toptal.com/developers/gitignore/api/python
+# Edit at https://www.toptal.com/developers/gitignore?templates=python
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -173,15 +173,4 @@ poetry.toml
 # LSP config files
 pyrightconfig.json
 
-### Vue ###
-# gitignore template for Vue.js projects
-#
-# Recommended template: Node.gitignore
-
-# TODO: where does this rule come from?
-docs/_book
-
-# TODO: where does this rule come from?
-test/
-
-# End of https://www.toptal.com/developers/gitignore/api/vue,python
+# End of https://www.toptal.com/developers/gitignore/api/python
