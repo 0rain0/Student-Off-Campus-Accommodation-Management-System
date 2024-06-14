@@ -351,7 +351,6 @@ ALTER TABLE `review`
 --
 ALTER TABLE `student`
   ADD PRIMARY KEY (`SID`),
-  ADD KEY `TEACHER` (`TEACHER`,`CLASS`),
   ADD KEY `CLASS` (`CLASS`);
 
 --
