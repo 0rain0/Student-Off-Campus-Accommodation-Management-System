@@ -1,7 +1,5 @@
 import { pa } from "element-plus/es/locale/index.mjs";
 import { createRouter, createWebHistory } from "vue-router";  //导入路由
-import menu from "../components/menu.vue";
-
 const routes = [
     {
         path:'/', // 要路由到的url路径
@@ -35,18 +33,18 @@ const routes = [
     },
     {
         path:'/ClassManage', // 要路由到的url路径
-        name:'Login',
+        name:'ClassManage',
         component:()=>import('../components/ClassManage.vue'), //导入路由页面的路径
     },
     {
-        path:'/login_example', // 要路由到的url路径
-        name:'login_example',
-        component:()=>import('../components/login_example.vue'), //导入路由页面的路径
+        path:'/EditClass', // 要路由到的url路径
+        name:'EditClass',
+        component:()=>import('../components/EditClass.vue'), //导入路由页面的路径
     },
     {
         path: '/menu',
         name: 'menu',
-        component: menu
+        component: () => import('../components/menu.vue')
     },
     {
         path: '/SAS',
@@ -59,9 +57,30 @@ const routes = [
         component: () => import('../components/VSS.vue')
     },
     {
+        path: '/back_vss',
+        name: 'back_vss',
+        component: () => import('../components/VSS.vue')
+    },
+    {
         path: '/RAS',
         name: 'RAS',
         component: () => import('../components/RAS.vue')
+    },
+    {
+        path: '/EditRentalSurveyForm',
+        name: 'EditRentalSurveyForm',
+        component: () => import('../components/EditRentalSurveyForm.vue')
+    }
+    ,
+    {
+        path: '/Successform',
+        name: 'Successform',
+        component: () => import('../components/Successform.vue')
+    },
+    {
+        path:'/AddNewClass', // 要路由到的url路径
+        name:'AddNewClass',
+        component:()=>import('../components/AddNewClass.vue'), //导入路由页面的路径
     }
 ];
 
