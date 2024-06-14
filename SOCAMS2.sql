@@ -182,7 +182,6 @@ CREATE TABLE `student` (
   `Name` varchar(15) NOT NULL,
   `Grade` int(2) NOT NULL,
   `Gender` int(1) NOT NULL,
-  `TEACHER` varchar(15) NOT NULL,
   `CLASS` varchar(15) DEFAULT NULL,
   `Tel` varchar(15) NOT NULL,
   `Email` varchar(30) NOT NULL,
@@ -250,7 +249,9 @@ CREATE TABLE `visit_form` (
   `RentType` int(1) DEFAULT NULL,
   `RoomType` int(1) DEFAULT NULL,
   `Price` int(10) DEFAULT NULL,
-  `RoommateDes` text DEFAULT NULL,
+  `RoommateN` varchar(15) DEFAULT NULL,
+  `RoommateP` varchar(15) DEFAULT NULL,
+  `RA` int(2) NOT NULL,
   `Deposit` int(10) DEFAULT NULL,
   `Recommend` int(1) DEFAULT NULL,
   `SA_01` int(1) DEFAULT NULL,
@@ -420,7 +421,6 @@ ALTER TABLE `review`
 ALTER TABLE `student`
   ADD CONSTRAINT `student_ibfk_1` FOREIGN KEY (`SID`) REFERENCES `account` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `student_ibfk_2` FOREIGN KEY (`CLASS`) REFERENCES `class` (`CID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `student_ibfk_3` FOREIGN KEY (`TEACHER`) REFERENCES `teacher` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- 資料表的限制式 `teacher`
