@@ -139,11 +139,15 @@
   }
   
   const manageClasses = () => {
-    console.log('Manage classes clicked')
-  }
+  console.log('Manage classes clicked')
+  router.push('/ClassManage')
+}
   
   const addClass = () => {
     console.log('Add class clicked')
+    router.push({
+        path: '/AddNewClass',
+    })
   }
   
   const handlePageChange = (page: number) => {
