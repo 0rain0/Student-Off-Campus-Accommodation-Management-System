@@ -12,17 +12,22 @@ def convert_to_dict(tuples_list):
     return dict_list
 
 def generate_new_cid(cursor):
-    cursor.execute("SELECT cid FROM CLASS ORDER BY cid DESC LIMIT 1")
-    result = cursor.fetchone()[0]
-    if result:
-        last_cid = result
-        new_cid_num = int(last_cid[1:]) + 1
-        print(new_cid_num)
-        new_cid = f"c{new_cid_num:03}"
-        print(new_cid)
-    else:
-        new_cid = "c001"
-    return new_cid
+    print("hi")
+    try:
+        cursor.execute("SELECT cid FROM CLASS ORDER BY cid DESC LIMIT 1")
+        result = cursor.fetchone()[0]
+        print("result: ", result)
+        if result:
+            last_cid = result
+            new_cid_num = int(last_cid[1:]) + 1
+            print(new_cid_num)
+            new_cid = f"c{new_cid_num:04}"
+            print(new_cid)
+        else:
+            new_cid = "c0001"
+        return new_cid
+    except:
+        return "c0001"
 
 @app.route('/')
 def index():
@@ -670,6 +675,8 @@ def create_class():
     section = data.get('section')
     teacher = data.get('teacher')
     selected_students = data.get('selectedStudents')
+    
+    print(department, grade, section, teacher, selected_students)
 
     connection = connect.connect_to_db()
     if connection is not None:
