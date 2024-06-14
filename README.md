@@ -28,4 +28,7 @@ npm run dev
 
 cd back-end
 python3 app.py
+
+cd back-end
+python app.py
 ```
