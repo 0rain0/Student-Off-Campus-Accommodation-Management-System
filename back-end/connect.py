@@ -47,5 +47,25 @@ def test_db_connection():
     else:
         print("無法連接到資料庫")
 
+#查詢表單資料
+def query_data(sql):
+    conn = connect_to_db()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(sql)
+        return cursor.fetchall()
+    finally:
+        conn.close()
+
+#更新表單資料
+def update(sql):
+    conn = connect_to_db()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(sql)
+        conn.commit()
+    finally:
+        conn.close()
+
 # 執行測試
 test_db_connection()
