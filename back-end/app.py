@@ -24,7 +24,8 @@ def login():
         connection = connect.connect_to_db()
         if connection is not None:
             with connection.cursor() as cursor:
-                sql = "SELECT * FROM ACCOUNT WHERE ID = %s AND PassWord = %s"
+                sql = "SELECT * FROM `account` WHERE `ID` = %s AND `Password` = %s"
+                print(sql)
                 cursor.execute(sql, (data['username'], data['password']))
                 result = cursor.fetchone()
                 if result is not None:
