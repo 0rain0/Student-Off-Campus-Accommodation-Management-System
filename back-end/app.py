@@ -12,17 +12,22 @@ def convert_to_dict(tuples_list):
     return dict_list
 
 def generate_new_cid(cursor):
-    cursor.execute("SELECT cid FROM CLASS ORDER BY cid DESC LIMIT 1")
-    result = cursor.fetchone()[0]
-    if result:
-        last_cid = result
-        new_cid_num = int(last_cid[1:]) + 1
-        print(new_cid_num)
-        new_cid = f"c{new_cid_num:03}"
-        print(new_cid)
-    else:
-        new_cid = "c001"
-    return new_cid
+    print("hi")
+    try:
+        cursor.execute("SELECT cid FROM CLASS ORDER BY cid DESC LIMIT 1")
+        result = cursor.fetchone()[0]
+        print("result: ", result)
+        if result:
+            last_cid = result
+            new_cid_num = int(last_cid[1:]) + 1
+            print(new_cid_num)
+            new_cid = f"c{new_cid_num:04}"
+            print(new_cid)
+        else:
+            new_cid = "c0001"
+        return new_cid
+    except:
+        return "c0001"
 
 @app.route('/')
 def index():
@@ -147,27 +152,31 @@ def delete_class():
         grade = data.get('grade')
         class_name = data.get('class')
         teacher = data.get('teacher')
-
+        
         print(department, grade, class_name, teacher)
-
+        
         connection = connect.connect_to_db()
         if connection is not None:
             with connection.cursor() as cursor:
                 try:
-                    sql = "SELECT CID FROM CLASS WHERE Department = %s AND Grade = %s AND Class = %s AND Teacher = %s"
+                    cursor.execute("SELECT tid FROM TEACHER WHERE name = %s", (teacher))
+                    teacher = cursor.fetchone()[0]
+                    
+                    sql = "SELECT CID FROM CLASS WHERE Department = %s AND Grade = %s AND section = %s AND tid = %s"
                     cursor.execute(sql, (department, grade, class_name, teacher))
                     target_cid = cursor.fetchone()
-
+                    print(target_cid)
+                    
                     # 先將所有該班級學生的CLASS欄位設為 NULL
                     sql_update_students = "UPDATE STUDENT SET class = NULL WHERE class = %s"
                     cursor.execute(sql_update_students, (target_cid,))
                     connection.commit()
-
+                    
                     # 再刪除該班級
                     sql = "DELETE FROM CLASS WHERE CID = %s"
                     cursor.execute(sql, (target_cid,))
                     connection.commit()
-
+                    
                     return jsonify({"status": "success"})
                 except Exception as ex:
                     print(ex)
@@ -666,6 +675,8 @@ def create_class():
     section = data.get('section')
     teacher = data.get('teacher')
     selected_students = data.get('selectedStudents')
+    
+    print(department, grade, section, teacher, selected_students)
 
     connection = connect.connect_to_db()
     if connection is not None:

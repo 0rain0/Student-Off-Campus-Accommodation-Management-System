@@ -136,6 +136,7 @@
   
   const manageAccounts = () => {
     console.log('Manage accounts clicked')
+    router.push('/AccountManage')
   }
   
   const manageClasses = () => {
