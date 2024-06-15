@@ -67,6 +67,11 @@ const routes = [
         component: () => import('../components/RAS.vue')
     },
     {
+        path: '/EditPersonFile',
+        name: 'EditPersonFile',
+        component: () => import('../components/EditPersonFile.vue')
+    },
+    {
         path: '/EditRentalSurveyForm',
         name: 'EditRentalSurveyForm',
         component: () => import('../components/EditRentalSurveyForm.vue')
