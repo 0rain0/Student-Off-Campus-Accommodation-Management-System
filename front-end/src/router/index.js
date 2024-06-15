@@ -67,11 +67,15 @@ const routes = [
         component: () => import('../components/RAS.vue')
     },
     {
-        path: '/EditRentalSurveyForm',
-        name: 'EditRentalSurveyForm',
-        component: () => import('../components/EditRentalSurveyForm.vue')
-    }
-    ,
+        path: '/EditRentalSurveyForm_S',
+        name: 'EditRentalSurveyForm_S',
+        component: () => import('../components/EditRentalSurveyForm_S.vue')
+    },
+    {
+        path: '/EditRentalSurveyForm_T',
+        name: 'EditRentalSurveyForm_T',
+        component: () => import('../components/EditRentalSurveyForm_T.vue')
+    },
     {
         path: '/Successform',
         name: 'Successform',
