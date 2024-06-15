@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}}, supports_credentials=True)
 
 def convert_to_dict(tuples_list):
-    keys = ["id", "department", "class", "grade", "teacher", "number"]
+    keys = ["id", "department", "grade", "class", "teacher", "number"]
     dict_list = [dict(zip(keys, row)) for row in tuples_list]
     return dict_list
 
@@ -39,10 +39,10 @@ def login():
     try:
         data = request.get_json()
         print("Received data:", data)  # 打印接收到的數據
-        connection = connect.connect_to_db()
+        connection = connect.connect.connect_to_db()
         if connection is not None:
             with connection.cursor() as cursor:
-                sql = "SELECT * FROM account WHERE ID = %s AND PassWord = %s"
+                sql = "SELECT * FROM ACCOUNT WHERE ID = %s AND PassWord = %s"
                 cursor.execute(sql, (data['username'], data['password']))
                 result = cursor.fetchone()
                 if result is not None:
@@ -67,29 +67,19 @@ def register():
         name = data.get('name')
         email = data.get('email')
         password = data.get('password')
-        tel = data.get('tel')
-        account = data.get('account')
 
         # 註冊進資料庫
         connection = connect.connect_to_db()
         if connection is not None:
             with connection.cursor() as cursor:
-                sql = "INSERT INTO `account` (`ID`, `Password`, `UserType`) VALUES (%s, %s, '2');"
-                
-                re = cursor.execute(sql, (account, password,))
-                connection.commit()
+                sql = "INSERT INTO `landlord` (`name`, `e-mail`, `password`) VALUES (%s, %s, %s);"
 
-                sql = "INSERT INTO `landlord` (`LID`, `Name`, `Tel`, `Email`) VALUES (%s, %s, %s, %s);"
-                re = cursor.execute(sql, (account, name, tel, email))
+                re = cursor.execute(sql, (name, email, password))
                 connection.commit()
 
                 if re > 0:
                     return jsonify({"register": 'success'})
                 else:
-                    # 創建失敗，把account刪除，避免帳號創建成功，landlord寫入失敗的情況
-                    sql = "DELETE FROM account WHERE `account`.`ID` = %s"
-                    re = cursor.execute(sql, (id,))
-                    connection.commit()
                     return jsonify({"register": 'fail'})
 
         else:
@@ -119,14 +109,7 @@ def get_class_data():
                     numbers.append(count)
 
                 modified_result = [tup + (numbers[i],) for i, tup in enumerate(result)]
-                data = convert_to_dict(modified_result)
-                for d in data:
-                    tid = d['teacher']
-                    sql = "SELECT name FROM Teacher WHERE tid = %s"
-                    cursor.execute(sql, (tid,))
-                    result = cursor.fetchone()
-                    d['teacher'] = result[0]
-                return data          
+                return convert_to_dict(modified_result)
         else:
             return jsonify({"ClassManage": 'sql connection fail'})
     except Exception as ex:
@@ -152,31 +135,27 @@ def delete_class():
         grade = data.get('grade')
         class_name = data.get('class')
         teacher = data.get('teacher')
-        
+
         print(department, grade, class_name, teacher)
-        
+
         connection = connect.connect_to_db()
         if connection is not None:
             with connection.cursor() as cursor:
                 try:
-                    cursor.execute("SELECT tid FROM TEACHER WHERE name = %s", (teacher))
-                    teacher = cursor.fetchone()[0]
-                    
-                    sql = "SELECT CID FROM CLASS WHERE Department = %s AND Grade = %s AND section = %s AND tid = %s"
+                    sql = "SELECT CID FROM CLASS WHERE Department = %s AND Grade = %s AND Class = %s AND Teacher = %s"
                     cursor.execute(sql, (department, grade, class_name, teacher))
                     target_cid = cursor.fetchone()
-                    print(target_cid)
-                    
+
                     # 先將所有該班級學生的CLASS欄位設為 NULL
                     sql_update_students = "UPDATE STUDENT SET class = NULL WHERE class = %s"
                     cursor.execute(sql_update_students, (target_cid,))
                     connection.commit()
-                    
+
                     # 再刪除該班級
                     sql = "DELETE FROM CLASS WHERE CID = %s"
                     cursor.execute(sql, (target_cid,))
                     connection.commit()
-                    
+
                     return jsonify({"status": "success"})
                 except Exception as ex:
                     print(ex)
@@ -185,6 +164,7 @@ def delete_class():
             return jsonify({"status": "fail", "message": "sql connection fail"})
     return jsonify({"status": "fail", "message": "Invalid method"})
 
+#學生編輯表單
 def convert_account_to_dict(tuples_list):
     keys = ["account", "password", "permission", "name", "phone", "email"]
     dict_list = [dict(zip(keys, row)) for row in tuples_list]
@@ -708,8 +688,8 @@ def create_class():
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
 
-@app.route('/receive_form',methods = ['GET','POST'])
-def receive_form():
+@app.route('/receive_form_s',methods = ['GET','POST'])
+def receive_form_s():
     user = request.form
     print(user)
 

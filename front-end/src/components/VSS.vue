@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import router from '../router'
+import router from "../router/index.js";
+import axios from 'axios'
 
 // 原來在第一個 <script setup> 中的函數
-const visit_form = () => {
-    router.push('/EditRentalSurveyForm');
+const visit_form_s = () => {
+    router.push('/EditRentalSurveyForm_S');
 };
-
+const visit_form_t = () => {
+    router.push('/EditRentalSurveyForm_T');
+    const response = axios.get('http://127.0.0.1:5000/show_stu');
+    return response;
+};
 // 原來在第二個 <script setup> 中的函數
 const CheckStudentStatus = () => {
     console.log('Jump CheckStudentStatus');
@@ -46,6 +50,8 @@ const CheckClassStatus = () => {
                 </el-aside>
                 <el-main id="main">
                    
+                   <el-button size="large" round @click="visit_form_s">學生編輯</el-button>
+                   <el-button size="large" round @click="visit_form_t">教師編輯</el-button>
                 </el-main>
             </el-container>
         </el-container>
