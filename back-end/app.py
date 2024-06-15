@@ -858,6 +858,69 @@ def receive_form():
         sql = sql.replace("'None'", "Null").replace("None", "Null")
         connect.update(sql)
         return redirect("http://localhost:5174/Successform")
+    
+@app.route('/VSS/students', methods=['GET'])
+def get_VSS_students():
+    page = request.args.get('page', 1, type=int)
+    pageSize = request.args.get('pageSize', 10, type=int)
+    sid = request.args.get('SID', None)
+    name = request.args.get('Name', None)
+    offset = (page - 1) * pageSize
+    
+    connection = connect.connect_to_db()
+    if connection is not None:
+        try:
+            with connection.cursor() as cursor:
+                count_query = "SELECT COUNT(*) FROM student"
+                select_query = "SELECT SID, Name, Tel, Email FROM student"
+                conditions = []
+                params = []
+
+                if sid:
+                    conditions.append("SID LIKE %s")
+                    params.append(f"%{sid}%")
+                if name:
+                    conditions.append("Name LIKE %s")
+                    params.append(f"%{name}%")
+
+                if conditions:
+                    count_query += " WHERE " + " AND ".join(conditions)
+                    select_query += " WHERE " + " AND ".join(conditions)
+
+                select_query += " LIMIT %s OFFSET %s"
+                params.extend([pageSize, offset])
+
+                cursor.execute(count_query, params[:-2])
+                total = cursor.fetchone()[0]
+                
+                cursor.execute(select_query, params)
+                students = cursor.fetchall()
+                
+                student_list = []
+                for student in students:
+                    sid = student[0]
+                    cursor.execute("SELECT 1 FROM visit_form WHERE SID = %s", (sid,))
+                    visit_record = cursor.fetchone()
+                    status = '已填寫' if visit_record else '未填寫'
+                    student_info = {
+                        "SID": student[0],
+                        "Name": student[1],
+                        "Phone": student[2],
+                        "Email": student[3],
+                        "Status": status
+                    }
+                    student_list.append(student_info)
+                
+                return jsonify({"students": student_list, "total": total, "status": "success"})
+        except Exception as ex:
+            print(ex)
+            return jsonify({"status": "fail", "message": str(ex)})
+        finally:
+            connection.close()
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
