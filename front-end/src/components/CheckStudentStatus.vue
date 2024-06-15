@@ -1,9 +1,3 @@
-<!-- CheckStudentStatus.vue -->
-<!-- 管理員查詢學生的狀態
-    可以以學號查詢
-    可以以姓名查詢
-    ~~可以以班級查詢~~ 合併到隔壁
--->
 <template>
     <div id="common-layout">
         <el-header id="header" style="display: flex;">
@@ -16,8 +10,9 @@
         <el-container>
             <el-aside id="aside" width="200px">
                 <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect">
-                    <el-menu-item class="aside-button" @click="CheckStudentStatus">查詢學生填寫狀況</el-menu-item>
-                    <el-menu-item class="aside-button" @click="CheckClassStatus">查詢班級填寫狀況</el-menu-item>
+                    <el-button class="aside-button" @click="visit_form">新增/編輯表單</el-button>
+                    <el-button class="aside-button" @click="CheckStudentStatus" >查詢學生填寫狀況</el-button>
+                    <el-button class="aside-button" @click="CheckClassStatus">查詢班級填寫狀況</el-button>
                 </el-menu>
             </el-aside>
             <el-main>
@@ -47,7 +42,14 @@
                     </el-table-column>
                     <el-table-column label="操作" width="100">
                         <template #default="scope">
-                            <el-button @click="handleFill(scope.$index, scope.row)" type="primary" size="small">查看</el-button>
+                            <el-button 
+                                @click="handleFill(scope.$index, scope.row)" 
+                                type="primary" 
+                                size="small"
+                                :disabled="scope.row.Status !== '已填寫'"
+                            >
+                                查看
+                            </el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -115,21 +117,19 @@ const handleReset = () => {
     fetchStudents()
 }
 
+const handleFill = (index: number, row: Student) => {
+    if (row.Status === '已填寫') {
+        // 執行查看操作
+        console.log(`查看學生 ${row.SID} 的詳細信息`)
+    }
+}
+
 onMounted(() => {
     fetchStudents()
 })
 </script>
 
-<style scoped>
-.text-large {
-    font-size: 20px;
-}
-.font-600 {
-    font-weight: 600;
-}
-.mr-3 {
-    margin-right: 1rem;
-}
+<style>
 #common-layout .el-container {
     height: 100vh;
     width: 100%;
@@ -139,20 +139,27 @@ onMounted(() => {
     background-color: #409eff;
     color: #fff;
     line-height: 60px;
-    --el-header-padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
 }
 
 #aside {
     background-color: #c3e1ff;
     color: #333;
-    line-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
 }
+
 .aside-button {
     width: 100%;
     margin-bottom: 10px;
     box-sizing: border-box;
     text-align: center;
 }
+
 .el-page-header__breadcrumb {
     margin-bottom: 0px;
 }
@@ -165,7 +172,8 @@ body {
     margin: 0;
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
 }
-.mb-3 {
-    margin-bottom: 1rem;
+
+.pagination {
+    margin-top: 20px;
 }
 </style>
