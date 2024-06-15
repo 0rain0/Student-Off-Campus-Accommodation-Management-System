@@ -9,11 +9,13 @@
         </el-header>
         <el-container>
             <el-aside id="aside" width="200px">
-                <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect">
-                    <el-button class="aside-button" @click="visit_form">新增/編輯表單</el-button>
-                    <el-button class="aside-button" @click="CheckStudentStatus" >查詢學生填寫狀況</el-button>
-                    <el-button class="aside-button" @click="CheckClassStatus">查詢班級填寫狀況</el-button>
-                </el-menu>
+                <!-- 側邊 -->
+                    <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect">
+                        <el-button class="aside-button" @click="visit_form_s">學生填寫</el-button>
+                        <el-button class="aside-button" @click="visit_form_t">教師填寫</el-button>
+                        <el-button class="aside-button" @click="CheckStudentStatus" >查詢學生填寫狀況</el-button>
+                        <el-button class="aside-button" @click="CheckClassStatus">查詢班級填寫狀況</el-button>
+                    </el-menu>
             </el-aside>
             <el-main>
                 <el-row :gutter="20" class="mb-3">
@@ -123,6 +125,15 @@ const handleFill = (index: number, row: Student) => {
         console.log(`查看學生 ${row.SID} 的詳細信息`)
     }
 }
+
+const visit_form_s = () => {
+    router.push('/EditRentalSurveyForm_S');
+};
+
+const visit_form_t = () => {
+    router.push('/EditRentalSurveyForm_T');
+};
+
 
 onMounted(() => {
     fetchStudents()
