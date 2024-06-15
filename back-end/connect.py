@@ -6,6 +6,7 @@ import os
 load_dotenv()
 
 # 資料庫設定
+# 資料庫設定
 db_settings = {
     "host": os.getenv("DB_HOST"),
     "user": os.getenv("DB_USER"),

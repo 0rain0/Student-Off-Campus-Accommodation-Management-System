@@ -1,7 +1,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import router from '../router';
-import { Tools, Comment, List } from '@element-plus/icons-vue';
+import { Tools, Comment, List, Edit } from '@element-plus/icons-vue';
 
 const toSAS = () => {
     router.push('/ClassManage');
@@ -10,6 +10,10 @@ const toSAS = () => {
 const toVSS = () => {
     router.push('/vss');
 };
+
+const toEditPersonFile = () => {
+    router.push('/EditPersonFile')
+}
 
 const toRAS = () => {
     router.push('/ras');
@@ -34,6 +38,12 @@ const toRAS = () => {
         <el-button id="ad-button" type="info" @click="toRAS" text>
             <el-icon :size="50"><Comment /></el-icon>
             <span>租屋廣告/留言板</span>
+        </el-button>
+    </div>
+    <div id="menu-button-3" class="menu-button">
+        <el-button id="ad-button" type="info" @click="toEditPersonFile" text>
+            <el-icon :size="50"><Edit /></el-icon>
+            <span>修改個人資料</span>
         </el-button>
     </div>
 </div>
