@@ -385,7 +385,7 @@ def new_accounts():
     Rank = data.get('Rank')
     OfficeAddr = data.get('OfficeAddr')
     OfficeTel = data.get('OfficeTel')
-
+    
     if account == '':
         return jsonify({"status": "fail", "message": "請輸入帳號!"})
     elif password == '':
@@ -680,7 +680,6 @@ def SaveChanges():
                 connection.close()
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
-
 # Class編輯頁面用於獲取班級內student資訊
 @app.route('/api/students', methods=['GET'])
 def get_students():
