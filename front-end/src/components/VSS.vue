@@ -1,10 +1,14 @@
 <script setup>
-import { ref, reactive } from 'vue'
-import router from '../router';
-const visit_form = () => {
-    router.push('/EditRentalSurveyForm');
+import router from "../router/index.js";
+import axios from 'axios';
+const visit_form_s = () => {
+    router.push('/EditRentalSurveyForm_S');
 };
-
+const visit_form_t = () => {
+    router.push('/EditRentalSurveyForm_T');
+    const response = axios.get('http://127.0.0.1:5000/show_stu');
+    return response;
+};
 </script>
 <template>
     <div id="common-layout">
@@ -27,7 +31,8 @@ const visit_form = () => {
             <el-container>
                 <el-aside id="aside" width="200px"> </el-aside>
                 <el-main id="main">
-                   <el-button size="large" round @click="visit_form">新增/編輯表單</el-button>
+                   <el-button size="large" round @click="visit_form_s">學生編輯</el-button>
+                   <el-button size="large" round @click="visit_form_t">教師編輯</el-button>
                 </el-main>
             </el-container>
         </el-container>
