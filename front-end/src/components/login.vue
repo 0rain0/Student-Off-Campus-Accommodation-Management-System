@@ -1,12 +1,16 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import router from '../router'
+import router from '../router'
 import axios from 'axios'
+
+const FPath = 'http://127.0.0.1:5000/login'
 
 const FPath = 'http://127.0.0.1:5000/login'
 const loginForm = reactive({
     username: '',
     password: ''
+})
 })
 
 const login = () => {
@@ -56,6 +60,7 @@ const login = () => {
                 <h3 style="color: #409eff;">登入 Login</h3>
                 <br>
                 <el-form v-model="loginForm" ref="loginFormRef">
+                <el-form v-model="loginForm" ref="loginFormRef">
                     <el-form-item label="帳號" required>
                         <el-input v-model="loginForm.username" placeholder="請輸入帳號"></el-input>
                     </el-form-item>
@@ -63,6 +68,7 @@ const login = () => {
                         <el-input v-model="loginForm.password" placeholder="請輸入密碼" show-password></el-input>
                     </el-form-item>
                     <el-form-item>
+                        <el-button type="primary" @click="login" width>登入</el-button>
                         <el-button type="primary" @click="login" width>登入</el-button>
                     </el-form-item>
                 </el-form>
@@ -136,7 +142,9 @@ input {
     border-radius: 5px;
 }
 
+
 .el-form-item__content {
     justify-content: center;
 }
 </style>
+
