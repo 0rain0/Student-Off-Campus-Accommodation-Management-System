@@ -43,15 +43,15 @@ const CheckClassStatus = () => {
                 <el-aside id="aside" width="200px">
                 <!-- 側邊 -->
                     <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect">
-                        <el-button class="aside-button" @click="visit_form">新增/編輯表單</el-button>
+                        <el-button class="aside-button" @click="visit_form_s">學生填寫</el-button>
+                        <el-button class="aside-button" @click="visit_form_t">教師填寫</el-button>
                         <el-button class="aside-button" @click="CheckStudentStatus" >查詢學生填寫狀況</el-button>
                         <el-button class="aside-button" @click="CheckClassStatus">查詢班級填寫狀況</el-button>
                     </el-menu>
                 </el-aside>
                 <el-main id="main">
                    
-                   <el-button size="large" round @click="visit_form_s">學生編輯</el-button>
-                   <el-button size="large" round @click="visit_form_t">教師編輯</el-button>
+
                 </el-main>
             </el-container>
         </el-container>
