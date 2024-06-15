@@ -78,6 +78,16 @@ const routes = [
         component: () => import('../components/Successform.vue')
     },
     {
+        path: '/CheckStudentStatus',
+        name: 'CheckStudentStatus',
+        component: () => import('../components/CheckStudentStatus.vue')
+    },
+    {
+        path: '/CheckClassStatus',
+        name: 'CheckClassStatus',
+        component: () => import('../components/CheckClassStatus.vue')
+    },
+    {
         path:'/AddNewClass', // 要路由到的url路径
         name:'AddNewClass',
         component:()=>import('../components/AddNewClass.vue'), //导入路由页面的路径

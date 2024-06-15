@@ -1,10 +1,21 @@
-<script setup>
+<script setup lang="ts">
 import { ref, reactive } from 'vue'
-import router from '../router';
+import router from '../router'
+
+// 原來在第一個 <script setup> 中的函數
 const visit_form = () => {
     router.push('/EditRentalSurveyForm');
 };
 
+// 原來在第二個 <script setup> 中的函數
+const CheckStudentStatus = () => {
+    console.log('Jump CheckStudentStatus');
+    router.push('/CheckStudentStatus');
+};
+const CheckClassStatus = () => {
+    console.log('Jump CheckClassStatus');
+    router.push('/CheckClassStatus');
+};
 </script>
 <template>
     <div id="common-layout">
@@ -25,7 +36,13 @@ const visit_form = () => {
                 </el-page-header>
             </el-header>
             <el-container>
-                <el-aside id="aside" width="200px"> </el-aside>
+                <el-aside id="aside" width="200px">
+                <!-- 側邊 -->
+                    <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect">
+                        <el-menu-item class="aside-button" @click="CheckStudentStatus" >查詢學生填寫狀況</el-menu-item>
+                        <el-menu-item class="aside-button" @click="CheckClassStatus">查詢班級填寫狀況</el-menu-item>
+                    </el-menu>
+                </el-aside>
                 <el-main id="main">
                    <el-button size="large" round @click="visit_form">新增/編輯表單</el-button>
                 </el-main>
@@ -33,6 +50,7 @@ const visit_form = () => {
         </el-container>
     </div>
 </template>
+
 
 <style>
 #common-layout .el-container {
@@ -52,7 +70,12 @@ const visit_form = () => {
     color: #333;
     line-height: 200px;
 }
-
+.aside-button {
+    width: 100%;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    text-align: center;
+}
 .el-page-header__breadcrumb {
     margin-bottom: 0px;
 }

@@ -32,3 +32,10 @@ python3 app.py
 cd back-end
 python app.py
 ```
+
+# account 
+1 管理員
+2 房東
+3 老師
+4 學生
+
