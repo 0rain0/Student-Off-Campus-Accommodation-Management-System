@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}}, supports_credentials=True)
 
 def convert_to_dict(tuples_list):
-    keys = ["id", "department", "class", "grade", "teacher", "number"]
+    keys = ["id", "department", "grade", "class", "teacher", "number"]
     dict_list = [dict(zip(keys, row)) for row in tuples_list]
     return dict_list
 
@@ -39,10 +39,10 @@ def login():
     try:
         data = request.get_json()
         print("Received data:", data)  # 打印接收到的數據
-        connection = connect.connect_to_db()
+        connection = connect.connect.connect_to_db()
         if connection is not None:
             with connection.cursor() as cursor:
-                sql = "SELECT * FROM account WHERE ID = %s AND PassWord = %s"
+                sql = "SELECT * FROM ACCOUNT WHERE ID = %s AND PassWord = %s"
                 cursor.execute(sql, (data['username'], data['password']))
                 result = cursor.fetchone()
                 if result is not None:
@@ -67,29 +67,19 @@ def register():
         name = data.get('name')
         email = data.get('email')
         password = data.get('password')
-        tel = data.get('tel')
-        account = data.get('account')
 
         # 註冊進資料庫
         connection = connect.connect_to_db()
         if connection is not None:
             with connection.cursor() as cursor:
-                sql = "INSERT INTO `account` (`ID`, `Password`, `UserType`) VALUES (%s, %s, '2');"
-                
-                re = cursor.execute(sql, (account, password,))
-                connection.commit()
+                sql = "INSERT INTO `landlord` (`name`, `e-mail`, `password`) VALUES (%s, %s, %s);"
 
-                sql = "INSERT INTO `landlord` (`LID`, `Name`, `Tel`, `Email`) VALUES (%s, %s, %s, %s);"
-                re = cursor.execute(sql, (account, name, tel, email))
+                re = cursor.execute(sql, (name, email, password))
                 connection.commit()
 
                 if re > 0:
                     return jsonify({"register": 'success'})
                 else:
-                    # 創建失敗，把account刪除，避免帳號創建成功，landlord寫入失敗的情況
-                    sql = "DELETE FROM account WHERE `account`.`ID` = %s"
-                    re = cursor.execute(sql, (id,))
-                    connection.commit()
                     return jsonify({"register": 'fail'})
 
         else:
@@ -119,14 +109,7 @@ def get_class_data():
                     numbers.append(count)
 
                 modified_result = [tup + (numbers[i],) for i, tup in enumerate(result)]
-                data = convert_to_dict(modified_result)
-                for d in data:
-                    tid = d['teacher']
-                    sql = "SELECT name FROM Teacher WHERE tid = %s"
-                    cursor.execute(sql, (tid,))
-                    result = cursor.fetchone()
-                    d['teacher'] = result[0]
-                return data          
+                return convert_to_dict(modified_result)
         else:
             return jsonify({"ClassManage": 'sql connection fail'})
     except Exception as ex:
@@ -152,31 +135,27 @@ def delete_class():
         grade = data.get('grade')
         class_name = data.get('class')
         teacher = data.get('teacher')
-        
+
         print(department, grade, class_name, teacher)
-        
+
         connection = connect.connect_to_db()
         if connection is not None:
             with connection.cursor() as cursor:
                 try:
-                    cursor.execute("SELECT tid FROM TEACHER WHERE name = %s", (teacher))
-                    teacher = cursor.fetchone()[0]
-                    
-                    sql = "SELECT CID FROM CLASS WHERE Department = %s AND Grade = %s AND section = %s AND tid = %s"
+                    sql = "SELECT CID FROM CLASS WHERE Department = %s AND Grade = %s AND Class = %s AND Teacher = %s"
                     cursor.execute(sql, (department, grade, class_name, teacher))
                     target_cid = cursor.fetchone()
-                    print(target_cid)
-                    
+
                     # 先將所有該班級學生的CLASS欄位設為 NULL
                     sql_update_students = "UPDATE STUDENT SET class = NULL WHERE class = %s"
                     cursor.execute(sql_update_students, (target_cid,))
                     connection.commit()
-                    
+
                     # 再刪除該班級
                     sql = "DELETE FROM CLASS WHERE CID = %s"
                     cursor.execute(sql, (target_cid,))
                     connection.commit()
-                    
+
                     return jsonify({"status": "success"})
                 except Exception as ex:
                     print(ex)
@@ -714,7 +693,6 @@ def receive_form_s():
     user = request.form
     print(user)
 
-    #獲取表單參數
     SID = request.form.get("SID")
     DG = request.form.get("DG")
     S_Name = request.form.get("S_Name")
@@ -749,6 +727,24 @@ def receive_form_s():
     SA_11 = request.form.get("SA_11")
     SA_12 = request.form.get("SA_12")
     SA_13 = request.form.get("SA_13")
+    EN_01 = request.form.get("EN_01")
+    EN_02 = request.form.get("EN_02")
+    EN_03 = request.form.get("EN_03")
+    EN_04 = request.form.get("EN_04")
+    VI_01 = request.form.get("VI_01")
+    VI_02 = request.form.get("VI_02")
+    Result = request.form.get("Result")
+    DI_01 = request.form.get("DI_01")
+    DI_02 = request.form.get("DI_02")
+    DI_03 = request.form.get("DI_03")
+    DI_04 = request.form.get("DI_04")
+    DI_05 = request.form.get("DI_05")
+    EN_03_Des = request.form.get("EN_03_Des")
+    EN_04_Des = request.form.get("EN_04_Des")
+    VI_01_Des = request.form.get("VI_01_Des")
+    RE_Des = request.form.get("RE_Des")
+    RE_Memo = request.form.get("RE_Memo")
+    DI_05_Des = request.form.get("DI_05_Des")
 
     #確認該學號是否存在訪視紀錄
     sql = f"""
@@ -789,89 +785,7 @@ def receive_form_s():
                     SA_10 = {SA_10},
                     SA_11 = {SA_11},
                     SA_12 = {SA_12},
-                    SA_13 = {SA_13}
-                WHERE SID = '{SID}'
-            """
-
-        sql = sql.replace("'None'", "Null").replace("None", "Null")
-        connect.update(sql)
-        return redirect("http://localhost:5175/Successform")
-    else:
-        #未存在訪視紀錄，新增表單
-        #需要有學號在資料庫內才能新增
-        sql = f"""
-                    insert into visit_form (State,DG,SID,S_Name,S_Tel,T_Name,
-                                            V_Time,L_Name,L_Tel,R_Addr,RoommateN,
-                                            RoommateP,RA,RentType,RoomType,Price,
-                                            Deposit,recommend,SA_01,SA_02,SA_03,
-                                            SA_04,SA_05,SA_06,SA_07,SA_08,SA_09,
-                                            SA_10,SA_11,SA_12,SA_13)
-                    values (1,'{DG}','{SID}','{S_Name}','{S_Tel}','{T_Name}',
-                            '{visit}','{L_Name}','{L_Tel}','{R_Addr}','{RoommateN}',
-                            '{RoommateP}',{RA},{RentType},{RoomType},{Price},
-                            {Deposit},{Recommend},{SA_01},{SA_02},{SA_03},{SA_04},
-                            {SA_05},{SA_06},{SA_07},{SA_08},{SA_09},{SA_10},{SA_11},
-                            {SA_12},{SA_13})
-                """
-
-        sql = sql.replace("'None'", "Null").replace("None", "Null")
-        connect.update(sql)
-        return redirect("http://localhost:5175/Successform")
-
-
-#老師編輯表單
-@app.route('/receive_form_t',methods = ['GET','POST'])
-def receive_form_t():
-    user = request.form
-    print(user)
-
-    # 獲取表單參數
-    SID = request.form.get("SID")
-    DG = request.form.get("DG")
-    S_Name = request.form.get("S_Name")
-    S_Tel = request.form.get("S_Tel")
-    T_Name = request.form.get("T_Name")
-    year = request.form.get("year", '0000')
-    month = request.form.get("month", '00')
-    day = request.form.get("day", '00')
-    hour = request.form.get("hour", '00')
-    visit = year + "-" + month + "-" + day + " " + hour + ":00:00"
-    EN_01 = request.form.get("EN_01")
-    EN_02 = request.form.get("EN_02")
-    EN_03 = request.form.get("EN_03")
-    EN_04 = request.form.get("EN_04")
-    VI_01 = request.form.get("VI_01")
-    VI_02 = request.form.get("VI_02")
-    Result = request.form.get("Result")
-    DI_01 = request.form.get("DI_01")
-    DI_02 = request.form.get("DI_02")
-    DI_03 = request.form.get("DI_03")
-    DI_04 = request.form.get("DI_04")
-    DI_05 = request.form.get("DI_05")
-    EN_03_Des = request.form.get("EN_03_Des")
-    EN_04_Des = request.form.get("EN_04_Des")
-    VI_01_Des = request.form.get("VI_01_Des")
-    RE_Des = request.form.get("RE_Des")
-    RE_Memo = request.form.get("RE_Memo")
-    DI_05_Des = request.form.get("DI_05_Des")
-
-    # 確認該學號是否存在訪視紀錄
-    sql = f"""
-            select * from visit_form where SID= '{SID}'
-            """
-    datas = connect.query_data(sql)
-
-    if (datas != ()):
-        # 已存在訪視紀錄，更新表單
-        sql = f"""
-                UPDATE visit_form
-                SET DG = '{DG}',
-                    SID = '{SID}',
-                    S_Name = '{S_Name}',
-                    S_Tel = '{S_Tel}',
-                    T_Name = '{T_Name}',
-                    V_Time = '{visit}',
-                    State = 1,
+                    SA_13 = {SA_13},
                     EN_01 = {EN_01},
                     EN_02 = {EN_02},
                     EN_03 = {EN_03},
@@ -895,26 +809,35 @@ def receive_form_t():
 
         sql = sql.replace("'None'", "Null").replace("None", "Null")
         connect.update(sql)
-        return redirect("http://localhost:5175/Successform")
-
+        return redirect("http://localhost:5174/Successform")
     else:
-        # 未存在訪視紀錄，新增表單
-        # 需要有學號在資料庫內才能新增
+        #未存在訪視紀錄，新增表單
+        #需要有學號在資料庫內才能新增
         sql = f"""
-        insert into visit_form
-                (State,DG,SID,S_Name,S_Tel,T_Name,V_Time,
-                EN_01,EN_02,EN_03,EN_04,VI_01,VI_02,Result,
-                DI_01,DI_02,DI_03,DI_04,DI_05,EN_03_Des,
-                EN_04_Des,VI_01_Des,RE_Des,RE_Memo,DI_05_Des)
-                values (1,'{DG}','{SID}','{S_Name}','{S_Tel}','{T_Name}',
-                        '{visit}','{EN_01}','{EN_02}','{EN_03}','{EN_04}',
-                        '{VI_01}',{VI_02},'{EN_03_Des}','{EN_04_Des}','{VI_01_Des}',
-                        '{RE_Des}','{RE_Memo}','{DI_05_Des}')
+                    insert into visit_form (State,DG,SID,S_Name,S_Tel,T_Name,
+                                            V_Time,L_Name,L_Tel,R_Addr,RoommateN,
+                                            RoommateP,RA,RentType,RoomType,Price,
+                                            Deposit,recommend,SA_01,SA_02,SA_03,
+                                            SA_04,SA_05,SA_06,SA_07,SA_08,SA_09,
+                                            SA_10,SA_11,SA_12,SA_13,EN_01,EN_02,
+                                            EN_03,EN_04,VI_01,VI_02,Result,DI_01,
+                                            DI_02,DI_03,DI_04,DI_05,EN_03_Des,
+                                            EN_04_Des,VI_01_Des,RE_Des,RE_Memo,
+                                            DI_05_Des)
+                    values (1,'{DG}','{SID}','{S_Name}','{S_Tel}','{T_Name}',
+                            '{visit}','{L_Name}','{L_Tel}','{R_Addr}','{RoommateN}',
+                            '{RoommateP}',{RA},{RentType},{RoomType},{Price},
+                            {Deposit},{Recommend},{SA_01},{SA_02},{SA_03},{SA_04},
+                            {SA_05},{SA_06},{SA_07},{SA_08},{SA_09},{SA_10},{SA_11},
+                            {SA_12},{SA_13},{EN_01},{EN_02},{EN_03},{EN_04},{VI_01},
+                            {VI_02},{Result},{DI_01},{DI_02},{DI_03},{DI_04},{DI_05},
+                            '{EN_03_Des}','{EN_04_Des}','{VI_01_Des}','{RE_Des}',
+                            '{RE_Memo}','{DI_05_Des}')
                 """
 
         sql = sql.replace("'None'", "Null").replace("None", "Null")
         connect.update(sql)
-        return redirect("http://localhost:5175/Successform")
+        return redirect("http://localhost:5174/Successform")
 
 if __name__ == '__main__':
     app.run(debug=True)
