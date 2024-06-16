@@ -8,6 +8,7 @@ let AD_data = ref([]); // Initialize as an empty array
 let AD_size = ref(0);
 let post_data = ref([]);
 let post_size = ref(0);
+const userType = ref(0);
 const rateValue = ref([0, 0, 0, 0]);
 const review_content = ref(['', '', '', '']);
 const comment_content = ref(['', '', '', '']);
@@ -17,6 +18,7 @@ onMounted(() => {
         .then(res => {
             console.log("Response data:", res.data)
             if (res.data.status === 'success') {
+                userType.value = res.data.data;
                 if (res.data.data === 1) {
                     document.querySelector('.verify').hidden = false;
                 } else {
@@ -380,7 +382,7 @@ const handleCurrentChange3 = (val) => {
 };
 
 const isAuthor = (ID) => {
-    return ID === localStorage.getItem('userID');
+    return ID === localStorage.getItem('userID') || userType.value === 1;
 }
 
 const editReview = (RID, content, rate) => {
