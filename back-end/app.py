@@ -1,8 +1,8 @@
 from flask import Flask, jsonify, request, redirect
 from flask_cors import CORS
 import traceback
-import traceback
 import connect
+from flask import make_response
 
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}}, supports_credentials=True)
