@@ -1581,6 +1581,7 @@ def edit_post():
 def edit_AD():
     data = request.get_json()
     adid = data.get('ADID')
+    Name = data.get('Name')
     HouseAge = data.get('HouseAge')
     HouseType = data.get('HouseType')
     RoomType = data.get('RoomType')
@@ -1593,7 +1594,6 @@ def edit_AD():
     End = data.get('End')
     AD_File = data.get('AD_File')
     AD_Des = data.get('AD_Des')
-    # Tue, 11 Jun 2024 00:00:00 GMT to 2024-06-11
     Start = format_date(Start)
     End = format_date(End)
     connection = connect.connect_to_db()
@@ -1601,7 +1601,7 @@ def edit_AD():
     if connection is not None:
         with connection.cursor() as cursor:
             try:
-                cursor.execute("UPDATE advertisement SET HouseAge = '"+str(HouseAge) + "', HouseType = '"+str(HouseType) + "', RoomType = '"+str(RoomType) + "', Address = '"+Address + "', RentLimit = '"+RentLimit + "', Price = '"+str(Price) + "', ContactName = '"+ContactName + "', ContactTel = '"+ContactTel + "', Start = '"+Start + "', End = '"+End + "', AD_File = '"+AD_File + "', AD_Des = '"+AD_Des + "' WHERE ADID = '"+adid + "'")
+                cursor.execute("UPDATE advertisement SET HouseAge = '"+str(HouseAge) + "', HouseType = '"+str(HouseType) + "', RoomType = '"+str(RoomType) + "', Address = '"+Address + "', RentLimit = '"+RentLimit + "', Price = '"+str(Price) + "', ContactName = '"+ContactName + "', ContactTel = '"+ContactTel + "', Start = '"+Start + "', End = '"+End + "', AD_File = '"+AD_File + "', AD_Des = '"+AD_Des + "', Name = '"+ Name + "' WHERE ADID = '"+adid + "'")
                 connection.commit()
                 return jsonify({"status": "success"})
             except Exception as ex:
@@ -1613,6 +1613,47 @@ def edit_AD():
 def format_date(date_str):
     date_obj = datetime.strptime(date_str, "%a, %d %b %Y %H:%M:%S %Z")
     return date_obj.strftime("%Y-%m-%d")
+
+@app.route('/api/ad/add-AD', methods=['POST'])
+def addAD():
+    data = request.get_json()
+    LID = data.get('LID')
+    Name = data.get('Name')
+    HouseAge = data.get('HouseAge')
+    HouseType = data.get('HouseType')
+    RoomType = data.get('RoomType')
+    Address = data.get('Address')
+    RentLimit = data.get('RentLimit')
+    Price = data.get('Price')
+    ContactName = data.get('ContactName')
+    ContactTel = data.get('ContactTel')
+    Start = data.get('Start')
+    End = data.get('End')
+    AD_File = data.get('AD_File')
+    AD_Des = data.get('AD_Des')
+    Start = Start[:10]
+    End = End[:10]
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT COUNT(*) FROM advertisement")
+                connection.commit()
+                count = cursor.fetchone()[0]
+                if count == 0:
+                    adid = 1
+                else:
+                    cursor.execute("SELECT MAX(ADID) FROM advertisement")
+                    connection.commit()
+                    adid = int(cursor.fetchone()[0]) + 1
+                cursor.execute("INSERT INTO advertisement (ADID, LID, Name, HouseAge, HouseType, RoomType, Address, RentLimit, Price, ContactName, ContactTel, Start, End, AD_File, AD_Des, Validated) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s, %s, %s)", (adid, LID, Name, HouseAge, HouseType, RoomType, Address, RentLimit, Price, ContactName, ContactTel, Start, End, AD_File, AD_Des, 1))
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
 
 
 if __name__ == '__main__':
