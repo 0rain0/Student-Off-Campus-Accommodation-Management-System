@@ -1,22 +1,8 @@
 <template>
     <div id="common-layout">
-        <el-header id="header" style="display: flex;">
-            <el-page-header @click="router.push('/menu');">
-                <template #content>
-                    <span class="text-large font-600 mr-3" style="color: white;">學生訪視</span>
-                </template>
-            </el-page-header>
-        </el-header>
+        <VSS_Header />
         <el-container>
-            <el-aside id="aside" width="200px">
-                <!-- 側邊 -->
-                    <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect">
-                        <el-button class="aside-button" @click="visit_form_s">學生填寫</el-button>
-                        <el-button class="aside-button" @click="visit_form_t">教師填寫</el-button>
-                        <el-button class="aside-button" @click="CheckStudentStatus" >查詢學生填寫狀況</el-button>
-                        <el-button class="aside-button" @click="CheckClassStatus">查詢班級填寫狀況</el-button>
-                    </el-menu>
-            </el-aside>
+            <VSS_Aside />
             <el-main>
                 <el-row :gutter="20" class="mb-3">
                     <el-col :span="8">
