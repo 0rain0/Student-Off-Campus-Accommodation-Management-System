@@ -3,7 +3,6 @@ from flask_cors import CORS
 import traceback
 import connect
 from flask import make_response
-from datetime import datetime
 
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}}, supports_credentials=True)
@@ -127,14 +126,7 @@ def get_class_data():
                     numbers.append(count)
 
                 modified_result = [tup + (numbers[i],) for i, tup in enumerate(result)]
-                data = convert_to_dict(modified_result)
-                for d in data:
-                    tid = d['teacher']
-                    sql = "SELECT name FROM Teacher WHERE tid = %s"
-                    cursor.execute(sql, (tid,))
-                    result = cursor.fetchone()
-                    d['teacher'] = result[0]
-                return data          
+                return convert_to_dict(modified_result)
         else:
             return jsonify({"ClassManage": 'sql connection fail'})
     except Exception as ex:
@@ -157,8 +149,8 @@ def delete_class():
     data = request.get_json()
     if data.get('_method') == 'DELETE':
         department = data.get('department')
-        grade = data.get('class')
-        class_name = data.get('grade')
+        grade = data.get('grade')
+        class_name = data.get('class')
         teacher = data.get('teacher')
 
         print(department, grade, class_name, teacher)
@@ -685,8 +677,6 @@ def SaveChanges():
                 connection.close()
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
-    
-    
 # Class編輯頁面用於獲取班級內student資訊
 @app.route('/api/students', methods=['GET'])
 def get_students():
@@ -698,9 +688,6 @@ def get_students():
     page = request.args.get('page', 1, type=int)
     per_page = 10
     offset = (page - 1) * per_page
-    
-    # print(department, grade, section)
-    
 
     connection = connect.connect_to_db()
     if connection is not None:
@@ -713,21 +700,22 @@ def get_students():
 
                     cursor.execute("SELECT COUNT(*) FROM STUDENT")
                     total = cursor.fetchone()[0]
-                    
-                    cursor.execute("SELECT cid FROM CLASS WHERE department=%s and grade=%s and section=%s", (department, section, grade,))
+
+                    cursor.execute("SELECT cid FROM CLASS WHERE department=%s and grade=%s and section=%s",
+                                   (department, grade, section,))
                     cid = cursor.fetchone()[0]
-                    # print('cid:', cid)
-                    
-                    cursor.execute("SELECT sid, name FROM STUDENT WHERE CLASS = %s LIMIT %s OFFSET %s", (cid, per_page, offset))
+
+                    cursor.execute("SELECT sid, name FROM STUDENT WHERE CLASS = %s LIMIT %s OFFSET %s",
+                                   (cid, per_page, offset))
                     students = cursor.fetchall()
-                    # print('students:', students)
-                    
+
                     # 将数据转换为字典列表
                     student_selected = [{"sid": student[0], "name": student[1]} for student in students]
-                    # print(student_selected)
-                    
-                    return jsonify({"status": "success", "student_all": student_list, "total": total, "student_selected": student_selected})
-            
+                    print(student_selected)
+
+                    return jsonify({"status": "success", "student_all": student_list, "total": total,
+                                    "student_selected": student_selected})
+
                 else:
                     cursor.execute("SELECT sid, name FROM STUDENT")
                     students = cursor.fetchall()
@@ -769,11 +757,11 @@ import re
 
 @app.route('/api/classes/update', methods=['POST'])
 def update_class():
-    print('1')
     data = request.get_json()
     original_data = data.get('originalData')
     new_data = data.get('newData')
     selected_students = data.get('selectedStudents')
+
     original_department = original_data.get('department')
     original_grade = original_data.get('grade')
     original_section = original_data.get('section')
@@ -783,10 +771,6 @@ def update_class():
     new_grade = new_data.get('grade')
     new_section = new_data.get('section')
     new_teacher = new_data.get('teacher')
-    
-    # print(original_data, new_data, selected_students)
-    
-
 
     connection = connect.connect_to_db()
     if connection is not None:
@@ -795,7 +779,7 @@ def update_class():
                 # 查找原班级CID
                 cursor.execute(
                     "SELECT cid FROM CLASS WHERE department=%s AND grade=%s AND section=%s",
-                    (original_department, original_section, original_grade)
+                    (original_department, original_grade, original_section)
                 )
                 cid = cursor.fetchone()
                 if not cid:
@@ -1558,6 +1542,7 @@ def getUserType():
         print(f"Error: {ex}")
         traceback.print_exc()
 
+
 @app.route('/api/ad/edit-post', methods=['POST'])
 def edit_post():
     data = request.get_json()
@@ -1700,6 +1685,7 @@ def addPost():
                 return jsonify({"status": "fail", "message": str(ex)})
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
