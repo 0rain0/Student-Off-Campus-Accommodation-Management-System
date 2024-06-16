@@ -10,8 +10,10 @@
       </el-header>
       <el-container>
         <el-aside id="aside" width="200px">
-          <el-button class="aside-button" @click="manageAccounts">帳號管理</el-button>
-          <el-button class="aside-button" @click="manageClasses">班級管理</el-button>
+          <el-menu default-active="2" class="el-menu-vertical-demo" @select="handleSelect">
+            <el-menu-item index="1">帳號管理</el-menu-item>
+            <el-menu-item index="2">班級管理</el-menu-item>
+          </el-menu>
         </el-aside>
         <el-main id="main">
           <!-- Row for the title -->
@@ -250,9 +252,23 @@ const handlePageChange = (page: number) => {
 onMounted(() => {
   fetchStudentData()
 })
+
+const handleSelect = (index: string) => {
+  if (index === '1') {
+    manageAccounts()
+  } else if (index === '2') {
+    manageClasses()
+  }
+}
+
 </script>
 
 <style scoped>
+body {
+  margin: 0;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+}
+
 #common-layout .el-container {
   height: 100vh;
   width: 100%;
@@ -272,8 +288,8 @@ onMounted(() => {
   color: #333;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 20px;
+  /* align-items: center;
+  padding: 20px; */
 }
 
 .aside-button {

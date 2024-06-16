@@ -10,8 +10,10 @@
             </el-header>
             <el-container>
                 <el-aside id="aside" width="200px">
-                    <el-button class="aside-button" @click="manageAccounts">帳號管理</el-button>
-                    <el-button class="aside-button" @click="manageClasses">班級管理</el-button>
+                    <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect">
+                        <el-menu-item index="1">帳號管理</el-menu-item>
+                        <el-menu-item index="2">班級管理</el-menu-item>
+                    </el-menu>
                 </el-aside>
                 <el-main id="main">
                     
@@ -107,6 +109,8 @@ const fetchAccountData = async (page = 1) => {
         console.error('Failed to fetch account data:', response.data.message)
     }
 }
+
+
 
 const filterTableData = computed(() =>
     tableData.value.filter(
@@ -208,6 +212,14 @@ const handlePageChange = (page: number) => {
 onMounted(() => {
     fetchAccountData()
 })
+
+const handleSelect = (index: string) => {
+    if (index === '1') {
+        manageAccounts()
+    } else if (index === '2') {
+        manageClasses()
+    }
+}
 </script>
 
 
