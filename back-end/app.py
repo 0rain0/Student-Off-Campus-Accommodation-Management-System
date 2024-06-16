@@ -96,6 +96,10 @@ def register():
                 if re > 0:
                     return jsonify({"register": 'success'})
                 else:
+                    # 創建失敗，把account刪除，避免帳號創建成功，landlord寫入失敗的情況
+                    sql = "DELETE FROM account WHERE `account`.`ID` = %s"
+                    re = cursor.execute(sql, (id,))
+                    connection.commit()
                     return jsonify({"register": 'fail'})
 
         else:
@@ -158,10 +162,12 @@ def delete_class():
         if connection is not None:
             with connection.cursor() as cursor:
                 try:
-                    sql = "SELECT CID FROM CLASS WHERE Department = %s AND Grade = %s AND Class = %s AND Teacher = %s"
+                    cursor.execute("SELECT tid FROM TEACHER WHERE name = %s", (teacher))
+                    teacher = cursor.fetchone()[0]
+                    
+                    sql = "SELECT CID FROM CLASS WHERE Department = %s AND Grade = %s AND section = %s AND tid = %s"
                     cursor.execute(sql, (department, grade, class_name, teacher))
                     target_cid = cursor.fetchone()
-
                     # 先將所有該班級學生的CLASS欄位設為 NULL
                     sql_update_students = "UPDATE STUDENT SET class = NULL WHERE class = %s"
                     cursor.execute(sql_update_students, (target_cid,))

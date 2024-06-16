@@ -1,5 +1,6 @@
 <script setup>
-import router from "../router/index.js";
+import { ref, reactive } from 'vue'
+import router from '../router';
 const back_vss = () => {
     router.push('/VSS');
 };
@@ -27,7 +28,7 @@ const back_vss = () => {
                 <el-aside id="aside" width="200px"> </el-aside>
                 <el-main id="main">
                   <div id='success'>
-                    <h1>成功填寫表單!</h1>
+                    <h1>成功編輯表單!</h1>
                     <br>
                     <el-button size="large" round @click="back_vss">回到主選單</el-button>
                   </div>
