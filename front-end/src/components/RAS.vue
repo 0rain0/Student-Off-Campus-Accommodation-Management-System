@@ -2,12 +2,13 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import router from '../router';
 import axios from 'axios'
-import { Promotion, Plus } from '@element-plus/icons-vue';
+import { Promotion, Plus, Edit, Delete } from '@element-plus/icons-vue';
 
 let AD_data = ref([]); // Initialize as an empty array
 let AD_size = ref(0);
 let post_data = ref([]);
 let post_size = ref(0);
+const userType = ref(0);
 const rateValue = ref([0, 0, 0, 0]);
 const review_content = ref(['', '', '', '']);
 const comment_content = ref(['', '', '', '']);
@@ -17,6 +18,7 @@ onMounted(() => {
         .then(res => {
             console.log("Response data:", res.data)
             if (res.data.status === 'success') {
+                userType.value = res.data.data;
                 if (res.data.data === 1) {
                     document.querySelector('.verify').hidden = false;
                 } else {
@@ -261,6 +263,59 @@ const sentReview = (ADID, content, rate) => {
         });
 }
 
+const deleteReview = (RID) => {
+    axios.post('http://127.0.0.1:5000/api/ad/delete-review', { RID: RID })
+        .then(res => {
+            console.log("Response data:", res.data)
+            if (res.data.status === 'success') {
+                alert('刪除成功');
+                handleSelect('1');
+            } else {
+                alert('刪除失敗');
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                console.error("Error response data:", error.response.data)
+                console.error("Error response status:", error.response.status)
+                console.error("Error response headers:", error.response.headers)
+            } else if (error.request) {
+                console.error("Error request data:", error.request)
+            } else {
+                console.error("Error message:", error.message)
+            }
+            console.error("Error config:", error.config)
+            alert('刪除出現錯誤');
+        });
+}
+
+const deleteComment = (CMID) => {
+    axios.post('http://http://127.0.0.1:5000/api/ad/delete-comment', { CMID: CMID })
+        .then(res => {
+            console.log("Response data:", res.data)
+            if (res.data.status === 'success') {
+                alert('刪除成功');
+                handleSelect('2');
+            } else {
+                alert('刪除失敗');
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                console.error("Error response data:", error.response.data)
+                console.error("Error response status:", error.response.status)
+                console.error("Error response headers:", error.response.headers)
+            } else if (error.request) {
+                console.error("Error request data:", error.request)
+            } else {
+                console.error("Error message:", error.message)
+            }
+            console.error("Error config:", error.config)
+            alert('刪除出現錯誤');
+        });
+}
+
+
 const sentComment = (PID, content) => {
     let comment_form = { PID: PID, content: content, ID: localStorage.getItem('userID') };
     axios.post('http://127.0.0.1:5000/api/ad/sent-comment', comment_form)
@@ -300,6 +355,13 @@ let pageSize3 = ref(4);
 let small = ref(false);
 let disabled = ref(false);
 let background = ref(false);
+let dialogFormVisible = ref(false);
+let dialogFormVisible2 = ref(false);
+const formLabelWidth = ref('120px');
+let edit_rate = ref(0);
+let edit_content = ref('');
+let edit_RID = ref('');
+let edit_CMID = ref('');
 
 let ad_subtitle = { "HouseAge": "屋齡", "HouseType": "房屋類型", "RoomType": "房間類型", "Address": "房屋地址", "RentLimit": "限租條件", "Price": "租金", "ContactName": "聯絡人", "ContactTel": "連絡電話", "AD_Des": "詳細資訊" };
 
@@ -318,6 +380,141 @@ const handleSizeChange3 = (val) => {
 const handleCurrentChange3 = (val) => {
     currentPage3.value = val;
 };
+
+const isAuthor = (ID) => {
+    return ID === localStorage.getItem('userID') || userType.value === 1;
+}
+
+const editReview = (RID, content, rate) => {
+    dialogFormVisible.value = true;
+    edit_content.value = content;
+    edit_rate.value = rate;
+    edit_RID.value = RID;
+}
+
+const editComment = (CMID, content) => {
+    dialogFormVisible2.value = true;
+    edit_content.value = content;
+    edit_CMID.value = CMID;
+}
+
+const form = reactive({
+    RID: '',
+    content: '',
+    rate: '',
+})
+
+const form2 = reactive({
+    CMID: '',
+    content: '',
+})
+
+const sentEditComment = () => {
+    axios.post('http://127.0.0.1:5000/api/ad/edit-comment', { CMID: edit_CMID.value, content: edit_content.value })
+        .then(res => {
+            console.log("Response data:", res.data)
+            if (res.data.status === 'success') {
+                alert('編輯成功');
+                dialogFormVisible2.value = false
+                handleSelect('2');
+            } else {
+                alert('編輯失敗');
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                console.error("Error response data:", error.response.data)
+                console.error("Error response status:", error.response.status)
+                console.error("Error response headers:", error.response.headers)
+            } else if (error.request) {
+                console.error("Error request data:", error.request)
+            } else {
+                console.error("Error message:", error.message)
+            }
+            console.error("Error config:", error.config)
+            alert('編輯出現錯誤');
+        });
+}
+
+const sentEdit = () => {
+    axios.post('http://127.0.0.1:5000/api/ad/edit-review', { RID: edit_RID.value, content: edit_content.value, rate: edit_rate.value })
+        .then(res => {
+            console.log("Response data:", res.data)
+            if (res.data.status === 'success') {
+                alert('編輯成功');
+                dialogFormVisible.value = false
+                handleSelect('1');
+            } else {
+                alert('編輯失敗');
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                console.error("Error response data:", error.response.data)
+                console.error("Error response status:", error.response.status)
+                console.error("Error response headers:", error.response.headers)
+            } else if (error.request) {
+                console.error("Error request data:", error.request)
+            } else {
+                console.error("Error message:", error.message)
+            }
+            console.error("Error config:", error.config)
+            alert('編輯出現錯誤');
+        });
+}
+
+const deleteAD = (ADID) => {
+    axios.post('http://127.0.0.1:5000/api/ad/delete-AD', { ADID: ADID })
+        .then(res => {
+            console.log("Response data:", res.data)
+            if (res.data.status === 'success') {
+                alert('刪除成功');
+                handleSelect('1');
+            } else {
+                alert('刪除失敗');
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                console.error("Error response data:", error.response.data)
+                console.error("Error response status:", error.response.status)
+                console.error("Error response headers:", error.response.headers)
+            } else if (error.request) {
+                console.error("Error request data:", error.request)
+            } else {
+                console.error("Error message:", error.message)
+            }
+            console.error("Error config:", error.config)
+            alert('刪除出現錯誤');
+        });
+}
+
+const deletePost = (PID) => {
+    axios.post('http://127.0.0.1:5000/api/ad/delete-post', { PID: PID })
+        .then(res => {
+            console.log("Response data:", res.data)
+            if (res.data.status === 'success') {
+                alert('刪除成功');
+                handleSelect('2');
+            } else {
+                alert('刪除失敗');
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                console.error("Error response data:", error.response.data)
+                console.error("Error response status:", error.response.status)
+                console.error("Error response headers:", error.response.headers)
+            } else if (error.request) {
+                console.error("Error request data:", error.request)
+            } else {
+                console.error("Error message:", error.message)
+            }
+            console.error("Error config:", error.config)
+            alert('刪除出現錯誤');
+        });
+}
+
 </script>
 
 <template>
@@ -349,8 +546,17 @@ const handleCurrentChange3 = (val) => {
                                 <el-card v-for="(item, k) in paginatedData" :key="k"
                                     style="max-width: 480px; margin: 10px 10px; width: 18vw;">
                                     <template #header>
-                                        <div class="card-header">
+                                        <div class="card-header" style="display: flex;justify-content: space-between;">
                                             <span>{{ item.Name }}</span>
+                                            <div class="edit-delete" v-if="isAuthor(item.ID)">
+                                                <el-button type="primary" size="small" :icon="Edit"
+                                                    style="margin-right: 5px;"
+                                                    @click="editAD(item)"
+                                                    circle></el-button>
+                                                <el-button type="danger" size="small" :icon="Delete"
+                                                    @click="deleteAD(item.ADID)" style="margin-left: auto;"
+                                                    circle></el-button>
+                                            </div>
                                         </div>
                                     </template>
                                     <img :src="item.AD_File" style="width: 100%;">
@@ -361,7 +567,16 @@ const handleCurrentChange3 = (val) => {
                                             <el-collapse-item title="評論" name="1">
                                                 <div class="review-block">
                                                     <el-card v-for="(review, j) in item.reviews" :key="j"
-                                                        style="margin: 10px 10px;">
+                                                        style="margin: 10px 10px; ">
+                                                        <div class="edit-delete" v-if="isAuthor(review.ID)">
+                                                            <el-button type="primary" size="small" :icon="Edit"
+                                                                style="margin-right: 5px;"
+                                                                @click="editReview(review.RID, review.Content, review.Rate)"
+                                                                circle></el-button>
+                                                            <el-button type="danger" size="small" :icon="Delete"
+                                                                @click="deleteReview(review.RID)"
+                                                                style="margin-left: auto;" circle></el-button>
+                                                        </div>
                                                         <p>{{ review.ID }}</p>
                                                         <p>{{ review.Content }}</p>
                                                         <el-rate v-model="review.Rate" disabled />
@@ -400,8 +615,17 @@ const handleCurrentChange3 = (val) => {
                                 <el-card v-for="(item, k) in paginatedData2" :key="k"
                                     style="max-width: 480px; margin: 10px 10px; width: 18vw;">
                                     <template #header>
-                                        <div class="card-header">
+                                        <div class="card-header" style="display: flex;justify-content: space-between;">
                                             <span>{{ item.Name }}</span>
+                                            <div class="edit-delete" v-if="isAuthor(item.ID)">
+                                                <el-button type="primary" size="small" :icon="Edit"
+                                                    style="margin-right: 5px;"
+                                                    @click="editPost(item)"
+                                                    circle></el-button>
+                                                <el-button type="danger" size="small" :icon="Delete"
+                                                    @click="deletePost(item.PID)" style="margin-left: auto;"
+                                                    circle></el-button>
+                                            </div>
                                         </div>
                                     </template>
                                     <img :src="item.Post_File" style="width: 100%;">
@@ -411,8 +635,18 @@ const handleCurrentChange3 = (val) => {
                                         <el-collapse>
                                             <el-collapse-item title="留言" name="1">
                                                 <div class="comment-block">
+
                                                     <el-card v-for="(comment, j) in item.comment" :key="j"
                                                         style="margin: 10px 10px;">
+                                                        <div class="edit-delete" v-if="isAuthor(comment.ID)">
+                                                            <el-button type="primary" size="small" :icon="Edit"
+                                                                style="margin-right: 5px;"
+                                                                @click="editComment(comment.CID, comment.Content)"
+                                                                circle></el-button>
+                                                            <el-button type="danger" size="small" :icon="Delete"
+                                                                @click="deleteComment(comment.CID)"
+                                                                style="margin-left: auto;" circle></el-button>
+                                                        </div>
                                                         <p>{{ comment.ID }}</p>
                                                         <p>{{ comment.Content }}</p>
                                                     </el-card>
@@ -466,6 +700,49 @@ const handleCurrentChange3 = (val) => {
                                 @current-change="handleCurrentChange3" />
                         </div>
                     </div>
+                    <el-dialog v-model="dialogFormVisible" title="編輯評論" width="500">
+                        <el-form :model="form">
+                            <div hidden>
+                                <el-form-item label="RID" :label-width="formLabelWidth">
+                                    <el-input v-model="edit_RID" style="width: 240px" :rows="2" />
+                                </el-form-item>
+                            </div>
+                            <el-form-item label="content" :label-width="formLabelWidth">
+                                <el-input v-model="edit_content" style="width: 240px" :rows="2" type="textarea" />
+                            </el-form-item>
+                            <el-form-item label="rate" :label-width="formLabelWidth">
+                                <el-rate v-model="edit_rate" />
+                            </el-form-item>
+                        </el-form>
+                        <template #footer>
+                            <div class="dialog-footer">
+                                <el-button @click="dialogFormVisible = false">Cancel</el-button>
+                                <el-button type="primary" @click="sentEdit">
+                                    Confirm
+                                </el-button>
+                            </div>
+                        </template>
+                    </el-dialog>
+                    <el-dialog v-model="dialogFormVisible2" title="編輯留言" width="500">
+                        <el-form :model="form2">
+                            <div hidden>
+                                <el-form-item label="CMID" :label-width="formLabelWidth">
+                                    <el-input v-model="edit_CMID" style="width: 240px" :rows="2" />
+                                </el-form-item>
+                            </div>
+                            <el-form-item label="content" :label-width="formLabelWidth">
+                                <el-input v-model="edit_content" style="width: 240px" :rows="2" type="textarea" />
+                            </el-form-item>
+                        </el-form>
+                        <template #footer>
+                            <div class="dialog-footer">
+                                <el-button @click="dialogFormVisible2 = false">Cancel</el-button>
+                                <el-button type="primary" @click="sentEditComment">
+                                    Confirm
+                                </el-button>
+                            </div>
+                        </template>
+                    </el-dialog>
                 </el-main>
             </el-container>
         </el-container>
