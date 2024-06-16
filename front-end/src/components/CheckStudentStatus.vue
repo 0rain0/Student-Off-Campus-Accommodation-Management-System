@@ -103,6 +103,9 @@ const fetchStudents = async (params = {}) => {
             console.log('TID to CID response:', tidResponse.data)
             additionalParams = { CID: tidResponse.data.cid.CID }
         }
+        if(userType.value === '1') {
+            additionalParams = { CID: searchCID.value }
+        }
         console.log('Additional params:', additionalParams)
         
         // 合并 params 和 additionalParams
