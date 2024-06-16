@@ -1369,6 +1369,26 @@ def delete_post():
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
 
+@app.route('/api/getUserType', methods=['POST'])
+def getUserType():
+    try:
+        data = request.get_json()
+        print("Received data:", data)  # 打印接收到的數據
+        connection = connect.connect_to_db()
+        if connection is not None:
+            with connection.cursor() as cursor:
+                sql = "SELECT UserType FROM ACCOUNT WHERE ID = %s"
+                cursor.execute(sql, (data['userID'],))
+                result = cursor.fetchone()
+                if result is not None:
+                    return jsonify({"status": "success", "data": result[0]})
+                else:
+                    return jsonify({"status": "fail", "message": "User not found"})
+        else:
+            return jsonify({"status": "fail", "message":  'sql connection fail'})
+    except Exception as ex:
+        print(f"Error: {ex}")
+        traceback.print_exc()
 
 if __name__ == '__main__':
     app.run(debug=True)
