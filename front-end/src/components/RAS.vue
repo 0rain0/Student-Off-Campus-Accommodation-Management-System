@@ -1,8 +1,8 @@
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import router from '../router';
 import axios from 'axios'
-import { Promotion } from '@element-plus/icons-vue';
+import { Promotion, Plus } from '@element-plus/icons-vue';
 
 let AD_data = ref([]); // Initialize as an empty array
 let AD_size = ref(0);
@@ -11,6 +11,36 @@ let post_size = ref(0);
 const rateValue = ref([0, 0, 0, 0]);
 const review_content = ref(['', '', '', '']);
 const comment_content = ref(['', '', '', '']);
+
+onMounted(() => {
+    axios.post('http://127.0.0.1:5000/api/getUserType', { userID: localStorage.getItem('userID') })
+        .then(res => {
+            console.log("Response data:", res.data)
+            if (res.data.status === 'success') {
+                if (res.data.data === 1) {
+                    document.querySelector('.verify').hidden = false;
+                } else {
+                    document.querySelector('.verify').hidden = true;
+                }
+            } else {
+                alert('取得使用者類型失敗');
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                console.error("Error response data:", error.response.data)
+                console.error("Error response status:", error.response.status)
+                console.error("Error response headers:", error.response.headers)
+            } else if (error.request) {
+                console.error("Error request data:", error.request)
+            } else {
+                console.error("Error message:", error.message)
+            }
+            console.error("Error config:", error.config)
+            alert('取得使用者類型出現錯誤');
+        });
+});
+
 let paginatedData = computed(() => {
     if (!AD_data.value || AD_data.value.length === 0) {
         return [];
@@ -41,7 +71,7 @@ let paginatedData = computed(() => {
                 console.error("Error config:", error.config)
                 alert('取得租屋廣告評論資料出現錯誤');
             });
-        
+
     }
     return AD_data.value.slice(start, end);
 });
@@ -299,55 +329,64 @@ const handleCurrentChange3 = (val) => {
                         <span class="text-large font-600 mr-3" style="color: white;"> 租屋廣告/留言板 </span>
                     </template>
                 </el-page-header>
+                <el-button type="info" bg text @click="router.push('/login')" style="margin-left: auto;">登出</el-button>
             </el-header>
             <el-container>
                 <el-aside id="aside" width="200px">
                     <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect">
                         <el-menu-item index="1">租屋廣告</el-menu-item>
                         <el-menu-item index="2">留言板</el-menu-item>
-                        <el-menu-item index="3">租屋廣告審核</el-menu-item>
+                        <div class="verify">
+                            <el-menu-item index="3">租屋廣告審核</el-menu-item>
+                        </div>
                     </el-menu>
                 </el-aside>
                 <el-main id="main">
                     <div class="ad" hidden>
-                        <div class="ad-cards" style="display: flex; flex-direction: row; flex-wrap: wrap;">
-                            <el-card v-for="(item, k) in paginatedData" :key="k"
-                                style="max-width: 480px; margin: 10px 10px; width: 18vw;">
-                                <template #header>
-                                    <div class="card-header">
-                                        <span>{{ item.Name }}</span>
-                                    </div>
-                                </template>
-                                <img :src="item.AD_File" style="width: 100%;">
-                                <p v-for="(o, i) in ad_subtitle" :key="i" class="text item">{{ o + ": " + item[i] }}</p>
-                                <template #footer>
-                                    <el-collapse>
-                                        <el-collapse-item title="評論" name="1">
-                                            <div class="review-block">
-                                                <el-card v-for="(review, j) in item.reviews" :key="j"
-                                                    style="margin: 10px 10px;">
-                                                    <p>{{ review.ID }}</p>
-                                                    <p>{{ review.Content }}</p>
-                                                    <el-rate v-model="review.Rate" disabled />
-                                                </el-card>
-                                            </div>
-                                            <div class="input-group">
-                                                <el-input v-model="review_content[k]" style="max-width: 600px"
-                                                    placeholder="評論" class="input-with-icon">
-                                                    <template #prepend>
-                                                        <el-rate v-model="rateValue[k]" />
-                                                    </template>
-                                                    <template #append>
-                                                        <el-button :icon="Promotion"
-                                                            @click="sentReview(item.ADID, review_content[k], rateValue[k])" />
-                                                    </template>
-                                                </el-input>
-                                            </div>
-                                        </el-collapse-item>
-                                    </el-collapse>
-                                </template>
-                            </el-card>
+                        <div class="ad-cards"
+                            style="display: flex; flex-direction: row; flex-wrap: wrap; align-items: center;">
+                            <div style="display: flex; flex-direction: row; flex-wrap: wrap; ">
+                                <el-card v-for="(item, k) in paginatedData" :key="k"
+                                    style="max-width: 480px; margin: 10px 10px; width: 18vw;">
+                                    <template #header>
+                                        <div class="card-header">
+                                            <span>{{ item.Name }}</span>
+                                        </div>
+                                    </template>
+                                    <img :src="item.AD_File" style="width: 100%;">
+                                    <p v-for="(o, i) in ad_subtitle" :key="i" class="text item">{{ o + ": " + item[i] }}
+                                    </p>
+                                    <template #footer>
+                                        <el-collapse>
+                                            <el-collapse-item title="評論" name="1">
+                                                <div class="review-block">
+                                                    <el-card v-for="(review, j) in item.reviews" :key="j"
+                                                        style="margin: 10px 10px;">
+                                                        <p>{{ review.ID }}</p>
+                                                        <p>{{ review.Content }}</p>
+                                                        <el-rate v-model="review.Rate" disabled />
+                                                    </el-card>
+                                                </div>
+                                                <div class="input-group">
+                                                    <el-input v-model="review_content[k]" style="max-width: 600px"
+                                                        placeholder="評論" class="input-with-icon">
+                                                        <template #prepend>
+                                                            <el-rate v-model="rateValue[k]" />
+                                                        </template>
+                                                        <template #append>
+                                                            <el-button :icon="Promotion"
+                                                                @click="sentReview(item.ADID, review_content[k], rateValue[k])" />
+                                                        </template>
+                                                    </el-input>
+                                                </div>
+                                            </el-collapse-item>
+                                        </el-collapse>
+                                    </template>
+                                </el-card>
+                            </div>
+                            <el-button style="justify-content: center;" :icon="Plus" size="large" circle />
                         </div>
+
                         <div class="pagination-block">
                             <el-pagination v-model:current-page="currentPage1" v-model:page-size="pageSize1"
                                 :small="small" :disabled="disabled" :background="background"
@@ -394,11 +433,11 @@ const handleCurrentChange3 = (val) => {
                             </div>
                         </div>
                         <div class="pagination-block">
-                                <el-pagination v-model:current-page="currentPage2" v-model:page-size="pageSize2"
-                                    :small="small" :disabled="disabled" :background="background"
-                                    layout="prev, pager, next, jumper" :total="AD_size" @size-change="handleSizeChange2"
-                                    @current-change="handleCurrentChange2" />
-                            </div>
+                            <el-pagination v-model:current-page="currentPage2" v-model:page-size="pageSize2"
+                                :small="small" :disabled="disabled" :background="background"
+                                layout="prev, pager, next, jumper" :total="AD_size" @size-change="handleSizeChange2"
+                                @current-change="handleCurrentChange2" />
+                        </div>
                     </div>
                     <div class="ad-verify" hidden>
                         <div class="ad-cards" style="display: flex; flex-direction: row; flex-wrap: wrap;">

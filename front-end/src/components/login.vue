@@ -20,6 +20,8 @@ const login = () => {
             } 
             else if (res.data.login === 'success_2') {
                 alert('歡迎登入')
+                localStorage.setItem('userID', loginForm.username)
+                router.push('/menu')
             }
             else {
                 alert('登入失敗')
