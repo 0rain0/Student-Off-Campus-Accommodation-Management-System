@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機: localhost
--- 產生時間： 2024-06-14 16:36:07
+-- 產生時間： 2024-06-10 09:59:51
 -- 伺服器版本: 5.7.17-log
 -- PHP 版本： 5.6.30
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- 資料庫： `socams2`
+-- 資料庫： `se_final`
 --
 
 -- --------------------------------------------------------
@@ -31,23 +31,6 @@ CREATE TABLE `account` (
   `Password` varchar(15) NOT NULL,
   `UserType` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- 資料表的匯出資料 `account`
---
-
-INSERT INTO `account` (`ID`, `Password`, `UserType`) VALUES
-('a1103306', '12345', 1),
-('a1105501', '12345', 2),
-('a1105502', '12345', 2),
-('a1105503', '12345', 2),
-('a1105510', '12345', 2),
-('a1105656', '12345', 2),
-('a1105678', '12345', 2),
-('Long', '12345', 2),
-('t0001', '12345', 3),
-('t002', '12345', 3),
-('t003', '12345', 3);
 
 -- --------------------------------------------------------
 
@@ -100,15 +83,6 @@ CREATE TABLE `class` (
   `TID` varchar(15) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- 資料表的匯出資料 `class`
---
-
-INSERT INTO `class` (`CID`, `Department`, `Section`, `Grade`, `TID`) VALUES
-('c001', '資工', 'A', '3', 't0001'),
-('c002', '外交', 'A', '1', 't002'),
-('c003', '文化', 'A', '2', 't003');
-
 -- --------------------------------------------------------
 
 --
@@ -134,13 +108,6 @@ CREATE TABLE `landlord` (
   `Tel` varchar(15) NOT NULL,
   `Email` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- 資料表的匯出資料 `landlord`
---
-
-INSERT INTO `landlord` (`LID`, `Name`, `Tel`, `Email`) VALUES
-('Long', '林佳龍', '09898989898', 'long@mail.com');
 
 -- --------------------------------------------------------
 
@@ -181,6 +148,7 @@ CREATE TABLE `student` (
   `Name` varchar(15) NOT NULL,
   `Grade` int(2) NOT NULL,
   `Gender` int(1) NOT NULL,
+  `TEACHER` varchar(15) NOT NULL,
   `CLASS` varchar(15) DEFAULT NULL,
   `Tel` varchar(15) NOT NULL,
   `Email` varchar(30) NOT NULL,
@@ -189,18 +157,6 @@ CREATE TABLE `student` (
   `ContactName` varchar(15) NOT NULL,
   `ConTel` varchar(15) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- 資料表的匯出資料 `student`
---
-
-INSERT INTO `student` (`SID`, `Name`, `Grade`, `Gender`, `CLASS`, `Tel`, `Email`, `Address`, `HomeTel`, `ContactName`, `ConTel`) VALUES
-('a1105501', 'aaa', 3, 1, 'c001', '090909090', 'aaa', 'aaa', 'aaa', 'aaa', 'aaa'),
-('a1105502', 'bbb', 3, 1, 'c001', 'bbb', 'bbb', 'bbb', 'bbb', 'bbb', 'bbb'),
-('a1105503', 'asdf', 1, 1, 'c001', '123', '123', '123', '123', '123', '123'),
-('a1105510', 'Tony', 1, 1, 'c001', '123', '123', '123', '123', '123', '123'),
-('a1105656', '老李', 3, 1, 'c003', '1234', '1234', '1234', '1234', '1234', '1234'),
-('a1105678', '小陳', 3, 1, 'c003', '1234', '1234', '1234', '1234', '1234', '1234');
 
 -- --------------------------------------------------------
 
@@ -218,15 +174,6 @@ CREATE TABLE `teacher` (
   `OfficeTel` varchar(15) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- 資料表的匯出資料 `teacher`
---
-
-INSERT INTO `teacher` (`TID`, `Name`, `Rank`, `Tel`, `Email`, `OfficeAddr`, `OfficeTel`) VALUES
-('t0001', '林文揚', 2, '0988888888', 'WanYan@gmail.com', '12345', '1234'),
-('t002', '林佳龍', 2, '134123', '12341234', '1234', '1234'),
-('t003', '李遠', 1, '1234', '1234', '1234', '1234');
-
 -- --------------------------------------------------------
 
 --
@@ -234,7 +181,7 @@ INSERT INTO `teacher` (`TID`, `Name`, `Rank`, `Tel`, `Email`, `OfficeAddr`, `Off
 --
 
 CREATE TABLE `visit_form` (
-  `VFID` int(15) NOT NULL, auto_increment,
+  `VFID` varchar(15) NOT NULL,
   `SID` varchar(15) NOT NULL,
   `S_Name` varchar(15) NOT NULL,
   `DG` varchar(10) NOT NULL,
@@ -248,9 +195,7 @@ CREATE TABLE `visit_form` (
   `RentType` int(1) DEFAULT NULL,
   `RoomType` int(1) DEFAULT NULL,
   `Price` int(10) DEFAULT NULL,
-  `RoommateN` varchar(15) DEFAULT NULL,
-  `RoommateP` varchar(15) DEFAULT NULL,
-  `RA` int(2) NOT NULL,
+  `RoommateDes` text,
   `Deposit` int(10) DEFAULT NULL,
   `Recommend` int(1) DEFAULT NULL,
   `SA_01` int(1) DEFAULT NULL,
@@ -350,7 +295,7 @@ ALTER TABLE `review`
 --
 ALTER TABLE `student`
   ADD PRIMARY KEY (`SID`),
-  ADD KEY `TEACHER` (`CLASS`),
+  ADD KEY `TEACHER` (`TEACHER`,`CLASS`),
   ADD KEY `CLASS` (`CLASS`);
 
 --
@@ -419,7 +364,8 @@ ALTER TABLE `review`
 --
 ALTER TABLE `student`
   ADD CONSTRAINT `student_ibfk_1` FOREIGN KEY (`SID`) REFERENCES `account` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `student_ibfk_2` FOREIGN KEY (`CLASS`) REFERENCES `class` (`CID`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `student_ibfk_2` FOREIGN KEY (`CLASS`) REFERENCES `class` (`CID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `student_ibfk_3` FOREIGN KEY (`TEACHER`) REFERENCES `teacher` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- 資料表的 Constraints `teacher`

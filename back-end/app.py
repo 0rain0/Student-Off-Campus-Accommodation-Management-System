@@ -3,6 +3,7 @@ from flask_cors import CORS
 import traceback
 import connect
 from flask import make_response
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}}, supports_credentials=True)
@@ -693,13 +694,14 @@ def get_students():
     grade = request.args.get('grade')
     section = request.args.get('section')
     page = request.args.get('page', 1, type=int)
-    
+
     page = request.args.get('page', 1, type=int)
-    per_page = 10  
+    per_page = 10
     offset = (page - 1) * per_page
     
     # print(department, grade, section)
     
+
     connection = connect.connect_to_db()
     if connection is not None:
         with connection.cursor() as cursor:
@@ -708,7 +710,7 @@ def get_students():
                     cursor.execute("SELECT sid, name FROM STUDENT")
                     students = cursor.fetchall()
                     student_list = [{"sid": student[0], "name": student[1]} for student in students]
-                    
+
                     cursor.execute("SELECT COUNT(*) FROM STUDENT")
                     total = cursor.fetchone()[0]
                     
@@ -730,12 +732,12 @@ def get_students():
                     cursor.execute("SELECT sid, name FROM STUDENT")
                     students = cursor.fetchall()
                     student_list = [{"sid": student[0], "name": student[1]} for student in students]
-                    
+
                     cursor.execute("SELECT COUNT(*) FROM STUDENT")
                     total = cursor.fetchone()[0]
-                    
+
                     return jsonify({"status": "success", "student_all": student_list, "total": total})
-                
+
             except Exception as ex:
                 print(ex)
                 return jsonify({"status": "fail", "message": str(ex)})
@@ -763,6 +765,8 @@ def get_teachers():
 
 # 提交class修改
 import re
+
+
 @app.route('/api/classes/update', methods=['POST'])
 def update_class():
     print('1')
@@ -783,6 +787,7 @@ def update_class():
     # print(original_data, new_data, selected_students)
     
 
+
     connection = connect.connect_to_db()
     if connection is not None:
         try:
@@ -796,7 +801,7 @@ def update_class():
                 if not cid:
                     return jsonify({"status": "fail", "message": "Class not found"})
                 cid = cid[0]
-                
+
                 if str(original_teacher) == str(new_teacher):
                     cursor.execute("SELECT tid FROM CLASS WHERE cid=%s", (cid,))
                     new_teacher = cursor.fetchone()[0]
@@ -849,20 +854,20 @@ def create_class():
                 # 生成新的 CID
                 new_cid = generate_new_cid(cursor)
                 print(new_cid)
-                
+
                 # 插入新的班级
                 cursor.execute(
                     "INSERT INTO CLASS (cid, department, grade, section, tid) VALUES (%s, %s, %s, %s, %s)",
                     (new_cid, department, grade, section, teacher)
                 )
-                
+
                 # 更新學生的班级信息
                 for student in selected_students:
                     cursor.execute(
                         "UPDATE STUDENT SET class=%s WHERE sid=%s",
                         (new_cid, student['sid'])
                     )
-                
+
                 connection.commit()
                 return jsonify({"status": "success"})
         except Exception as ex:
@@ -1552,6 +1557,63 @@ def getUserType():
     except Exception as ex:
         print(f"Error: {ex}")
         traceback.print_exc()
+
+@app.route('/api/ad/edit-post', methods=['POST'])
+def edit_post():
+    data = request.get_json()
+    pid = data.get('PID')
+    content = data.get('content')
+    Post_File = data.get('file')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("UPDATE post SET Content = '"+content + "', Post_File = '"+Post_File + "' WHERE PID = '"+pid + "'")
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+@app.route('/api/ad/edit-AD', methods=['POST'])
+def edit_AD():
+    data = request.get_json()
+    adid = data.get('ADID')
+    HouseAge = data.get('HouseAge')
+    HouseType = data.get('HouseType')
+    RoomType = data.get('RoomType')
+    Address = data.get('Address')
+    RentLimit = data.get('RentLimit')
+    Price = data.get('Price')
+    ContactName = data.get('ContactName')
+    ContactTel = data.get('ContactTel')
+    Start = data.get('Start')
+    End = data.get('End')
+    AD_File = data.get('AD_File')
+    AD_Des = data.get('AD_Des')
+    # Tue, 11 Jun 2024 00:00:00 GMT to 2024-06-11
+    Start = format_date(Start)
+    End = format_date(End)
+    connection = connect.connect_to_db()
+    print(Start, End)
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("UPDATE advertisement SET HouseAge = '"+str(HouseAge) + "', HouseType = '"+str(HouseType) + "', RoomType = '"+str(RoomType) + "', Address = '"+Address + "', RentLimit = '"+RentLimit + "', Price = '"+str(Price) + "', ContactName = '"+ContactName + "', ContactTel = '"+ContactTel + "', Start = '"+Start + "', End = '"+End + "', AD_File = '"+AD_File + "', AD_Des = '"+AD_Des + "' WHERE ADID = '"+adid + "'")
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+def format_date(date_str):
+    date_obj = datetime.strptime(date_str, "%a, %d %b %Y %H:%M:%S %Z")
+    return date_obj.strftime("%Y-%m-%d")
+
 
 if __name__ == '__main__':
     app.run(debug=True)

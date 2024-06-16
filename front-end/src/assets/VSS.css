@@ -1,0 +1,134 @@
+#common-layout .el-container {
+    height: 100vh;
+    width: 100%;
+}
+
+#header {
+    background-color: #409eff; /* 藍色背景 */
+    color: white;
+    line-height: 60px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+}
+
+#aside {
+    background-color: #c3e1ff;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* 文本靠左對齊 */
+    /* padding: 20px; */
+    width: 200px; /* 固定側欄寬度 */
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* 添加陰影 */
+}
+
+.aside-button {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px; /* 增加按鈕的內距 */
+    text-align: left; /* 按鈕文字靠左 */
+    background-color: transparent; /* 按鈕背景透明 */
+    border: none; /* 移除邊框 */
+    color: #333; /* 文字顏色 */
+    cursor: pointer; /* 鼠標樣式 */
+    transition: background-color 0.3s; /* 平滑過渡效果 */
+    font-size: 18px; /* 按鈕文字大小 */
+    text-align: center; /* 按鈕文字居中 */
+    border: 1px solid #dcdfe6; /* 按鈕邊框 */
+    border-radius: 4px; /* 圓角邊框 */
+    box-sizing: border-box;
+}
+
+.aside-button:hover {
+    background-color: #ecf5ff; /* 鼠標懸停時改變背景色 */
+    color: #409eff; /* 鼠標懸停時改變文字顏色 */
+}
+
+.el-page-header__breadcrumb, .el-icon, body {
+    margin: 0;
+    padding-top: 0;
+}
+
+body {
+    background-color: white;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 20px;
+    color: black;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+.line {
+    border-top: 1.5px solid black;
+    border-bottom: 1.5px solid black;
+}
+
+.evaluate {
+    border-bottom: 1.5px dashed black;
+}
+
+.center {
+    text-align: center;
+}
+
+.underline-input {
+    text-align: center;
+    border: none;
+    border-bottom: 1px solid black;
+    outline: none;
+    width: 70%;
+    font-size: 20px;
+}
+
+.radio-group {
+    justify-content: space-around;
+}
+
+h1 {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.styled-button {
+    background-color: white;
+    border: 1px solid #c1c1c1;
+    color: black;
+    text-align: center;
+    font-size: 18px;
+    border-radius: 50px;
+    padding: 7px 25px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.styled-button:hover {
+    color: #409eff;
+    background-color: #c3e1ff;
+}
+
+.text-large {
+    font-size: 20px;
+}
+
+.font-600 {
+    font-weight: 600;
+}
+
+.mr-3, .mb-3 {
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+}
+
+.pagination {
+    margin-top: 20px;
+}
