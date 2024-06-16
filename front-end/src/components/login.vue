@@ -14,6 +14,7 @@ const login = () => {
         .then(res => {
             console.log("Response data:", res.data)  
             if (res.data.login === 'success_1') {
+                localStorage.setItem('userID', loginForm.username)
                 alert('歡迎管理員登入')
                 router.push('/menu')
             } 
