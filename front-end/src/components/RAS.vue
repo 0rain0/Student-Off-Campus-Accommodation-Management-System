@@ -2,7 +2,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import router from '../router';
 import axios from 'axios'
-import { Promotion, Plus } from '@element-plus/icons-vue';
+import { Promotion, Plus, Edit, Delete } from '@element-plus/icons-vue';
 
 let AD_data = ref([]); // Initialize as an empty array
 let AD_size = ref(0);
@@ -261,6 +261,35 @@ const sentReview = (ADID, content, rate) => {
         });
 }
 
+const deleteReview = (RID) => {
+    axios.post('http://127.0.0.1:5000/api/ad/delete-review', { RID: RID })
+        .then(res => {
+            console.log("Response data:", res.data)
+            if (res.data.status === 'success') {
+                alert('刪除成功');
+                handleSelect('1');
+            } else {
+                alert('刪除失敗');
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                console.error("Error response data:", error.response.data)
+                console.error("Error response status:", error.response.status)
+                console.error("Error response headers:", error.response.headers)
+            } else if (error.request) {
+                console.error("Error request data:", error.request)
+            } else {
+                console.error("Error message:", error.message)
+            }
+            console.error("Error config:", error.config)
+            alert('刪除出現錯誤');
+        });
+}
+
+
+
+
 const sentComment = (PID, content) => {
     let comment_form = { PID: PID, content: content, ID: localStorage.getItem('userID') };
     axios.post('http://127.0.0.1:5000/api/ad/sent-comment', comment_form)
@@ -300,6 +329,11 @@ let pageSize3 = ref(4);
 let small = ref(false);
 let disabled = ref(false);
 let background = ref(false);
+let dialogFormVisible = ref(false);
+const formLabelWidth = ref('120px');
+let edit_rate = ref(0);
+let edit_content = ref('');
+let edit_RID = ref('');
 
 let ad_subtitle = { "HouseAge": "屋齡", "HouseType": "房屋類型", "RoomType": "房間類型", "Address": "房屋地址", "RentLimit": "限租條件", "Price": "租金", "ContactName": "聯絡人", "ContactTel": "連絡電話", "AD_Des": "詳細資訊" };
 
@@ -318,6 +352,51 @@ const handleSizeChange3 = (val) => {
 const handleCurrentChange3 = (val) => {
     currentPage3.value = val;
 };
+
+const isAuthor = (ID) => {
+    return ID === localStorage.getItem('userID');
+}
+
+const editReview = (RID, content, rate) => {
+    dialogFormVisible.value = true;
+    edit_content.value = content;
+    edit_rate.value = rate;
+    edit_RID.value = RID;
+}
+
+const form = reactive({
+    RID: '',
+    content: '',
+    rate: '',
+})
+
+const sentEdit = () => {
+    axios.post('http://127.0.0.1:5000/api/ad/edit-review', { RID: edit_RID.value, content: edit_content.value, rate: edit_rate.value })
+        .then(res => {
+            console.log("Response data:", res.data)
+            if (res.data.status === 'success') {
+                alert('編輯成功');
+                dialogFormVisible = false
+                handleSelect('1');
+            } else {
+                alert('編輯失敗');
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                console.error("Error response data:", error.response.data)
+                console.error("Error response status:", error.response.status)
+                console.error("Error response headers:", error.response.headers)
+            } else if (error.request) {
+                console.error("Error request data:", error.request)
+            } else {
+                console.error("Error message:", error.message)
+            }
+            console.error("Error config:", error.config)
+            alert('編輯出現錯誤');
+        });
+}
+
 </script>
 
 <template>
@@ -361,7 +440,16 @@ const handleCurrentChange3 = (val) => {
                                             <el-collapse-item title="評論" name="1">
                                                 <div class="review-block">
                                                     <el-card v-for="(review, j) in item.reviews" :key="j"
-                                                        style="margin: 10px 10px;">
+                                                        style="margin: 10px 10px; ">
+                                                        <div class="edit-delete" v-if="isAuthor(review.ID)">
+                                                            <el-button type="primary" size="small" :icon="Edit"
+                                                                style="margin-right: 5px;"
+                                                                @click="editReview(review.RID, review.Content, review.Rate)"
+                                                                circle></el-button>
+                                                            <el-button type="danger" size="small" :icon="Delete"
+                                                                @click="deleteReview(review.RID)"
+                                                                style="margin-left: auto;" circle></el-button>
+                                                        </div>
                                                         <p>{{ review.ID }}</p>
                                                         <p>{{ review.Content }}</p>
                                                         <el-rate v-model="review.Rate" disabled />
@@ -466,6 +554,29 @@ const handleCurrentChange3 = (val) => {
                                 @current-change="handleCurrentChange3" />
                         </div>
                     </div>
+                    <el-dialog v-model="dialogFormVisible" title="編輯評價" width="500">
+                        <el-form :model="form">
+                            <div hidden>
+                                <el-form-item label="RID" :label-width="formLabelWidth">
+                                    <el-input v-model="edit_RID" style="width: 240px" :rows="2" />
+                                </el-form-item>
+                            </div>
+                            <el-form-item label="content" :label-width="formLabelWidth">
+                                <el-input v-model="edit_content" style="width: 240px" :rows="2" type="textarea" />
+                            </el-form-item>
+                            <el-form-item label="rate" :label-width="formLabelWidth">
+                                <el-rate v-model="edit_rate" />
+                            </el-form-item>
+                        </el-form>
+                        <template #footer>
+                            <div class="dialog-footer">
+                                <el-button @click="dialogFormVisible = false">Cancel</el-button>
+                                <el-button type="primary" @click="sentEdit">
+                                    Confirm
+                                </el-button>
+                            </div>
+                        </template>
+                    </el-dialog>
                 </el-main>
             </el-container>
         </el-container>

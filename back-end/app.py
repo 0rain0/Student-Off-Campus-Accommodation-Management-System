@@ -914,5 +914,42 @@ def get_comment():
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
 
+
+@app.route('/api/ad/delete-review', methods=['POST'])
+def delete_review():
+    data = request.get_json()
+    rid = data.get('RID')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("DELETE FROM review WHERE RID = '"+rid + "'")
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+    
+@app.route('/api/ad/edit-review', methods=['POST'])
+def edit_review():
+    data = request.get_json()
+    rid = data.get('RID')
+    content = data.get('content')
+    rate = data.get('rate')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("UPDATE review SET Content = '"+content + "', Rate = '"+str(rate) + "' WHERE RID = '"+rid + "'")
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
 if __name__ == '__main__':
     app.run(debug=True)
