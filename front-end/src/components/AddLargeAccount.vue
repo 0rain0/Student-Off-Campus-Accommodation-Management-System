@@ -15,20 +15,14 @@
                 </el-aside>
                 <el-main id="main">
                     <div style="margin-bottom: 20px;">
-                        <h2>檔案格式需求範例(.csv, .txt)：</h2>
-                        <h1>管理員欄位</h1>
-                        <p>帳號, 密碼, 管理員, 姓名, 電子信箱</p>
-                        <h1>房東欄位</h1>
-                        <p>帳號, 密碼, 房東, 姓名, 電子信箱, 電話</p>
-                        <h1>學生欄位</h1>
-                        <p>帳號, 密碼, 學生, 姓名, 電子信箱, 電話, 年級, 性別(男、女、其他), 家中地址, 家中電話, 聯絡人姓名, 聯絡人電話, </p>
-                        <h1>老師欄位</h1>
-                        <p>帳號, 密碼, 老師, 姓名, 電子信箱, 電話, 職級(教授、副教授、助理教授), 辦公室位址, 辦公室電話</p>
-                        <h2>示例：</h2>
-                        <p>管理員帳號, 管理員密碼, 管理員, 管理員名字, administrator@example.com</p>
-                        <p>房東帳號, 房東密碼, 房東, 房東名字, landlord@example.com, 電話</p>
-                        <p>學生帳號, 學生密碼, 學生, 學生名字, student@example.com, 333333333, 3, 其他, XX市333街333號, 03-33333, 聯絡人, 聯絡人電話</p>
-                        <p>老師帳號, 老師密碼, 老師, 老師名字, teacher@example.com, 444444444, 助理教授, 辦公室的位址, 辦公室的電話</p>
+                        <h3>檔案格式需求範例：</h3>
+                        <p>帳號, 密碼, 權限, 姓名, 電話, 電子郵件,( 老師ID, 班級ID)</p>
+                        <h1>管理員電話欄位為空，學生多兩個欄位(老師ID、班級ID)</h1>
+                        <p>示例：</p>
+                        <p>admin, password, 管理員, 管理員, , admin@example.com</p>
+                        <p>landlord, password, 房東, 房東, 987654321, landlord@example.com</p>
+                        <p>student, password, 學生, 學生, 123123123, student@example.com, teacher, class</p>
+                        <p>teacher, password,老 師, 老師, 456456456, teacher@example.com</p>
                     </div>
                     <div style="text-align: center;">
                         <el-button type="primary">
@@ -52,6 +46,7 @@ import router from '../router'
 import axios from 'axios'
 
 const fileContent = ref<string | null>(null)
+const fileInput = ref<HTMLInputElement | null>(null)
 
 const handleFileUpload = (event: Event) => {
     const input = event.target as HTMLInputElement
@@ -62,6 +57,12 @@ const handleFileUpload = (event: Event) => {
             fileContent.value = reader.result as string
         }
         reader.readAsText(file)
+    }
+}
+
+const resetFileInput = () => {
+    if (fileInput.value) {
+        fileInput.value.value = ''
     }
 }
 
@@ -78,7 +79,6 @@ const uploadFile = async () => {
                 message: response.data.message,
                 type: 'success',
             });
-            manageAccounts();
         } else {
             ElMessage({
                 message: response.data.message,
