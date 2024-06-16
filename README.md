@@ -44,3 +44,13 @@ python app.py
 3 老師
 4 學生
 
+
+# 從所有版本中刪除某檔案
+git rm -r --cached .env
+git filter-repo --invert-paths --path .env
+
+git remote add origin https://github.com/0rain0/Student-Off-Campus-Accommodation-Management-System.git
+git remote -v
+
+git push origin --force --all
+git push origin --force --tags
