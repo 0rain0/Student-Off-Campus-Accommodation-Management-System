@@ -1,17 +1,14 @@
 import pymysql
 from dotenv import load_dotenv
 import os
-
-# 載入 .env 檔案
-load_dotenv()
-
 # 資料庫設定
 # 資料庫設定
 db_settings = {
-    "host": os.getenv("DB_HOST"),
-    "user": os.getenv("DB_USER"),
-    "password": os.getenv("DB_PASSWORD"),
-    "db": os.getenv("DB_NAME"),
+    "host": '127.0.0.1',
+    "user": 'root',
+    "password": '12345678',
+    "db": 'stt',
+    "charset": 'utf8'
 }
 
 def connect_to_db():
