@@ -3,7 +3,6 @@ import router from "../router/index.js";
 import axios from 'axios'
 </script>
 <template>
-    <link rel="stylesheet" href="./VSS.css">
     <el-header id="header" style="display: flex;">
         <el-page-header @click="router.push('/menu');">
             <template #content>

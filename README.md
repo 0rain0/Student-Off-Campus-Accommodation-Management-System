@@ -8,10 +8,7 @@ This template should help get you started developing with Vue 3 in Vite. The tem
 
 ## Environment
 
-請先安裝 python3, pip3, nodejs, npm, appserv
-
-資料庫建置指令使用SOCAMS2.sql
-
+請先安裝 python3, pip3, nodejs, npm
 
 ## Project setup
 
@@ -31,26 +28,4 @@ npm run dev
 
 cd back-end
 python3 app.py
-
-cd back-end
-python app.py
 ```
-
-
-
-# account 
-1 管理員
-2 房東
-3 老師
-4 學生
-
-
-# 從所有版本中刪除某檔案
-git rm -r --cached .env
-git filter-repo --invert-paths --path .env
-
-git remote add origin https://github.com/0rain0/Student-Off-Campus-Accommodation-Management-System.git
-git remote -v
-
-git push origin --force --all
-git push origin --force --tags
