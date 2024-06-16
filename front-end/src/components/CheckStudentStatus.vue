@@ -36,7 +36,7 @@
                                 size="small"
                                 :disabled="scope.row.Status !== '已填寫'"
                             >
-                                查看
+                                填寫
                             </el-button>
                         </template>
                     </el-table-column>

@@ -13,19 +13,19 @@
                                 <th colspan="8" class="center"><h1>校外賃居訪視記錄-學生填寫</h1></th>
                             </tr>
                             <tr>
-                                <th>系級：</th>
+                                <th>系級*：</th>
                                 <td><input type="text" class="underline-input" name="DG"></td>
-                                <th>學號：</th>
+                                <th>學號*：</th>
                                 <td><input type="text" class="underline-input" name="SID"></td>
-                                <th>姓名：</th>
+                                <th>姓名*：</th>
                                 <td><input type="text" class="underline-input" name="S_Name"></td>
-                                <th>聯絡電話：</th>
+                                <th>聯絡電話*：</th>
                                 <td><input type="text" class="underline-input" name="S_Tel"></td>
                             </tr>
                             <tr>
-                                <th>導師：</th>
+                                <th>導師*：</th>
                                 <td><input type="text" class="underline-input" name="T_Name"></td>
-                                <th>訪視時間：</th>
+                                <th>訪視時間*：</th>
                                 <td colspan="5"><input type="text" name="year" size="1">年
                                                 <input type="text" name="month" size="1">月
                                                 <input type="text" name="day" size="1">日
@@ -39,11 +39,11 @@
                                 <th colspan="6" class="line">校外賃居資料（學生填寫）</th>
                             </tr>
                             <tr>
-                                <th>房東姓名：</th>
+                                <th>房東姓名*：</th>
                                 <td><input type="text" class="underline-input" name="L_Name"></td>
-                                <th>房東電話：</th>
+                                <th>房東電話*：</th>
                                 <td><input type="text" class="underline-input" name="L_Tel"></td>
-                                <th>租賃地址：</th>
+                                <th>租賃地址*：</th>
                                 <td colspan="3"><input type="text" class="underline-input" name="R_Addr"></td>
                             </tr>
                             <tr>
@@ -51,11 +51,11 @@
                                 <td><input type="text" class="underline-input" name="RoommateN"></td>
                                 <th>室友電話：</th>
                                 <td><input type="text" class="underline-input" name="RoommateP"></td>
-                                <th>屋齡：</th>
+                                <th>屋齡*：</th>
                                 <td colspan="3"><input type="text" class="underline-input" name="RA"></td>
                             </tr>
                             <tr>
-                                <th>租屋型態：</th>
+                                <th>租屋型態*：</th>
                                 <td colspan="3">
                                     <div class="radio-group">
                                         <label><input type="radio" name="RentType" value="0"> 獨棟透天</label>
@@ -64,7 +64,7 @@
                                         <label><input type="radio" name="RentType" value="3"> 大型學舍(為學生建設的宿舍)</label>
                                     </div>
                                 </td>
-                                <th>房間類型：</th>
+                                <th>房間類型*：</th>
                                 <td colspan="3">
                                     <div class="radio-group">
                                         <label><input type="radio" name="RoomType" value="0"> 套房</label>
@@ -73,11 +73,11 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>每月租金：</th>
+                                <th>每月租金*：</th>
                                 <td><input type="text" class="underline-input" name="Price"></td>
-                                <th>押金：</th>
+                                <th>押金*：</th>
                                 <td><input type="text" class="underline-input" name="Deposit"></td>
-                                <th>是否值得推薦其他同學租賃：</th>
+                                <th>是否值得推薦其他同學租賃*：</th>
                                 <td colspan="3">
                                     <div class="radio-group">
                                         <label><input type="radio" name="Recommend" value="0"> 是</label>
@@ -299,8 +299,8 @@
                             </tr>
                         </table>
                             <div align="center">
-                                      <input type="reset" value="清除表單" name="reset" class="styled-button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                      <input type="submit" value="提交表單" name="submit" class="styled-button">
+                              <input type="reset" value="清除表單" name="reset" class="styled-button">&nbsp;&nbsp;&nbsp;&nbsp;
+                              <input type="submit" value="提交表單" name="submit" class="styled-button">&nbsp;
                             </div>
           </form>
         </el-main>
@@ -309,8 +309,10 @@
 </template>
 
 <script setup>
-
+import { ref } from 'vue';
 import router from "../router/index.js";
+import axios from 'axios';
+
 </script>
 
 <style>
