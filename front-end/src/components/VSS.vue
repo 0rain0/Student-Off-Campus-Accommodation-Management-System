@@ -8,7 +8,6 @@
             <el-container>
                 <VSS_Aside />
                 <el-main id="main">
-                   <el-button size="large" round @click="visit_form">新增/編輯表單</el-button>
                 </el-main>
             </el-container>
         </el-container>

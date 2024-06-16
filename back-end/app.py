@@ -1224,6 +1224,25 @@ def check_form_s(sid):
             connection.close()
     else:
         return jsonify({"status": "fail", "message": "SQL connection failed"})
+    
+@app.route('/VSS/TIDtoCID', methods=['GET'])
+def tid_to_cid():
+    try:
+        tid = request.args.get('TID')
+        connection = connect.connect_to_db()
+        if connection is not None:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT CID FROM CLASS WHERE TID = %s", (tid,))
+                cid = cursor.fetchone()
+                if cid:
+                    return jsonify({"cid": {"CID": cid[0], "status": "success"}})
+                else:
+                    return jsonify({"cid": {"CID": "", "status": "fail"}})
+        else:
+            return jsonify({"status": "sql connection fail"})
+    except Exception as ex:
+        print(ex)
+        return jsonify({"status": "fail", "message": str(ex)})
 
 
 if __name__ == '__main__':

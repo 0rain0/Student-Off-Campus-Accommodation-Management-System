@@ -4,7 +4,7 @@
         <el-container>
             <VSS_Aside />
             <el-main>
-                <el-row :gutter="20" class="mb-3">
+                <el-row :gutter="20" class="mb-3" v-if="isUserType('1')">
                     <el-col :span="6">
                         <el-input v-model="searchSID" placeholder="輸入學號"></el-input>
                     </el-col>
@@ -58,6 +58,15 @@
 import { ref, onMounted, defineProps } from 'vue'
 import router from '../router'
 import axios from 'axios'
+import Cookies from 'js-cookie'
+
+const userType = ref(null)
+const userNames = ref(null)
+
+onMounted(() => {
+  userType.value = Cookies.get('UserType')
+  userNames.value = Cookies.get('username')
+})
 
 interface Student {
     SID: string
@@ -77,19 +86,37 @@ const searchCID = ref('')
 
 const fetchStudents = async (params = {}) => {
     try {
+        let additionalParams = {}
+        if (userType.value === '3') {
+            const tidResponse = await axios.get('http://127.0.0.1:5000/VSS/TIDtoCID', {
+                params: { TID: userNames.value }
+            })
+            console.log('TID to CID response:', tidResponse.data)
+            additionalParams = { CID: tidResponse.data.cid.CID }
+        }
+        console.log('Additional params:', additionalParams)
+        
+        // 合并 params 和 additionalParams
+        const combinedParams = { 
+            page: currentPage.value,
+            pageSize,
+            ...params,
+            ...additionalParams 
+        }
+        console.log('Combined params:', combinedParams)
+
         const response = await axios.get('http://127.0.0.1:5000/VSS/studentStatue', {
-            params: {
-                page: currentPage.value,
-                pageSize,
-                ...params
-            }
+            params: combinedParams
         })
+
         students.value = response.data.students
         total.value = response.data.total
     } catch (error) {
         console.error("Error fetching students:", error)
     }
 }
+
+
 
 const handlePageChange = (page: number) => {
     currentPage.value = page
@@ -116,10 +143,10 @@ const handleFill = (sid: string) => {
 }
 
 const props = defineProps({
-  id: {
-    type: String,
-    default: null
-  }
+    id: {
+        type: String,
+        default: null
+    }
 })
 
 onMounted(() => {
@@ -130,4 +157,13 @@ onMounted(() => {
         fetchStudents()
     }
 })
+
+const isUserType = (type: string) => {
+    return userType.value === type
+}
+
 </script>
+
+<style>
+@import "@/assets/VSS.css";
+</style>
