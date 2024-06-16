@@ -272,3 +272,13 @@
                         </table>
           </form>
 </template>
+<script setup lang="ts">
+import { defineProps } from 'vue'
+
+const props = defineProps({
+    student: {
+        type: Object,
+        required: true
+    }
+})
+</script>
