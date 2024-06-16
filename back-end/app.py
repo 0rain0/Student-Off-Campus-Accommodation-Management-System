@@ -3,7 +3,7 @@ from flask_cors import CORS
 import traceback
 import connect
 from flask import make_response
-from datetime import datetime
+from datetime import datetime 
 
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}}, supports_credentials=True)
@@ -682,8 +682,8 @@ def SaveChanges():
 @app.route('/api/students', methods=['GET'])
 def get_students():
     department = request.args.get('department')
-    grade = request.args.get('grade')
-    section = request.args.get('section')
+    grade = request.args.get('section')
+    section = request.args.get('grade')
     page = request.args.get('page', 1, type=int)
 
     page = request.args.get('page', 1, type=int)
@@ -764,13 +764,13 @@ def update_class():
     selected_students = data.get('selectedStudents')
 
     original_department = original_data.get('department')
-    original_grade = original_data.get('grade')
-    original_section = original_data.get('section')
+    original_grade = original_data.get('section')
+    original_section = original_data.get('grade')
     original_teacher = original_data.get('teacher')
 
     new_department = new_data.get('department')
-    new_grade = new_data.get('grade')
-    new_section = new_data.get('section')
+    new_grade = new_data.get('section')
+    new_section = new_data.get('grade')
     new_teacher = new_data.get('teacher')
 
     connection = connect.connect_to_db()
