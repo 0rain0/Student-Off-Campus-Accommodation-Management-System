@@ -1,4 +1,7 @@
+# 開發VSS前端注意事項
 
+## 新網頁模板
+```vue
 <template>
     <link rel="stylesheet" href="VSS.css">
     <div id="common-layout">
@@ -18,3 +21,6 @@
 import router from "../router/index.js";
 import axios from 'axios'
 </script>
+```
+<VSS_Header />是Header模組
+<VSS_Aside />是側欄模組
