@@ -1,40 +1,12 @@
 <template>
-    <link rel="stylesheet" href="VSS.css">
-  <div id="common-layout">
-      <VSS_Header />
-  </div>
-  <div>
-    <el-container>
-        <VSS_Aside />
-        <el-main id="main">
-          <form action="http://127.0.0.1:5000/receive_form_s" method="POST">
+    <form action="http://127.0.0.1:5000/receive_form_t" method="POST">
                           <table>
                             <tr>
-                                <th colspan="8" class="center"><h1>校外賃居訪視記錄-學生填寫</h1></th>
-                            </tr>
-                            <tr>
-                                <th>系級：</th>
-                                <td><input type="text" class="underline-input" name="DG"></td>
-                                <th>學號：</th>
-                                <td><input type="text" class="underline-input" name="SID"></td>
-                                <th>姓名：</th>
-                                <td><input type="text" class="underline-input" name="S_Name"></td>
-                                <th>聯絡電話：</th>
-                                <td><input type="text" class="underline-input" name="S_Tel"></td>
-                            </tr>
-                            <tr>
-                                <th>導師：</th>
-                                <td><input type="text" class="underline-input" name="T_Name"></td>
-                                <th>訪視時間：</th>
-                                <td colspan="5"><input type="text" name="year" size="1">年
-                                                <input type="text" name="month" size="1">月
-                                                <input type="text" name="day" size="1">日
-                                                <input type="text" name="hour" size="1">時
-                                </td>
+                                <th colspan="8" class="center"><h1>校外賃居訪視記錄-導師填寫</h1></th>
                             </tr>
                           </table>
 
-                        <table>
+                        <table style="display:none">
                             <tr>
                                 <th colspan="6" class="line">校外賃居資料（學生填寫）</th>
                             </tr>
@@ -87,7 +59,7 @@
                             </tr>
                         </table>
 
-                        <table>
+                        <table style="display:none">
                             <tr>
                                 <th colspan="4" class="line">賃居安全自主管理檢視資料（學生填寫）</th>
                             </tr>
@@ -198,7 +170,7 @@
                             </tr>
                         </table>
 
-                        <table style="display:none">
+                        <table>
                             <tr>
                                 <th colspan="2" class="line">環境及作息評估（導師填寫）</th>
                             </tr>
@@ -265,7 +237,7 @@
                             </tr>
                         </table>
 
-                        <table style="display:none">
+                        <table>
                             <tr>
                                 <th colspan="4" class="line">訪視結果（導師填寫）</th>
                             </tr>
@@ -298,112 +270,15 @@
                                 </td>
                             </tr>
                         </table>
-                            <div align="center">
-                                      <input type="reset" value="清除表單" name="reset" class="styled-button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                      <input type="submit" value="提交表單" name="submit" class="styled-button">
-                            </div>
           </form>
-        </el-main>
-      </el-container>
-  </div>
 </template>
+<script setup lang="ts">
+import { defineProps } from 'vue'
 
-<script setup>
-
-import router from "../router/index.js";
+const props = defineProps({
+    student: {
+        type: Object,
+        required: true
+    }
+})
 </script>
-
-<style>
-        #common-layout .el-container {
-            height: 100%;
-            width: 100%;
-        }
-
-        #header {
-            background-color: #409eff;
-            color: white;
-            line-height: 60px;
-            --el-header-padding: 15px 20px;
-        }
-
-        #aside {
-            background-color: #c3e1ff;
-            color: #333;
-            line-height: 200px;
-        }
-
-        .el-page-header__breadcrumb {
-            margin-bottom: 0px;
-        }
-
-        .el-icon {
-            padding-top: 0px;
-        }
-
-        body {
-            background-color: white;
-            margin: 0;
-            font-family: 'Avenir', Helvetica, Arial, sans-serif;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            font-size: 20px;
-            color: black;
-        }
-
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-
-        .line {
-            border-top:1.5px solid black;
-            border-bottom:1.5px solid black;
-        }
-
-        .evaluate {
-           border-bottom:1.5px dashed black;
-        }
-
-        .center {
-            text-align: center;
-        }
-
-        .underline-input {
-            text-align: center;
-            border: none;
-            border-bottom: 1px solid black;
-            outline: none;
-            width: 70%;
-            font-size: 20px;
-        }
-
-        .radio-group {
-            justify-content: space-around;
-        }
-
-        h1 {
-            margin-top: 5px;
-            margin-bottom: 5px;
-        }
-
-        .styled-button {
-            background-color: white;
-            border: 1px solid #c1c1c1;
-            color: black;
-            text-align: center;
-            font-size: 18px;
-            border-radius: 50px;
-            padding: 7px 25px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .styled-button:hover {
-            color: #409eff;
-            background-color: #c3e1ff;
-        }
-</style>

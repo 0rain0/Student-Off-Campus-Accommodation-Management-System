@@ -31,7 +31,7 @@
                     <el-table-column label="操作" width="100">
                         <template #default="scope">
                             <el-button 
-                                @click="handleFill(scope.$index, scope.row)" 
+                                @click="handleFill(scope.row.SID)" 
                                 type="primary" 
                                 size="small"
                                 :disabled="scope.row.Status !== '已填寫'"
@@ -73,7 +73,7 @@ const searchName = ref('')
 
 const fetchStudents = async (params = {}) => {
     try {
-        const response = await axios.get('http://127.0.0.1:5000/VSS/students', {
+        const response = await axios.get('http://127.0.0.1:5000/VSS/studentStatue', {
             params: {
                 page: currentPage.value,
                 pageSize,
@@ -105,72 +105,10 @@ const handleReset = () => {
     fetchStudents()
 }
 
-const handleFill = (index: number, row: Student) => {
-    if (row.Status === '已填寫') {
-        // 執行查看操作
-        console.log(`查看學生 ${row.SID} 的詳細信息`)
-    }
+const handleFill = (sid: string) => {
+    router.push({ name: 'CheckStudentForm', params: { id: sid } })
 }
-
-const visit_form_s = () => {
-    router.push('/EditRentalSurveyForm_S');
-};
-
-const visit_form_t = () => {
-    router.push('/EditRentalSurveyForm_T');
-};
-
-
 onMounted(() => {
     fetchStudents()
 })
 </script>
-
-<style>
-#common-layout .el-container {
-    height: 100vh;
-    width: 100%;
-}
-
-#header {
-    background-color: #409eff;
-    color: #fff;
-    line-height: 60px;
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-}
-
-#aside {
-    background-color: #c3e1ff;
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-}
-
-.aside-button {
-    width: 100%;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-    text-align: center;
-}
-
-.el-page-header__breadcrumb {
-    margin-bottom: 0px;
-}
-
-.el-icon {
-    padding-top: 0px;
-}
-
-body {
-    margin: 0;
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-}
-
-.pagination {
-    margin-top: 20px;
-}
-</style>
