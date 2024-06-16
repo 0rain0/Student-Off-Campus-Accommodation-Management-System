@@ -1577,6 +1577,23 @@ def edit_post():
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
 
+@app.route('/api/ad/delete-post', methods=['POST'])
+def delete_post():
+    data = request.get_json()
+    pid = data.get('PID')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("DELETE FROM post WHERE PID = '"+pid + "'")
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
 @app.route('/api/ad/edit-AD', methods=['POST'])
 def edit_AD():
     data = request.get_json()
@@ -1655,6 +1672,34 @@ def addAD():
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
 
+@app.route('/api/ad/add-post', methods=['POST'])
+def addPost():
+    data = request.get_json()
+    ID = data.get('ID')
+    Name = data.get('Name')
+    Content = data.get('Content')
+    Post_File = data.get('Post_File')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT COUNT(*) FROM post")
+                connection.commit()
+                count = cursor.fetchone()[0]
+                if count == 0:
+                    pid = 1
+                else:
+                    cursor.execute("SELECT MAX(PID) FROM post")
+                    connection.commit()
+                    pid = int(cursor.fetchone()[0]) + 1
+                cursor.execute("INSERT INTO post (PID, ID, Name, Content, Post_File) VALUES (%s, %s, %s, %s, %s)", (pid, ID, Name, Content, Post_File))
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
 
 if __name__ == '__main__':
     app.run(debug=True)
