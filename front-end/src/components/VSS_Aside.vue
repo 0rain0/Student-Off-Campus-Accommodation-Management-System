@@ -9,7 +9,6 @@ import axios from 'axios'
       <!-- 側邊 -->
       <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect">
         <el-button class="aside-button" @click="visit_form_s">學生填寫</el-button>
-        <el-button class="aside-button" @click="visit_form_t">教師填寫</el-button>
         <el-button class="aside-button" @click="CheckStudentStatus">查詢學生填寫狀況</el-button>
         <el-button class="aside-button" @click="CheckClassStatus">查詢班級填寫狀況</el-button>
       </el-menu>
@@ -25,9 +24,6 @@ import axios from 'axios'
       },
       visit_form_s() {
         router.push('/EditRentalSurveyForm_S');
-      },
-      visit_form_t() {
-        router.push('/EditRentalSurveyForm_T');
       },
       CheckStudentStatus() {
         router.push('/CheckStudentStatus');
