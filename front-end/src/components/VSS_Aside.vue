@@ -15,8 +15,8 @@ onMounted(() => {
     <el-aside id="aside" width="200px">
       <el-menu default-active="1" class="el-menu-vertical-demo">
 
-          <el-menu-item index="1" v-if="userType === '4'" @click="visit_form_s">學生填寫</el-menu-item>
-          <el-menu-item index="2" v-if="userType === '1'|| userType === '3'"@click="CheckStudentStatus">查詢學生填寫狀況</el-menu-item>
+          <el-menu-item index="1" v-if="userType === '3'" @click="visit_form_s">學生填寫</el-menu-item>
+          <el-menu-item index="2" v-if="userType === '1'|| userType === '4'"@click="CheckStudentStatus">查詢學生填寫狀況</el-menu-item>
 
           <el-menu-item index="3" v-if="userType === '1'"  @click="CheckClassStatus">查詢班級填寫狀況</el-menu-item>
       </el-menu>

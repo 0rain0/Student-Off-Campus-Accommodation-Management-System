@@ -96,7 +96,7 @@ const searchCID = ref('')
 const fetchStudents = async (params = {}) => {
     try {
         let additionalParams = {}
-        if (userType.value === '3') {
+        if (userType.value === '4') {
             const tidResponse = await axios.get('http://127.0.0.1:5000/VSS/TIDtoCID', {
                 params: { TID: userNames.value }
             })
