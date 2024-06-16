@@ -1,8 +1,8 @@
 from flask import Flask, jsonify, request, redirect
 from flask_cors import CORS
 import traceback
-import traceback
 import connect
+from flask import make_response
 
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}}, supports_credentials=True)
@@ -44,14 +44,19 @@ def login():
         connection = connect.connect_to_db()
         if connection is not None:
             with connection.cursor() as cursor:
-                sql = "SELECT * FROM ACCOUNT WHERE ID = %s AND PassWord = %s"
+                sql = "SELECT * FROM account WHERE ID = %s AND PassWord = %s"
                 cursor.execute(sql, (data['username'], data['password']))
                 result = cursor.fetchone()
                 if result is not None:
-                    if result[2] == 1:
-                        return jsonify({"login": 'success_1'})
-                    else:
-                        return jsonify({"login": 'success_2'})
+                    usertype = result[2]
+                    if usertype == 1:
+                        return jsonify({"login": 'success_1', "usertype": '1'})
+                    elif usertype == 2:
+                        return jsonify({"login": 'success_2', "usertype": '2'})
+                    elif usertype == 3:
+                        return jsonify({"login": 'success_2', "usertype": '3'})
+                    elif usertype == 4:
+                        return jsonify({"login": 'success_2', "usertype": '4'})
                 else:
                     return jsonify({"login": 'fail'})
         else:
@@ -69,19 +74,29 @@ def register():
         name = data.get('name')
         email = data.get('email')
         password = data.get('password')
+        tel = data.get('tel')
+        account = data.get('account')
 
         # 註冊進資料庫
         connection = connect.connect_to_db()
         if connection is not None:
             with connection.cursor() as cursor:
-                sql = "INSERT INTO `landlord` (`name`, `e-mail`, `password`) VALUES (%s, %s, %s);"
+                sql = "INSERT INTO `account` (`ID`, `Password`, `UserType`) VALUES (%s, %s, '2');"
+                
+                re = cursor.execute(sql, (account, password,))
+                connection.commit()
 
-                re = cursor.execute(sql, (name, email, password))
+                sql = "INSERT INTO `landlord` (`LID`, `Name`, `Tel`, `Email`) VALUES (%s, %s, %s, %s);"
+                re = cursor.execute(sql, (account, name, tel, email))
                 connection.commit()
 
                 if re > 0:
                     return jsonify({"register": 'success'})
                 else:
+                    # 創建失敗，把account刪除，避免帳號創建成功，landlord寫入失敗的情況
+                    sql = "DELETE FROM account WHERE `account`.`ID` = %s"
+                    re = cursor.execute(sql, (id,))
+                    connection.commit()
                     return jsonify({"register": 'fail'})
 
         else:
