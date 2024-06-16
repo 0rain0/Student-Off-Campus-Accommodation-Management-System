@@ -463,6 +463,58 @@ const sentEdit = () => {
         });
 }
 
+const deleteAD = (ADID) => {
+    axios.post('http://127.0.0.1:5000/api/ad/delete-AD', { ADID: ADID })
+        .then(res => {
+            console.log("Response data:", res.data)
+            if (res.data.status === 'success') {
+                alert('刪除成功');
+                handleSelect('1');
+            } else {
+                alert('刪除失敗');
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                console.error("Error response data:", error.response.data)
+                console.error("Error response status:", error.response.status)
+                console.error("Error response headers:", error.response.headers)
+            } else if (error.request) {
+                console.error("Error request data:", error.request)
+            } else {
+                console.error("Error message:", error.message)
+            }
+            console.error("Error config:", error.config)
+            alert('刪除出現錯誤');
+        });
+}
+
+const deletePost = (PID) => {
+    axios.post('http://127.0.0.1:5000/api/ad/delete-post', { PID: PID })
+        .then(res => {
+            console.log("Response data:", res.data)
+            if (res.data.status === 'success') {
+                alert('刪除成功');
+                handleSelect('2');
+            } else {
+                alert('刪除失敗');
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                console.error("Error response data:", error.response.data)
+                console.error("Error response status:", error.response.status)
+                console.error("Error response headers:", error.response.headers)
+            } else if (error.request) {
+                console.error("Error request data:", error.request)
+            } else {
+                console.error("Error message:", error.message)
+            }
+            console.error("Error config:", error.config)
+            alert('刪除出現錯誤');
+        });
+}
+
 </script>
 
 <template>
@@ -494,8 +546,17 @@ const sentEdit = () => {
                                 <el-card v-for="(item, k) in paginatedData" :key="k"
                                     style="max-width: 480px; margin: 10px 10px; width: 18vw;">
                                     <template #header>
-                                        <div class="card-header">
+                                        <div class="card-header" style="display: flex;justify-content: space-between;">
                                             <span>{{ item.Name }}</span>
+                                            <div class="edit-delete" v-if="isAuthor(item.ID)">
+                                                <el-button type="primary" size="small" :icon="Edit"
+                                                    style="margin-right: 5px;"
+                                                    @click="editAD(item)"
+                                                    circle></el-button>
+                                                <el-button type="danger" size="small" :icon="Delete"
+                                                    @click="deleteAD(item.ADID)" style="margin-left: auto;"
+                                                    circle></el-button>
+                                            </div>
                                         </div>
                                     </template>
                                     <img :src="item.AD_File" style="width: 100%;">
@@ -554,8 +615,17 @@ const sentEdit = () => {
                                 <el-card v-for="(item, k) in paginatedData2" :key="k"
                                     style="max-width: 480px; margin: 10px 10px; width: 18vw;">
                                     <template #header>
-                                        <div class="card-header">
+                                        <div class="card-header" style="display: flex;justify-content: space-between;">
                                             <span>{{ item.Name }}</span>
+                                            <div class="edit-delete" v-if="isAuthor(item.ID)">
+                                                <el-button type="primary" size="small" :icon="Edit"
+                                                    style="margin-right: 5px;"
+                                                    @click="editPost(item)"
+                                                    circle></el-button>
+                                                <el-button type="danger" size="small" :icon="Delete"
+                                                    @click="deletePost(item.PID)" style="margin-left: auto;"
+                                                    circle></el-button>
+                                            </div>
                                         </div>
                                     </template>
                                     <img :src="item.Post_File" style="width: 100%;">

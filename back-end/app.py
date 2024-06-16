@@ -987,5 +987,41 @@ def delete_comment():
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
 
+@app.route('/api/ad/delete-AD', methods=['POST'])
+def delete_AD():
+    data = request.get_json()
+    adid = data.get('ADID')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("DELETE FROM advertisement WHERE ADID = '"+adid + "'")
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+
+@app.route('/api/ad/delete-post', methods=['POST'])
+def delete_post():
+    data = request.get_json()
+    pid = data.get('PID')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("DELETE FROM post WHERE PID = '"+pid + "'")
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+
 if __name__ == '__main__':
     app.run(debug=True)
