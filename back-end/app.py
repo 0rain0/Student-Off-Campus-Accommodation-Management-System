@@ -74,19 +74,29 @@ def register():
         name = data.get('name')
         email = data.get('email')
         password = data.get('password')
+        tel = data.get('tel')
+        account = data.get('account')
 
         # 註冊進資料庫
         connection = connect.connect_to_db()
         if connection is not None:
             with connection.cursor() as cursor:
-                sql = "INSERT INTO `landlord` (`name`, `e-mail`, `password`) VALUES (%s, %s, %s);"
+                sql = "INSERT INTO `account` (`ID`, `Password`, `UserType`) VALUES (%s, %s, '2');"
+                
+                re = cursor.execute(sql, (account, password,))
+                connection.commit()
 
-                re = cursor.execute(sql, (name, email, password))
+                sql = "INSERT INTO `landlord` (`LID`, `Name`, `Tel`, `Email`) VALUES (%s, %s, %s, %s);"
+                re = cursor.execute(sql, (account, name, tel, email))
                 connection.commit()
 
                 if re > 0:
                     return jsonify({"register": 'success'})
                 else:
+                    # 創建失敗，把account刪除，避免帳號創建成功，landlord寫入失敗的情況
+                    sql = "DELETE FROM account WHERE `account`.`ID` = %s"
+                    re = cursor.execute(sql, (id,))
+                    connection.commit()
                     return jsonify({"register": 'fail'})
 
         else:
