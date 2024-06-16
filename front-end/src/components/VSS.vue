@@ -20,7 +20,3 @@ const visit_form = () => {
         </el-container>
     </div>
 </template>
-<script setup lang="ts">
-import router from "../router/index.js";
-import axios from 'axios'
-</script>
