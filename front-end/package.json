@@ -13,6 +13,7 @@
     "axios": "^1.7.2",
     "cors": "^2.8.5",
     "element-plus": "^2.7.3",
+    "js-cookie": "^3.0.5",
     "unplugin-icons": "^0.19.0",
     "vue": "^3.4.21",
     "vue-axios": "^3.5.2",
