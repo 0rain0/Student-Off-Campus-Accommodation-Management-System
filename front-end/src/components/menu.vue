@@ -60,13 +60,14 @@ const logout = () => {
             <span>修改個人資料</span>
         </el-button>
     </div>
-        <div id="menu-button-4" class="menu-button">
-          <el-button id="log-out" type="info" @click="logout" text>
-            <el-icon :size="50"><User /></el-icon>
-            <span>登出</span>
-          </el-button>
-        </div>
+    <div id="menu-button-4" class="menu-button">
+      <el-button id="log-out" type="info" @click="logout" text>
+        <el-icon :size="50"><User /></el-icon>
+        <span>登出</span>
+      </el-button>
+    </div>
   </div>
+  
 </template>
 
 <style>
