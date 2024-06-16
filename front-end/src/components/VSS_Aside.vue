@@ -4,7 +4,7 @@ import axios from 'axios'
 </script>
 
 <template>
-    <link rel="stylesheet" href="VSS.css">
+    <link rel="stylesheet" href="./VSS.css">
     <el-aside id="aside" width="200px">
       <!-- 側邊 -->
       <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect">

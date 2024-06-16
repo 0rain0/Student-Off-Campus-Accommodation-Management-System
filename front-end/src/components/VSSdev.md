@@ -2,8 +2,10 @@
 
 ## 新網頁模板
 ```vue
+<style>
+@import "@/assets/VSS.css";
+</style>
 <template>
-    <link rel="stylesheet" href="VSS.css">
     <div id="common-layout">
         <VSS_Header />
         <el-container>
