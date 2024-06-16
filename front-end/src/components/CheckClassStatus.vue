@@ -57,3 +57,6 @@ const handleFill = (CID: string) => {
 
 onMounted(getClassStatus);
 </script>
+<style>
+@import "@/assets/VSS.css";
+</style>

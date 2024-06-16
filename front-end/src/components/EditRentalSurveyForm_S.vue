@@ -1,5 +1,4 @@
 <template>
-    <link rel="stylesheet" href="VSS.css">
   <div id="common-layout">
       <VSS_Header />
   </div>
@@ -314,3 +313,6 @@ import router from "../router/index.js";
 import axios from 'axios';
 
 </script>
+<style>
+@import "@/assets/VSS.css";
+</style>
