@@ -2,7 +2,7 @@
     <div id="common-layout">
         <el-container>
             <el-header id="header">
-                <el-page-header @click="router.push('/menu');">
+                <el-page-header @click="manageAccounts">
                     <template #content>
                         <span class="text-large font-600 mr-3" style="color: white;"> 系統管理 </span>
                     </template>
