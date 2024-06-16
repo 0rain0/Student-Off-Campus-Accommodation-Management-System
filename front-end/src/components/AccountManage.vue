@@ -27,12 +27,7 @@
                                 <span v-else>{{ scope.row.password }}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column label="權限">
-                            <template #default="scope">
-                                <el-input v-if="scope.row.isEditing" v-model="scope.row.permission" />
-                                <span v-else>{{ scope.row.permission }}</span>
-                            </template>
-                        </el-table-column>
+                        <el-table-column label="權限" prop="permission" />
                         <el-table-column label="姓名">
                             <template #default="scope">
                                 <el-input v-if="scope.row.isEditing" v-model="scope.row.name" />
