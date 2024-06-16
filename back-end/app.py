@@ -160,8 +160,9 @@ def delete_class():
         if connection is not None:
             with connection.cursor() as cursor:
                 try:
-                    cursor.execute("SELECT tid FROM TEACHER WHERE name = %s", (teacher))
+                    cursor.execute("SELECT tid FROM TEACHER WHERE tid = %s", (teacher))
                     teacher = cursor.fetchone()[0]
+                    print(teacher)
                     
                     sql = "SELECT CID FROM CLASS WHERE Department = %s AND Grade = %s AND section = %s AND tid = %s"
                     cursor.execute(sql, (department, grade, class_name, teacher))
