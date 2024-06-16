@@ -1,6 +1,9 @@
 import pymysql
 from dotenv import load_dotenv
 import os
+
+load_dotenv()
+
 # 資料庫設定
 db_settings = {
     "host": os.getenv("DB_HOST"),
