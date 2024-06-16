@@ -234,7 +234,7 @@ INSERT INTO `teacher` (`TID`, `Name`, `Rank`, `Tel`, `Email`, `OfficeAddr`, `Off
 --
 
 CREATE TABLE `visit_form` (
-  `VFID` varchar(15) NOT NULL,
+  `VFID` int(15) NOT NULL, auto_increment,
   `SID` varchar(15) NOT NULL,
   `S_Name` varchar(15) NOT NULL,
   `DG` varchar(10) NOT NULL,
