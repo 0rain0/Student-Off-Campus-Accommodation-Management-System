@@ -2,7 +2,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import router from '../router'
 import Cookies from 'js-cookie'
-import { Tools, Comment, List, User } from '@element-plus/icons-vue'
+import { Tools, Comment, List, Edit, User } from '@element-plus/icons-vue'
 
 const userType = ref(null)
 
@@ -16,6 +16,10 @@ const toSAS = () => {
 
 const toVSS = () => {
   router.push('/vss')
+}
+
+const toEditPersonFile = () => {
+    router.push('/EditPersonFile')
 }
 
 const toRAS = () => {
@@ -49,6 +53,12 @@ const logout = () => {
         <el-icon :size="50"><Comment /></el-icon>
         <span>租屋廣告/留言板</span>
       </el-button>
+    </div>
+    <div id="menu-button-3" class="menu-button">
+        <el-button id="ad-button" type="info" @click="toEditPersonFile" text>
+            <el-icon :size="50"><Edit /></el-icon>
+            <span>修改個人資料</span>
+        </el-button>
     </div>
     <div id="menu-button-4" class="menu-button">
       <el-button id="log-out" type="info" @click="logout" text>

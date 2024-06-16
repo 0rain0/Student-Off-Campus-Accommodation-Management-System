@@ -1,11 +1,17 @@
 import pymysql
+from dotenv import load_dotenv
+import os
+
+# 載入 .env 檔案
+load_dotenv()
 
 # 資料庫設定
+# 資料庫設定
 db_settings = {
-    "host": "localhost",
-    "user": "root",
-    "password": "",
-    "db": "SOCAMS2",
+    "host": os.getenv("DB_HOST"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
+    "db": os.getenv("DB_NAME"),
 }
 
 def connect_to_db():
@@ -41,6 +47,26 @@ def test_db_connection():
             conn.close()
     else:
         print("無法連接到資料庫")
+
+#查詢表單資料
+def query_data(sql):
+    conn = connect_to_db()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(sql)
+        return cursor.fetchall()
+    finally:
+        conn.close()
+
+#更新表單資料
+def update(sql):
+    conn = connect_to_db()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(sql)
+        conn.commit()
+    finally:
+        conn.close()
 
 # 執行測試
 test_db_connection()

@@ -1,20 +1,17 @@
-<script setup>
-import { ref, reactive } from 'vue'
-import router from '../router';
-const visit_form = () => {
-    router.push('/EditRentalSurveyForm');
-};
+# 開發VSS前端注意事項
 
-</script>
+## 新網頁模板
+```vue
 <template>
     <link rel="stylesheet" href="VSS.css">
     <div id="common-layout">
         <VSS_Header />
         <el-container>
             <el-container>
-                <el-aside id="aside" width="200px"> </el-aside>
+                <VSS_Aside />
                 <el-main id="main">
-                   <el-button size="large" round @click="visit_form">新增/編輯表單</el-button>
+                   
+
                 </el-main>
             </el-container>
         </el-container>
@@ -24,3 +21,6 @@ const visit_form = () => {
 import router from "../router/index.js";
 import axios from 'axios'
 </script>
+```
+<VSS_Header />是Header模組
+<VSS_Aside />是側欄模組
