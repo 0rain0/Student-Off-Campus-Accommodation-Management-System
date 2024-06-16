@@ -846,6 +846,7 @@ def create_class():
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
 
+
 #學生編輯表單
 @app.route('/receive_form_s',methods = ['GET','POST'])
 def receive_form_s():
@@ -933,28 +934,32 @@ def receive_form_s():
 
         sql = sql.replace("'None'", "Null").replace("None", "Null")
         connect.update(sql)
-        return redirect("http://localhost:5175/Successform")
+        return redirect("http://localhost:5173/Successform")
+
     else:
         #未存在訪視紀錄，新增表單
         #需要有學號在資料庫內才能新增
         sql = f"""
-                    insert into visit_form (State,DG,SID,S_Name,S_Tel,T_Name,
-                                            V_Time,L_Name,L_Tel,R_Addr,RoommateN,
-                                            RoommateP,RA,RentType,RoomType,Price,
-                                            Deposit,recommend,SA_01,SA_02,SA_03,
-                                            SA_04,SA_05,SA_06,SA_07,SA_08,SA_09,
-                                            SA_10,SA_11,SA_12,SA_13)
-                    values (1,'{DG}','{SID}','{S_Name}','{S_Tel}','{T_Name}',
+        insert into visit_form 
+                            (State,DG,SID,S_Name,S_Tel,T_Name,
+                            V_Time,L_Name,L_Tel,R_Addr,RoommateN,
+                            RoommateP,RA,RentType,RoomType,Price,
+                            Deposit,recommend,SA_01,SA_02,SA_03,
+                            SA_04,SA_05,SA_06,SA_07,SA_08,SA_09,
+                            SA_10,SA_11,SA_12,SA_13)
+                    values 
+                            (1,'{DG}','{SID}','{S_Name}','{S_Tel}','{T_Name}',
                             '{visit}','{L_Name}','{L_Tel}','{R_Addr}','{RoommateN}',
                             '{RoommateP}',{RA},{RentType},{RoomType},{Price},
-                            {Deposit},{Recommend},{SA_01},{SA_02},{SA_03},{SA_04},
-                            {SA_05},{SA_06},{SA_07},{SA_08},{SA_09},{SA_10},{SA_11},
-                            {SA_12},{SA_13})
+                            {Deposit},{Recommend},{SA_01},{SA_02},{SA_03},
+                            {SA_04},{SA_05},{SA_06},{SA_07},{SA_08},{SA_09},
+                            {SA_10},{SA_11},{SA_12},{SA_13})
                 """
 
         sql = sql.replace("'None'", "Null").replace("None", "Null")
         connect.update(sql)
-        return redirect("http://localhost:5175/Successform")
+        print(jsonify())
+        return redirect("http://localhost:5173/Successform")
 
 
 #老師編輯表單
@@ -1033,26 +1038,27 @@ def receive_form_t():
 
         sql = sql.replace("'None'", "Null").replace("None", "Null")
         connect.update(sql)
-        return redirect("http://localhost:5175/Successform")
+        return redirect("http://localhost:5173/Successform")
 
     else:
         # 未存在訪視紀錄，新增表單
         # 需要有學號在資料庫內才能新增
         sql = f"""
         insert into visit_form
-                (State,DG,SID,S_Name,S_Tel,T_Name,V_Time,
-                EN_01,EN_02,EN_03,EN_04,VI_01,VI_02,Result,
-                DI_01,DI_02,DI_03,DI_04,DI_05,EN_03_Des,
-                EN_04_Des,VI_01_Des,RE_Des,RE_Memo,DI_05_Des)
-                values (1,'{DG}','{SID}','{S_Name}','{S_Tel}','{T_Name}',
-                        '{visit}','{EN_01}','{EN_02}','{EN_03}','{EN_04}',
-                        '{VI_01}',{VI_02},'{EN_03_Des}','{EN_04_Des}','{VI_01_Des}',
-                        '{RE_Des}','{RE_Memo}','{DI_05_Des}')
+                        (State,DG,SID,S_Name,S_Tel,T_Name,V_Time,
+                        EN_01,EN_02,EN_03,EN_04,VI_01,VI_02,Result,
+                        DI_01,DI_02,DI_03,DI_04,DI_05,EN_03_Des,
+                        EN_04_Des,VI_01_Des,RE_Des,RE_Memo,DI_05_Des)
+                values 
+                        (1,'{DG}','{SID}','{S_Name}','{S_Tel}','{T_Name}','{visit}',
+                        {EN_01},{EN_02},{EN_03},{EN_04},{VI_01},{VI_02},{Result},
+                        {DI_01},{DI_02},{DI_03},{DI_04},{DI_05},'{EN_03_Des}',
+                        '{EN_04_Des}','{VI_01_Des}','{RE_Des}','{RE_Memo}','{DI_05_Des}')
                 """
 
         sql = sql.replace("'None'", "Null").replace("None", "Null")
         connect.update(sql)
-        return redirect("http://localhost:5175/Successform")
+        return redirect("http://localhost:5173/Successform")
     
 @app.route('/VSS/students', methods=['GET'])
 def get_VSS_students():
