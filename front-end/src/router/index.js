@@ -97,6 +97,11 @@ const routes = [
         name: 'CheckClassStatus',
         component: () => import('../components/CheckClassStatus.vue')
     },
+    {
+        path: '/CheckStudentStatus',
+        name: 'CheckStudentStatus',
+        component: () => import('../components/CheckStudentStatus.vue')
+    },
     //RAS
     {
         path: '/RAS',

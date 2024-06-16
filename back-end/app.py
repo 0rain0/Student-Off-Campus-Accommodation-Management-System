@@ -1162,8 +1162,7 @@ def get_VSS_classes():
                 
                 class_list = [{'CID': cl[0], 'Department': cl[1], 'Grade': cl[2], 
                                'Section': cl[3], 'TID': cl[4], 'TeacherName': cl[5], 
-                               'CompleteRate': (cl[7] / cl[6] * 100) if cl[6] > 0 else 0,  # 轉換為百分比
-                               'Status': '已填寫' if cl[7] > 0 else '未填寫'}
+                               'CompleteRate': (cl[7] / cl[6] * 100) if cl[6] > 0 else 0}  # 轉換為百分比
                               for cl in classes]
                 
                 return jsonify({"classes": class_list, "total": total, "status": "success"})
