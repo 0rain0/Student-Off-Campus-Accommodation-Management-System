@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request, redirect
 from flask_cors import CORS
 import traceback
-import traceback
 import connect
 from flask import make_response
 
@@ -36,8 +35,6 @@ def generate_new_cid(cursor):
 @app.route('/')
 def index():
     return jsonify({"message": "Hello, this is a CORS-enabled Flask application!"})
-
-
 
 @app.route('/login', methods=['POST'])
 def login():
