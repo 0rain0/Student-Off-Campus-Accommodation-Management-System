@@ -1542,5 +1542,24 @@ def getUserType():
         print(f"Error: {ex}")
         traceback.print_exc()
 
+@app.route('/api/ad/edit-post', methods=['POST'])
+def edit_post():
+    data = request.get_json()
+    pid = data.get('PID')
+    content = data.get('content')
+    Post_File = data.get('file')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("UPDATE post SET Content = '"+content + "', Post_File = '"+Post_File + "' WHERE PID = '"+pid + "'")
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
 if __name__ == '__main__':
     app.run(debug=True)

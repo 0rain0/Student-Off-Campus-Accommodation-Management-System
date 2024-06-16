@@ -362,6 +362,10 @@ let edit_rate = ref(0);
 let edit_content = ref('');
 let edit_RID = ref('');
 let edit_CMID = ref('');
+let dialogFormVisiblePost = ref(false);
+let edit_PID = ref('');
+let edit_file = ref('');
+
 
 let ad_subtitle = { "HouseAge": "屋齡", "HouseType": "房屋類型", "RoomType": "房間類型", "Address": "房屋地址", "RentLimit": "限租條件", "Price": "租金", "ContactName": "聯絡人", "ContactTel": "連絡電話", "AD_Des": "詳細資訊" };
 
@@ -398,6 +402,40 @@ const editComment = (CMID, content) => {
     edit_CMID.value = CMID;
 }
 
+const editPost = (item) => {
+    dialogFormVisiblePost.value = true;
+    edit_PID.value = item.PID;
+    edit_content.value = item.Content;
+    edit_file.value = item.Post_File;
+}
+
+const sentEditPost = () => {
+    axios.post('http://127.0.0.1:5000/api/ad/edit-post', { PID: edit_PID.value, content: edit_content.value, file: edit_file.value})
+        .then(res => {
+            console.log("Response data:", res.data)
+            if (res.data.status === 'success') {
+                alert('編輯成功');
+                dialogFormVisiblePost.value = false
+                handleSelect('2');
+            } else {
+                alert('編輯失敗');
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                console.error("Error response data:", error.response.data)
+                console.error("Error response status:", error.response.status)
+                console.error("Error response headers:", error.response.headers)
+            } else if (error.request) {
+                console.error("Error request data:", error.request)
+            } else {
+                console.error("Error message:", error.message)
+            }
+            console.error("Error config:", error.config)
+            alert('編輯出現錯誤');
+        });
+}
+
 const form = reactive({
     RID: '',
     content: '',
@@ -408,6 +446,8 @@ const form2 = reactive({
     CMID: '',
     content: '',
 })
+
+
 
 const sentEditComment = () => {
     axios.post('http://127.0.0.1:5000/api/ad/edit-comment', { CMID: edit_CMID.value, content: edit_content.value })
@@ -738,6 +778,29 @@ const deletePost = (PID) => {
                             <div class="dialog-footer">
                                 <el-button @click="dialogFormVisible2 = false">Cancel</el-button>
                                 <el-button type="primary" @click="sentEditComment">
+                                    Confirm
+                                </el-button>
+                            </div>
+                        </template>
+                    </el-dialog>
+                    <el-dialog v-model="dialogFormVisiblePost" title="編輯貼文" width="500">
+                        <el-form :model="form2">
+                            <div hidden>
+                                <el-form-item label="PID" :label-width="formLabelWidth">
+                                    <el-input v-model="edit_PID" style="width: 240px" :rows="2" />
+                                </el-form-item>
+                            </div>
+                            <el-form-item label="內文" :label-width="formLabelWidth">
+                                <el-input v-model="edit_content" style="width: 240px" :rows="2" type="textarea" />
+                            </el-form-item>
+                            <el-form-item label="檔案連結" :label-width="formLabelWidth">
+                                <el-input v-model="edit_file" style="width: 240px" :rows="2" />
+                            </el-form-item>
+                        </el-form>
+                        <template #footer>
+                            <div class="dialog-footer">
+                                <el-button @click="dialogFormVisiblePost = false">Cancel</el-button>
+                                <el-button type="primary" @click="sentEditPost">
                                     Confirm
                                 </el-button>
                             </div>
