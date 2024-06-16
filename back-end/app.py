@@ -446,7 +446,7 @@ def new_accounts():
                 elif permission == "老師":
                     insert_query = "INSERT INTO account (ID, Password, UserType) VALUES (%s, %s, %s)"
                     cursor.execute(insert_query, (account, password, "4"))
-                    insert_query = "INSERT INTO teacher (TID, Name, Rank, Tel, Email, OfficeAddr, OfficeTel) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                    insert_query = "INSERT INTO teacher (TID, Name, `Rank`, Tel, Email, OfficeAddr, OfficeTel) VALUES (%s, %s, %s, %s, %s, %s, %s)"
                     cursor.execute(insert_query, (account, name, Rank, phone, email, OfficeAddr, OfficeTel))
                     connection.commit()
                 return jsonify({"status": "success", "message": "新增成功"})
@@ -541,7 +541,7 @@ def bulk_add_accounts():
 
                             insert_query = "INSERT INTO account (ID, Password, UserType) VALUES (%s, %s, %s)"
                             cursor.execute(insert_query, (columns[0], columns[1], "4"))
-                            insert_query = "INSERT INTO teacher (TID, Name, Rank, Tel, Email, OfficeAddr, OfficeTel) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                            insert_query = "INSERT INTO teacher (TID, Name, `Rank`, Tel, Email, OfficeAddr, OfficeTel) VALUES (%s, %s, %s, %s, %s, %s, %s)"
                             cursor.execute(insert_query, (columns[0], columns[3], columns[6], columns[5], columns[4], columns[7], columns[8]))
                     else:
                         return jsonify({"status": "fail", "message": "資料格式錯誤"})
@@ -666,7 +666,7 @@ def SaveChanges():
                         return jsonify({"status": "fail", "message": "請輸入空欄位"})
                     sql = "UPDATE ACCOUNT SET Password = %s, UserType = %s WHERE ID = %s"
                     cursor.execute(sql, (password, permission_mapping.get(permission), account))
-                    sql = "UPDATE teacher SET Name = %s, Rank = %s, Tel = %s, Email = %s, OfficeAddr = %s, OfficeTel = %s WHERE TID = %s"
+                    sql = "UPDATE teacher SET Name = %s, `Rank` = %s, Tel = %s, Email = %s, OfficeAddr = %s, OfficeTel = %s WHERE TID = %s"
                     cursor.execute(sql, (name, Rank, phone, email, OfficeAddr, OfficeTel, account))
                     connection.commit()
                 return jsonify({"status": "success", "message": "編輯成功"})
