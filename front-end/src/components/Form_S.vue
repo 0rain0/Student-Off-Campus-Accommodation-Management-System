@@ -387,7 +387,7 @@
                                 <th class="evaluate">押金要求</th>
                                 <td>
                                     <div class="radio-group">
-                                        <label><input type="radio" name="EN_01" value="0"> 合理</label>
+                                        <label><input type="radio" name="EN_01" value="0" > 合理</label>
                                         <label><input type="radio" name="EN_01" value="1"> 不合理（2個月以上之租金）</label>
                                     </div>
                                 </td>

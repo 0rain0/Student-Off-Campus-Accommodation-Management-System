@@ -1229,6 +1229,25 @@ def check_form_s(sid):
     else:
         return jsonify({"status": "fail", "message": "SQL connection failed"})
 
+@app.route('/VSS/CheckForm_query/<sid>', methods=['GET'])
+def check_form_query(sid):
+    connection = connect.connect_to_db()
+    if connection is not None:
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM visit_form WHERE SID = %s", (sid,))
+                form = cursor.fetchone()
+                if form:
+                    return jsonify({"status": "success", "form": form})
+                else:
+                    return jsonify({"status": "fail", "message": "No form found"})
+        except Exception as ex:
+            print(ex)
+            return jsonify({"status": "fail", "message": str(ex)})
+        finally:
+            connection.close()
+    else:
+        return jsonify({"status": "fail", "message": "SQL connection failed"})
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -109,6 +109,12 @@ const routes = [
         props: true,
         component: () => import('../components/CheckStudentForm.vue')
     },
+    {
+        path: '/QueryStudentForm/:id',
+        name: 'QueryStudentForm',
+        props: true,
+        component: () => import('../components/QueryStudentForm.vue')
+    },
     //RAS
     {
         path: '/RAS',

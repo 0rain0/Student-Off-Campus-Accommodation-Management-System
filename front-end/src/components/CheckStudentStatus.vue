@@ -38,6 +38,15 @@
                             >
                                 填寫
                             </el-button>
+                            <br>
+                            <el-button
+                                @click="handleQ(scope.row.SID)"
+                                type="primary"
+                                size="small"
+                                :disabled="scope.row.Status !== '已填寫'"
+                            >
+                                查詢
+                            </el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -111,4 +120,12 @@ const handleFill = (sid: string) => {
 onMounted(() => {
     fetchStudents()
 })
+
+const handleQ = (sid: string) => {
+    router.push({ name: 'QueryStudentForm', params: { id: sid } })
+}
+onMounted(() => {
+    fetchStudents()
+})
+
 </script>
