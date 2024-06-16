@@ -290,7 +290,7 @@ const deleteReview = (RID) => {
 }
 
 const deleteComment = (CMID) => {
-    axios.post('http://http://127.0.0.1:5000/api/ad/delete-comment', { CMID: CMID })
+    axios.post('http://127.0.0.1:5000/api/ad/delete-comment', { CMID: CMID })
         .then(res => {
             console.log("Response data:", res.data)
             if (res.data.status === 'success') {
