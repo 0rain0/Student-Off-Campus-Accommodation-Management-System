@@ -5,16 +5,17 @@
             <VSS_Aside />
             <el-main id="main">
                 <Form_S :student="student" />
-                <Form_T :student="student" />
+                <Form_T ref="formTComponent" :student="student" />
                 <div align="center">
                     <input type="reset" value="清除表單" name="reset" class="styled-button">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <input type="submit" value="提交表單" name="submit" class="styled-button">
+                    <input type="submit" value="提交表單" name="submit" class="styled-button" @click="submitForm">
                 </div>
             </el-main>
         </el-container>
     </div>
 </template>
+
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -24,13 +25,13 @@ import Form_T from './Form_T.vue'
 
 const route = useRoute()
 const student = ref({})
+const formTComponent = ref(null)
 
-const fetchStudent = async (id: string) => {
+const fetchStudent = async (id) => {
     try {
         const response = await axios.get(`http://127.0.0.1:5000/VSS/CheckForm_S/${id}`)
         console.log('Fetched student data:', response.data)
 
-        // 將數組轉換為對象
         const dataArray = response.data.form
         student.value = {
             VFID: dataArray[0],
@@ -89,14 +90,18 @@ const fetchStudent = async (id: string) => {
         console.error("Error fetching student data:", error)
     }
 }
-
+const submitFormS = () => {
+    if (formS.value && formS.value.handleSubmit) {
+        formS.value.handleSubmit()
+    }
+}
 onMounted(() => {
-    const id = route.params.id as string
+    const id = route.params.id
     fetchStudent(id)
 })
 
 watch(student, (newVal) => {
-    console.log('Student data passed to Form_S:', newVal)
+    console.log('Student data passed to Form_S and Form_T:', newVal)
 })
 </script>
 

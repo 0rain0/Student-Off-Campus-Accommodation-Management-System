@@ -1055,6 +1055,7 @@ def get_VSS_students():
     pageSize = request.args.get('pageSize', 10, type=int)
     sid = request.args.get('SID', None)
     name = request.args.get('Name', None)
+    cid = request.args.get('CID', None)
     offset = (page - 1) * pageSize
     
     connection = connect.connect_to_db()
@@ -1062,7 +1063,7 @@ def get_VSS_students():
         try:
             with connection.cursor() as cursor:
                 count_query = "SELECT COUNT(*) FROM student"
-                select_query = "SELECT SID, Name, Tel, Email FROM student"
+                select_query = "SELECT SID, Name, CLASS, Tel, Email FROM student"
                 conditions = []
                 params = []
 
@@ -1072,6 +1073,9 @@ def get_VSS_students():
                 if name:
                     conditions.append("Name LIKE %s")
                     params.append(f"%{name}%")
+                if cid:
+                    conditions.append("CLASS LIKE %s")
+                    params.append(f"%{cid}%")
 
                 if conditions:
                     count_query += " WHERE " + " AND ".join(conditions)
@@ -1109,7 +1113,7 @@ def get_VSS_students():
             connection.close()
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
-    
+
 @app.route('/VSS/ClassStatue', methods=['GET'])
 def get_VSS_classes():
     page = request.args.get('page', 1, type=int)

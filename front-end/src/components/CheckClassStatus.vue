@@ -15,11 +15,13 @@
                         <el-table-column prop="TeacherName" label="導師名字" width="150" />
                         <el-table-column prop="CompleteRate" label="完成率" width="100" />
                         <el-table-column label="操作" width="100">
-                                <el-button>
+                            <template #default="scope">
+                                <el-button @click="handleFill(scope.row.TeacherName)" type="primary" size="small">
                                     查看
                                 </el-button>
+                            </template>
                         </el-table-column>
-                    </el-table>               
+                    </el-table>
                 </el-main>
             </el-container>
         </el-container>
@@ -30,7 +32,7 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
-interface ClassStatue {
+interface ClassStatus {
     Department: string;
     Grade: string;
     Section: string;
@@ -38,7 +40,7 @@ interface ClassStatue {
     CompleteRate: number;
 }
 
-const classStatus = ref<ClassStatue[]>([]);
+const classStatus = ref<ClassStatus[]>([]);
 
 const getClassStatus = async () => {
     try {
@@ -47,6 +49,10 @@ const getClassStatus = async () => {
     } catch (error) {
         console.error("Failed to fetch class status:", error);
     }
+}
+const handleFill = (teacherName: string) => {
+    console.log(teacherName);
+    router.push({ name: 'CheckStudentStatus', params: { teacherName } });
 }
 
 onMounted(getClassStatus);

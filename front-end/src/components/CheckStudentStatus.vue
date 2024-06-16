@@ -5,13 +5,16 @@
             <VSS_Aside />
             <el-main>
                 <el-row :gutter="20" class="mb-3">
-                    <el-col :span="8">
+                    <el-col :span="6">
                         <el-input v-model="searchSID" placeholder="輸入學號"></el-input>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="6">
                         <el-input v-model="searchName" placeholder="輸入姓名"></el-input>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="6">
+                        <el-input v-model="searchCID" placeholder="輸入班級CID"></el-input>
+                    </el-col>
+                    <el-col :span="6">
                         <el-button type="primary" @click="handleSearch">搜尋</el-button>
                         <el-button @click="handleReset">重置</el-button>
                     </el-col>
@@ -70,6 +73,7 @@ const pageSize = 10
 const currentPage = ref(1)
 const searchSID = ref('')
 const searchName = ref('')
+const searchCID = ref('')
 
 const fetchStudents = async (params = {}) => {
     try {
@@ -96,12 +100,14 @@ const handleSearch = () => {
     const params: any = {}
     if (searchSID.value) params.SID = searchSID.value
     if (searchName.value) params.Name = searchName.value
+    if (searchCID.value) params.CID = searchCID.value
     fetchStudents(params)
 }
 
 const handleReset = () => {
     searchSID.value = ''
     searchName.value = ''
+    searchCID.value = ''
     fetchStudents()
 }
 
