@@ -7,14 +7,90 @@ const routes = [
         component:()=>import('../components/login.vue'), //导入路由页面的路径
     },
     {
-        path:'/home_example', // 要路由到的url路径
-        name:'home_example',
-        component:()=>import('../components/HelloWorld_example.vue'), //导入路由页面的路径
+        path:'/register', // 要路由到的url路径
+        name:'Landlord_register',
+        component:()=>import('../components/Landlord_register.vue'), //导入路由页面的路径
     },
     {
-        path:'/login_example', // 要路由到的url路径
-        name:'login_example',
-        component:()=>import('../components/login_example.vue'), //导入路由页面的路径
+        path:'/login', // 要路由到的url路径
+        name:'Login',
+        component:()=>import('../components/login.vue'), //导入路由页面的路径
+    },
+    {
+        path:'/AccountManage', // 要路由到的url路径
+        name:'AccountManage',
+        component:()=>import('../components/AccountManage.vue'), //导入路由页面的路径
+    },
+    {
+        path:'/NewAccount', // 要路由到的url路径
+        name:'NewAccount',
+        component:()=>import('../components/NewAccount.vue'), //导入路由页面的路径
+    },
+    {
+        path:'//AddLargeAccount', // 要路由到的url路径
+        name:'AddLargeAccount',
+        component:()=>import('../components/AddLargeAccount.vue'), //导入路由页面的路径
+    },
+    {
+        path:'/ClassManage', // 要路由到的url路径
+        name:'ClassManage',
+        component:()=>import('../components/ClassManage.vue'), //导入路由页面的路径
+    },
+    {
+        path:'/EditClass', // 要路由到的url路径
+        name:'EditClass',
+        component:()=>import('../components/EditClass.vue'), //导入路由页面的路径
+    },
+    {
+        path: '/menu',
+        name: 'menu',
+        component: () => import('../components/menu.vue')
+    },
+    {
+        path: '/SAS',
+        name: 'SAS',
+        component: () => import('../components/SAS.vue')
+    },
+    {
+        path: '/VSS',
+        name: 'VSS',
+        component: () => import('../components/VSS.vue')
+    },
+    {
+        path: '/back_vss',
+        name: 'back_vss',
+        component: () => import('../components/VSS.vue')
+    },
+    {
+        path: '/RAS',
+        name: 'RAS',
+        component: () => import('../components/RAS.vue')
+    },
+    {
+        path:'/AddNewAd', // 新增廣告
+        name:'AddNewAd',
+        component:()=>import('../components/AddNewAd.vue'),
+    },
+    {
+        path:'/AddNewPost', // 新增貼文
+        name:'AddNewPost',
+        component:()=>import('../components/AddNewPost.vue'),
+    },
+    {
+        path: '/EditRentalSurveyForm',
+        name: 'EditRentalSurveyForm',
+        component: () => import('../components/EditRentalSurveyForm.vue')
+    }
+    ,
+    {
+        path: '/Successform',
+        name: 'Successform',
+        component: () => import('../components/Successform.vue')
+    },
+    {
+        path:'/AddNewClass', // 要路由到的url路径
+        name:'AddNewClass',
+        component:()=>import('../components/AddNewClass.vue'), //导入路由页面的路径
     }
 ];
 
