@@ -1066,20 +1066,21 @@ def receive_form_t():
         connect.update(sql)
         return redirect("http://localhost:5175/Successform")
     
-@app.route('/VSS/students', methods=['GET'])
+@app.route('/VSS/studentStatue', methods=['GET'])
 def get_VSS_students():
     page = request.args.get('page', 1, type=int)
     pageSize = request.args.get('pageSize', 10, type=int)
     sid = request.args.get('SID', None)
     name = request.args.get('Name', None)
+    cid = request.args.get('CID', None)
     offset = (page - 1) * pageSize
-    
+
     connection = connect.connect_to_db()
     if connection is not None:
         try:
             with connection.cursor() as cursor:
                 count_query = "SELECT COUNT(*) FROM student"
-                select_query = "SELECT SID, Name, Tel, Email FROM student"
+                select_query = "SELECT SID, Name, CLASS, Tel, Email FROM student"
                 conditions = []
                 params = []
 
@@ -1089,6 +1090,9 @@ def get_VSS_students():
                 if name:
                     conditions.append("Name LIKE %s")
                     params.append(f"%{name}%")
+                if cid:
+                    conditions.append("CLASS LIKE %s")
+                    params.append(f"%{cid}%")
 
                 if conditions:
                     count_query += " WHERE " + " AND ".join(conditions)
@@ -1099,10 +1103,10 @@ def get_VSS_students():
 
                 cursor.execute(count_query, params[:-2])
                 total = cursor.fetchone()[0]
-                
+
                 cursor.execute(select_query, params)
                 students = cursor.fetchall()
-                
+
                 student_list = []
                 for student in students:
                     sid = student[0]
@@ -1117,7 +1121,7 @@ def get_VSS_students():
                         "Status": status
                     }
                     student_list.append(student_info)
-                
+
                 return jsonify({"students": student_list, "total": total, "status": "success"})
         except Exception as ex:
             print(ex)
@@ -1127,6 +1131,90 @@ def get_VSS_students():
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
 
+
+@app.route('/VSS/ClassStatue', methods=['GET'])
+def get_VSS_classes():
+    page = request.args.get('page', 1, type=int)
+    pageSize = request.args.get('pageSize', 10, type=int)
+    department = request.args.get('department', None)
+    grade = request.args.get('grade', None)
+    section = request.args.get('section', None)
+    offset = (page - 1) * pageSize
+
+    connection = connect.connect_to_db()
+    if connection is not None:
+        try:
+            with connection.cursor() as cursor:
+                count_query = "SELECT COUNT(*) FROM class"
+                select_query = """SELECT class.CID, class.Department, class.Grade, class.Section, 
+                                  class.TID, teacher.Name, COUNT(student.SID) AS StudentCount, 
+                                  SUM(CASE WHEN visit_form.SID IS NOT NULL THEN 1 ELSE 0 END) AS VisitCount
+                                  FROM class
+                                  LEFT JOIN teacher ON class.TID = teacher.TID
+                                  LEFT JOIN student ON class.CID = student.CLASS
+                                  LEFT JOIN visit_form ON student.SID = visit_form.SID"""
+                conditions = []
+                params = []
+
+                if department:
+                    conditions.append("class.Department = %s")
+                    params.append(department)
+                if grade:
+                    conditions.append("class.Grade = %s")
+                    params.append(grade)
+                if section:
+                    conditions.append("class.Section = %s")
+                    params.append(section)
+
+                if conditions:
+                    condition_str = " WHERE " + " AND ".join(conditions)
+                else:
+                    condition_str = ""
+
+                count_query += condition_str
+                select_query += condition_str + " GROUP BY class.CID, class.Department, class.Grade, class.Section, class.TID, teacher.Name"
+                select_query += " LIMIT %s OFFSET %s"
+                params.extend([pageSize, offset])
+
+                cursor.execute(count_query, params[:-2])
+                total = cursor.fetchone()[0]
+
+                cursor.execute(select_query, params)
+                classes = cursor.fetchall()
+
+                class_list = [{'CID': cl[0], 'Department': cl[1], 'Grade': cl[2],
+                               'Section': cl[3], 'TID': cl[4], 'teacherName': cl[5],
+                               'CompleteRate': (cl[7] / cl[6] * 100) if cl[6] > 0 else 0}  # 轉換為百分比
+                              for cl in classes]
+
+                return jsonify({"classes": class_list, "total": total, "status": "success"})
+        except Exception as ex:
+            print(ex)
+            return jsonify({"status": "fail", "message": str(ex)})
+        finally:
+            connection.close()
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+    
+@app.route('/VSS/CheckForm_S/<sid>', methods=['GET'])
+def check_form_s(sid):
+    connection = connect.connect_to_db()
+    if connection is not None:
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM visit_form WHERE SID = %s", (sid,))
+                form = cursor.fetchone()
+                if form:
+                    return jsonify({"status": "success", "form": form})
+                else:
+                    return jsonify({"status": "fail", "message": "No form found"})
+        except Exception as ex:
+            print(ex)
+            return jsonify({"status": "fail", "message": str(ex)})
+        finally:
+            connection.close()
+    else:
+        return jsonify({"status": "fail", "message": "SQL connection failed"})
 
 
 if __name__ == '__main__':

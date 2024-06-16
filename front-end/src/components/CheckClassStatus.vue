@@ -1,6 +1,3 @@
-<style>
-@import "@/assets/VSS.css";
-</style>
 <template>
     <div id="common-layout">
         <VSS_Header />
@@ -12,11 +9,11 @@
                         <el-table-column prop="Department" label="系所" width="150" />
                         <el-table-column prop="Grade" label="年級" width="100" />
                         <el-table-column prop="Section" label="班級" width="100" />
-                        <el-table-column prop="TeacherName" label="導師名字" width="150" />
+                        <el-table-column prop="teacherName" label="導師名字" width="150" />
                         <el-table-column prop="CompleteRate" label="完成率" width="100" />
                         <el-table-column label="操作" width="100">
                             <template #default="scope">
-                                <el-button @click="handleFill(scope.row.TeacherName)" type="primary" size="small">
+                                <el-button @click="handleFill(scope.row.CID)" type="primary" size="small">
                                     查看
                                 </el-button>
                             </template>
@@ -30,13 +27,15 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import router from '../router';
 import axios from 'axios';
 
 interface ClassStatus {
+    CID: string;
     Department: string;
     Grade: string;
     Section: string;
-    TeacherName: string;
+    teacherName: string;
     CompleteRate: number;
 }
 
@@ -50,9 +49,10 @@ const getClassStatus = async () => {
         console.error("Failed to fetch class status:", error);
     }
 }
-const handleFill = (teacherName: string) => {
-    console.log(teacherName);
-    router.push({ name: 'CheckStudentStatus', params: { teacherName } });
+
+const handleFill = (CID: string) => {
+    console.log(CID);
+    router.push({ name: 'CheckStudentStatus', params: { id: CID } });
 }
 
 onMounted(getClassStatus);

@@ -94,8 +94,9 @@ const routes = [
         component: () => import('../components/Successform.vue')
     },
     {
-        path: '/CheckStudentStatus',
+        path: '/CheckStudentStatus/:id?',
         name: 'CheckStudentStatus',
+        props: true,
         component: () => import('../components/CheckStudentStatus.vue')
     },
     {

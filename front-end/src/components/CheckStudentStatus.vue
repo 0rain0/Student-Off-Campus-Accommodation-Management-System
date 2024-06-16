@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, defineProps } from 'vue'
 import router from '../router'
 import axios from 'axios'
 
@@ -114,7 +114,20 @@ const handleReset = () => {
 const handleFill = (sid: string) => {
     router.push({ name: 'CheckStudentForm', params: { id: sid } })
 }
+
+const props = defineProps({
+  id: {
+    type: String,
+    default: null
+  }
+})
+
 onMounted(() => {
-    fetchStudents()
+    if (props.id) {
+        searchCID.value = props.id
+        handleSearch()
+    } else {
+        fetchStudents()
+    }
 })
 </script>
