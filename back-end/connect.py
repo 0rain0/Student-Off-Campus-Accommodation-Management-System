@@ -6,11 +6,12 @@ import os
 load_dotenv()
 
 db_settings = {
-    "host": "localhost",
-    "user": "root",
-    "password": "rainmysql314043",
-    "db": "socams",
+    "host": os.getenv("DB_HOST"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
+    "db": os.getenv("DB_NAME"),
 }
+
 
 def connect_to_db():
     try:
@@ -67,4 +68,4 @@ def update(sql):
         conn.close()
 
 # 執行測試
-test_db_connection()
+# test_db_connection()
