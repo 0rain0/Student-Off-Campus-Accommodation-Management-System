@@ -2,7 +2,6 @@
 import { ref, reactive } from 'vue'
 import router from '../router'
 import axios from 'axios'
-import Cookies from 'js-cookie'
 
 const FPath = 'http://127.0.0.1:5000/login'
 const loginForm = reactive({
@@ -13,13 +12,15 @@ const loginForm = reactive({
 const login = () => {
     axios.post(FPath, loginForm)
         .then(res => {
-            console.log("Response data:", res.data)
-            if (res.data.login.startsWith('success')) {
-                alert(`歡迎${res.data.usertype === '1' ? '管理員' : '登入'}`)
-                Cookies.set('UserType', res.data.usertype)
-                Cookies.set('username', loginForm.username)
+            console.log("Response data:", res.data)  
+            if (res.data.login === 'success_1') {
+                alert('歡迎管理員登入')
                 router.push('/menu')
-            } else {
+            } 
+            else if (res.data.login === 'success_2') {
+                alert('歡迎登入')
+            }
+            else {
                 alert('登入失敗')
             }
         })
@@ -41,12 +42,6 @@ const login = () => {
         })
 }
 
-const logout = () => {
-    Cookies.remove('UserType')
-    Cookies.remove('username')
-    alert('已登出')
-    router.push('/login')
-}
 </script>
 
 <template>
