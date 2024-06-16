@@ -226,7 +226,7 @@ const handleSelect = (index: string) => {
 
 
 
-<style scoped>
+<style>
 #common-layout .el-container {
     height: 100vh;
     width: 100%;

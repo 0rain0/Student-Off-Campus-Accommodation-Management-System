@@ -284,8 +284,7 @@ const saveChanges = async () => {
     color: #333;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 20px;
+    
 }
 
 .aside-button {

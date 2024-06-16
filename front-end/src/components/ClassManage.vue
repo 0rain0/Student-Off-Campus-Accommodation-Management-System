@@ -20,8 +20,8 @@
 
           <el-table :data="filterTableData" style="width: 100%">
             <el-table-column label="Department" prop="department" />
-            <el-table-column label="Grade" prop="grade" />
-            <el-table-column label="Class" prop="class" />
+            <el-table-column label="Class" prop="grade" />
+            <el-table-column label="Grade" prop="class" />
             <el-table-column label="Number" prop="number" />
             <el-table-column label="Teacher" prop="teacher" />
             <el-table-column align="right">

@@ -10,8 +10,10 @@
             </el-header>
             <el-container>
                 <el-aside id="aside" width="200px">
-                    <el-button class="aside-button" @click="manageAccounts">帳號管理</el-button>
-                    <el-button class="aside-button" @click="manageClasses">班級管理</el-button>
+                    <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect">
+                        <el-menu-item index="1">帳號管理</el-menu-item>
+                        <el-menu-item index="2">班級管理</el-menu-item>
+                    </el-menu>
                 </el-aside>
                 <el-main id="main">
                     <div style="margin-bottom: 20px;">
@@ -101,9 +103,17 @@ const manageAccounts = () => {
 const manageClasses = () => {
     router.push('/ClassManage')
 }
+
+const handleSelect = (index: string) => {
+    if (index === '1') {
+        manageAccounts()
+    } else if (index === '2') {
+        manageClasses()
+    }
+}
 </script>
 
-<style scoped>
+<style >
 #common-layout .el-container {
     height: 100vh;
     width: 100%;
@@ -123,8 +133,6 @@ const manageClasses = () => {
     color: #333;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 20px;
 }
 
 .aside-button {

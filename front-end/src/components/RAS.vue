@@ -425,6 +425,7 @@ const editPost = (item) => {
     edit_PID.value = item.PID;
     edit_content.value = item.Content;
     edit_file.value = item.Post_File;
+    edit_Name.value = item.Name;
 }
 
 const addPost = () => {
@@ -471,7 +472,7 @@ const addAD = () => {
 }
 
 const sentEditPost = () => {
-    axios.post('http://127.0.0.1:5000/api/ad/edit-post', { PID: edit_PID.value, content: edit_content.value, file: edit_file.value })
+    axios.post('http://127.0.0.1:5000/api/ad/edit-post', { PID: edit_PID.value, content: edit_content.value, file: edit_file.value, Name: edit_Name.value})
         .then(res => {
             console.log("Response data:", res.data)
             if (res.data.status === 'success') {
@@ -936,6 +937,9 @@ const deletePost = (PID) => {
                                     <el-input v-model="edit_PID" style="width: 240px" :rows="2" />
                                 </el-form-item>
                             </div>
+                            <el-form-item label="標題" :label-width="formLabelWidth">
+                                <el-input v-model="edit_Name" style="width: 240px" />
+                            </el-form-item>
                             <el-form-item label="內文" :label-width="formLabelWidth">
                                 <el-input v-model="edit_content" style="width: 240px" :rows="2" type="textarea" />
                             </el-form-item>

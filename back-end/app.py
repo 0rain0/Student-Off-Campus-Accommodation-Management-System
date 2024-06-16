@@ -164,14 +164,15 @@ def delete_class():
                     teacher = cursor.fetchone()[0]
                     print(teacher)
                     
-                    sql = "SELECT CID FROM CLASS WHERE Department = %s AND Grade = %s AND section = %s AND tid = %s"
-                    cursor.execute(sql, (department, grade, class_name, teacher))
-                    target_cid = cursor.fetchone()
+                    sql = "SELECT CID FROM CLASS WHERE Department = %s AND Grade = %s AND `section` = %s AND tid = %s"
+                    
+                    cursor.execute(sql, (department, class_name,grade , teacher))
+                    target_cid = cursor.fetchone()[0]
                     # 先將所有該班級學生的CLASS欄位設為 NULL
                     sql_update_students = "UPDATE STUDENT SET class = NULL WHERE class = %s"
                     cursor.execute(sql_update_students, (target_cid,))
                     connection.commit()
-
+                    
                     # 再刪除該班級
                     sql = "DELETE FROM CLASS WHERE CID = %s"
                     cursor.execute(sql, (target_cid,))
@@ -1551,11 +1552,12 @@ def edit_post():
     pid = data.get('PID')
     content = data.get('content')
     Post_File = data.get('file')
+    Name = data.get('Name')
     connection = connect.connect_to_db()
     if connection is not None:
         with connection.cursor() as cursor:
             try:
-                cursor.execute("UPDATE post SET Content = '"+content + "', Post_File = '"+Post_File + "' WHERE PID = '"+pid + "'")
+                cursor.execute("UPDATE post SET Content = '"+content + "', Post_File = '"+Post_File + "', Name = '"+Name + "' WHERE PID = '"+pid + "'")
                 connection.commit()
                 return jsonify({"status": "success"})
             except Exception as ex:
