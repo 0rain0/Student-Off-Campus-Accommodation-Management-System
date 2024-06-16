@@ -827,5 +827,73 @@ def get_review():
                 return jsonify({"status": "fail", "message": str(ex)})
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
+    
+@app.route('/api/ad/get-post', methods=['GET'])
+def get_post():
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT * FROM `post`")
+                posts = cursor.fetchall()
+                # PID
+                # ID  
+                # Name
+                # Content
+                # Post_File
+                post_list = [ {"PID": post[0], "ID": post[1], "Name": post[2], "Content": post[3], "Post_File": post[4]} for post in posts]
+                return jsonify({"status": "success", "data": post_list})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+@app.route('/api/ad/sent-comment', methods=['POST'])
+def sent_comment():
+    data = request.get_json()
+    postid = data.get('PID')
+    userID = data.get('ID')
+    content = data.get('content')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT COUNT(*) FROM comment")
+                connection.commit()
+                count = cursor.fetchone()[0]
+                if count == 0:
+                    commentID = 1
+                else:
+                    cursor.execute("SELECT MAX(CMID) FROM comment")
+                    connection.commit()
+                    commentID = int(cursor.fetchone()[0]) + 1
+                cursor.execute("INSERT INTO comment (CMID, PID, ID, Content) VALUES (%s, %s, %s, %s)", (commentID, postid, userID, content))
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+@app.route('/api/ad/get-post-comment', methods=['POST'])
+def get_comment():
+    data = request.get_json()
+    postid = data.get('PID')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT * FROM comment WHERE PID = '"+postid + "'")
+                comments = cursor.fetchall()
+                comment_list = [ {"CID": comment[0], "PID": comment[1], "ID": comment[2], "Content": comment[3]} for comment in comments]
+                return jsonify({"status": "success", "data": comment_list})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
 if __name__ == '__main__':
     app.run(debug=True)
