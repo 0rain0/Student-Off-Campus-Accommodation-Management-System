@@ -67,6 +67,16 @@ const routes = [
         component: () => import('../components/RAS.vue')
     },
     {
+        path:'/AddNewAd', // 新增廣告
+        name:'AddNewAd',
+        component:()=>import('../components/AddNewAd.vue'),
+    },
+    {
+        path:'/AddNewPost', // 新增貼文
+        name:'AddNewPost',
+        component:()=>import('../components/AddNewPost.vue'),
+    },
+    {
         path: '/EditRentalSurveyForm',
         name: 'EditRentalSurveyForm',
         component: () => import('../components/EditRentalSurveyForm.vue')

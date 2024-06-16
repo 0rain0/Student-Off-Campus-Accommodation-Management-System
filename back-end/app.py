@@ -684,7 +684,6 @@ def update_class():
             return jsonify({"status": "fail", "message": str(ex)})
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
-
     
 # 提交AddNewClass的班級創建
 @app.route('/api/classes/create', methods=['POST'])
@@ -761,6 +760,69 @@ def get_verify_ad():
             except Exception as ex:
                 print(ex)
                 return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+
+def generate_new_adid(cursor):
+    print("adid")
+    try:
+        cursor.execute("SELECT adid FROM CLASS ORDER BY adid DESC LIMIT 1")
+        result = cursor.fetchone()[0]
+        print("result: ", result)
+        if result:
+            last_adid = result
+            new_adid_num = int(last_adid[1:]) + 1
+            print(new_adid_num)
+            new_adid = f"c{new_adid_num:04}"
+            print(new_adid)
+        else:
+            new_adid = "ad0001"
+        return new_adid
+    except:
+        return "ad0001"
+
+# 提交AddNewAd的廣告創建
+@app.route('/receive_ad', methods=['GET','POST'])
+def receive_ad():
+
+    name = request.form.get("title")
+    lid = request.form.get("userID")
+    houseage = request.form.get("age")
+    housetype = request.form.get("house_type")
+    roomtype = request.form.get("room_type")
+    address = request.form.get("address")
+    rentlimit = request.form.get("rental_conditions")
+    price = request.form.get("rent")
+    contactname = request.form.get("contact_name")
+    contacttel = request.form.get("contact_phone")
+    start = request.form.get("start_date")
+    end = request.form.get("end_date")
+    ad_des = request.form.get("description")
+    ad_file = request.form.get("ad_file_link")
+    
+    print(name, houseage, housetype, roomtype, address, rentlimit, price, contactname, contacttel, start, end, ad_des, ad_file)
+
+    connection = connect.connect_to_db()
+    if connection is not None:
+        try:
+            with connection.cursor() as cursor:
+                # 生成新的 ADID
+                new_adid = generate_new_adid(cursor)
+                print(new_adid)
+                
+                # 插入新的廣告
+                cursor.execute(
+                    f"""INSERT INTO ADVERTISEMENT (adid, lid, name, houseage, housetype, roomtype, address, rentlimit, price, contactname, contacttel, start, end, ad_des, ad_file, validated) VALUES 
+                    ('{new_adid}', '{lid}', '{name}', '{houseage}', '{housetype}', '{roomtype}', '{address}', '{rentlimit if rentlimit else 'NULL'}', '{price}', '{contactname}', '{contacttel}', '{start}', '{end if end else 'NULL'}', '{ad_des}', '{ad_file if ad_file else 'NULL'}', 1)""",
+                )
+                
+                connection.commit()
+                return redirect("http://localhost:5173/RAS")
+        except Exception as ex:
+            connection.rollback()
+            print(ex)
+            return jsonify({"status": "fail", "message": str(ex)})
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
 
@@ -846,7 +908,60 @@ def get_review():
                 return jsonify({"status": "fail", "message": str(ex)})
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
+
+def generate_new_pid(cursor):
+    print("pid")
+    try:
+        cursor.execute("SELECT pid FROM CLASS ORDER BY adid DESC LIMIT 1")
+        result = cursor.fetchone()[0]
+        print("result: ", result)
+        if result:
+            last_pid = result
+            new_pid_num = int(last_pid[1:]) + 1
+            print(new_pid_num)
+            new_pid = f"c{new_pid_num:04}"
+            print(new_pid)
+        else:
+            new_pid = "p0001"
+        return new_pid
+    except:
+        return "p0001"
+
+# 提交AddNewPost的貼文創建
+@app.route('/receive_post', methods=['GET','POST'])
+def receive_post():
+
+    name = request.form.get("title")
+    # 抓ID
+    id = request.form.get("userID")
+    content = request.form.get("content")
+    post_file = request.form.get("file_link")
     
+    print(name, id, content, post_file)
+
+    connection = connect.connect_to_db()
+    if connection is not None:
+        try:
+            with connection.cursor() as cursor:
+                # 生成新的 PID
+                new_pid = generate_new_pid(cursor)
+                print(new_pid)
+                
+                # 插入新的貼文
+                cursor.execute(
+                    f"""INSERT INTO POST (pid, id, name, content, post_file) VALUES 
+                    ('{new_pid}', '{id}', '{name}', '{content}', '{post_file if post_file else 'NULL'}')""",
+                )
+                
+                connection.commit()
+                return redirect("http://localhost:5173/RAS")
+        except Exception as ex:
+            connection.rollback()
+            print(ex)
+            return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
 @app.route('/api/ad/get-post', methods=['GET'])
 def get_post():
     connection = connect.connect_to_db()

@@ -234,6 +234,20 @@ const ad_verify = (ADID, verify_result) => {
 
 }
 
+const addAd = () => {
+    console.log('Add Ad clicked')
+    router.push({
+        path: '/AddNewAd',
+    })
+}
+
+const addPost = () => {
+    console.log('Add Post clicked')
+    router.push({
+        path: '/AddNewPost',
+    })
+}
+
 const sentReview = (ADID, content, rate) => {
     let review_form = { ADID: ADID, content: content, rate: rate, userID: localStorage.getItem('userID') };
     axios.post('http://127.0.0.1:5000/api/ad/sent-ad-review', review_form)
@@ -538,7 +552,7 @@ const sentEdit = () => {
                                     </template>
                                 </el-card>
                             </div>
-                            <el-button style="justify-content: center;" :icon="Plus" size="large" circle />
+                            <el-button style="justify-content: center;" :icon="Plus" size="large" circle @click="addAd()"/>
                         </div>
 
                         <div class="pagination-block">
@@ -595,6 +609,7 @@ const sentEdit = () => {
                                     </template>
                                 </el-card>
                             </div>
+                            <el-button style="justify-content: center;" :icon="Plus" size="large" circle @click="addPost()"/>
                         </div>
                         <div class="pagination-block">
                             <el-pagination v-model:current-page="currentPage2" v-model:page-size="pageSize2"
