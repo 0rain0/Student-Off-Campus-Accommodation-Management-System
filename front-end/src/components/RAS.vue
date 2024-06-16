@@ -357,6 +357,7 @@ let disabled = ref(false);
 let background = ref(false);
 let dialogFormVisible = ref(false);
 let dialogFormVisible2 = ref(false);
+let dialogFormVisibleAD = ref(false);
 const formLabelWidth = ref('120px');
 let edit_rate = ref(0);
 let edit_content = ref('');
@@ -365,6 +366,20 @@ let edit_CMID = ref('');
 let dialogFormVisiblePost = ref(false);
 let edit_PID = ref('');
 let edit_file = ref('');
+let edit_ADID = ref('');
+let edit_houseAge = ref('');
+let edit_houseType = ref('');
+let edit_roomType = ref('');
+let edit_address = ref('');
+let edit_rentLimit = ref('');
+let edit_price = ref('');
+let edit_contactName = ref('');
+let edit_contactTel = ref('');
+let edit_AD_Des = ref('');
+let edit_date = ref('');
+
+let houseType = ref(['透天', '公寓', '大樓', '學舍', '其他']);
+let roomType = ref(['套房', '雅房']);
 
 
 let ad_subtitle = { "HouseAge": "屋齡", "HouseType": "房屋類型", "RoomType": "房間類型", "Address": "房屋地址", "RentLimit": "限租條件", "Price": "租金", "ContactName": "聯絡人", "ContactTel": "連絡電話", "AD_Des": "詳細資訊" };
@@ -409,14 +424,58 @@ const editPost = (item) => {
     edit_file.value = item.Post_File;
 }
 
+const editAD = (item) => {
+    dialogFormVisibleAD.value = true;
+    edit_ADID.value = item.ADID;
+    edit_houseAge.value = item.HouseAge;
+    edit_houseType.value = item.HouseType;
+    edit_roomType.value = item.RoomType;
+    edit_address.value = item.Address;
+    edit_rentLimit.value = item.RentLimit;
+    edit_price.value = item.Price;
+    edit_contactName.value = item.ContactName;
+    edit_contactTel.value = item.ContactTel;
+    edit_AD_Des.value = item.AD_Des;
+    edit_date.value = item.Date;
+    edit_file.value = item.AD_File;
+    edit_date.value = [item.Start, item.End];
+}
+
 const sentEditPost = () => {
-    axios.post('http://127.0.0.1:5000/api/ad/edit-post', { PID: edit_PID.value, content: edit_content.value, file: edit_file.value})
+    axios.post('http://127.0.0.1:5000/api/ad/edit-post', { PID: edit_PID.value, content: edit_content.value, file: edit_file.value })
         .then(res => {
             console.log("Response data:", res.data)
             if (res.data.status === 'success') {
                 alert('編輯成功');
                 dialogFormVisiblePost.value = false
                 handleSelect('2');
+            } else {
+                alert('編輯失敗');
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                console.error("Error response data:", error.response.data)
+                console.error("Error response status:", error.response.status)
+                console.error("Error response headers:", error.response.headers)
+            } else if (error.request) {
+                console.error("Error request data:", error.request)
+            } else {
+                console.error("Error message:", error.message)
+            }
+            console.error("Error config:", error.config)
+            alert('編輯出現錯誤');
+        });
+}
+
+const sentEditAD = () => {
+    axios.post('http://127.0.0.1:5000/api/ad/edit-AD', { ADID: edit_ADID.value, HouseAge: edit_houseAge.value, HouseType: edit_houseType.value, RoomType: edit_roomType.value, Address: edit_address.value, RentLimit: edit_rentLimit.value, Price: edit_price.value, ContactName: edit_contactName.value, ContactTel: edit_contactTel.value, AD_Des: edit_AD_Des.value, AD_File: edit_file.value, Start: edit_date.value[0], End: edit_date.value[1]})
+        .then(res => {
+            console.log("Response data:", res.data)
+            if (res.data.status === 'success') {
+                alert('編輯成功');
+                dialogFormVisibleAD.value = false
+                handleSelect('1');
             } else {
                 alert('編輯失敗');
             }
@@ -590,9 +649,7 @@ const deletePost = (PID) => {
                                             <span>{{ item.Name }}</span>
                                             <div class="edit-delete" v-if="isAuthor(item.ID)">
                                                 <el-button type="primary" size="small" :icon="Edit"
-                                                    style="margin-right: 5px;"
-                                                    @click="editAD(item)"
-                                                    circle></el-button>
+                                                    style="margin-right: 5px;" @click="editAD(item)" circle></el-button>
                                                 <el-button type="danger" size="small" :icon="Delete"
                                                     @click="deleteAD(item.ADID)" style="margin-left: auto;"
                                                     circle></el-button>
@@ -659,8 +716,7 @@ const deletePost = (PID) => {
                                             <span>{{ item.Name }}</span>
                                             <div class="edit-delete" v-if="isAuthor(item.ID)">
                                                 <el-button type="primary" size="small" :icon="Edit"
-                                                    style="margin-right: 5px;"
-                                                    @click="editPost(item)"
+                                                    style="margin-right: 5px;" @click="editPost(item)"
                                                     circle></el-button>
                                                 <el-button type="danger" size="small" :icon="Delete"
                                                     @click="deletePost(item.PID)" style="margin-left: auto;"
@@ -784,7 +840,7 @@ const deletePost = (PID) => {
                         </template>
                     </el-dialog>
                     <el-dialog v-model="dialogFormVisiblePost" title="編輯貼文" width="500">
-                        <el-form :model="form2">
+                        <el-form>
                             <div hidden>
                                 <el-form-item label="PID" :label-width="formLabelWidth">
                                     <el-input v-model="edit_PID" style="width: 240px" :rows="2" />
@@ -801,6 +857,63 @@ const deletePost = (PID) => {
                             <div class="dialog-footer">
                                 <el-button @click="dialogFormVisiblePost = false">Cancel</el-button>
                                 <el-button type="primary" @click="sentEditPost">
+                                    Confirm
+                                </el-button>
+                            </div>
+                        </template>
+                    </el-dialog>
+                    <el-dialog v-model="dialogFormVisibleAD" title="編輯貼文" width="500">
+                        <el-form>
+                            <div hidden>
+                                <el-form-item label="ADID" :label-width="formLabelWidth">
+                                    <el-input v-model="edit_ADID" style="width: 240px" :rows="2" />
+                                </el-form-item>
+                            </div>
+                            <el-form-item label="屋齡" :label-width="formLabelWidth">
+                                <el-input-number v-model="edit_houseAge" :min="0" />
+                            </el-form-item>
+                            <el-form-item label="房屋類型" :label-width="formLabelWidth">
+                                <el-select v-model="edit_houseType" placeholder="Select" style="width: 240px">
+                                    <el-option v-for="(item, index) in houseType" :key="index" :label="item"
+                                        :value="index" />
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="房間類型" :label-width="formLabelWidth">
+                                <el-select v-model="edit_roomType" placeholder="Select" style="width: 240px">
+                                    <el-option v-for="(item, index) in roomType" :key="index" :label="item"
+                                        :value="index" />
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="房屋地址" :label-width="formLabelWidth">
+                                <el-input v-model="edit_address" style="width: 240px" />
+                            </el-form-item>
+                            <el-form-item label="限租條件" :label-width="formLabelWidth">
+                                <el-input v-model="edit_rentLimit" style="width: 240px" />
+                            </el-form-item>
+                            <el-form-item label="租金(月)" :label-width="formLabelWidth">
+                                <el-input-number v-model="edit_price" :min="0" />
+                            </el-form-item>
+                            <el-form-item label="聯絡人" :label-width="formLabelWidth">
+                                <el-input v-model="edit_contactName" style="width: 240px" />
+                            </el-form-item>
+                            <el-form-item label="連絡電話" :label-width="formLabelWidth">
+                                <el-input v-model="edit_contactTel" style="width: 240px" />
+                            </el-form-item>
+                            <el-form-item label="詳細資訊" :label-width="formLabelWidth">
+                                <el-input v-model="edit_AD_Des" style="width: 240px" :rows="2" type="textarea" />
+                            </el-form-item>
+                            <el-form-item label="刊登起訖日" :label-width="formLabelWidth">
+                                <el-date-picker v-model="edit_date" type="daterange" range-separator="To"
+                                    start-placeholder="Start date" end-placeholder="End date" :size="size" />
+                            </el-form-item>
+                            <el-form-item label="檔案連結" :label-width="formLabelWidth">
+                                <el-input v-model="edit_file" style="width: 240px" :rows="2" />
+                            </el-form-item>
+                        </el-form>
+                        <template #footer>
+                            <div class="dialog-footer">
+                                <el-button @click="dialogFormVisibleAD = false">Cancel</el-button>
+                                <el-button type="primary" @click="sentEditAD">
                                     Confirm
                                 </el-button>
                             </div>
