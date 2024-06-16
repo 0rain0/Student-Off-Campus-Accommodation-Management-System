@@ -76,7 +76,7 @@ const searchName = ref('')
 
 const fetchStudents = async (params = {}) => {
     try {
-        const response = await axios.get('http://127.0.0.1:5000/VSS/students', {
+        const response = await axios.get('http://127.0.0.1:5000/VSS/studentStatue', {
             params: {
                 page: currentPage.value,
                 pageSize,

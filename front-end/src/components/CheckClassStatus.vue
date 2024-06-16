@@ -8,25 +8,46 @@
             <el-container>
                 <VSS_Aside />
                 <el-main id="main">
-                    <el-table :data="ClassStatu" style="width: 100%">
+                    <el-table :data="classStatus" style="width: 100%">
                         <el-table-column prop="Department" label="系所" width="150" />
                         <el-table-column prop="Grade" label="年級" width="100" />
                         <el-table-column prop="Section" label="班級" width="100" />
-                        <el-table-column prop="Total" label="人數" width="100" />
-                        <el-table-column prop="Status" label="狀態" width="100">
-                            <template #default="scope">
-                                <el-tag :type="scope.row.Status === '已填寫' ? 'success' : 'danger'">
-                                    {{ scope.row.Status }}
-                                </el-tag>
-                            </template>
-                        </el-table-column>     
+                        <el-table-column prop="TeacherName" label="導師名字" width="150" />
+                        <el-table-column prop="CompleteRate" label="完成率" width="100" />
+                        <el-table-column label="操作" width="100">
+                                <el-button>
+                                    查看
+                                </el-button>
+                        </el-table-column>
                     </el-table>               
                 </el-main>
             </el-container>
         </el-container>
     </div>
 </template>
+
 <script setup lang="ts">
-import router from "../router/index.js";
-import axios from 'axios'
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+
+interface ClassStatue {
+    Department: string;
+    Grade: string;
+    Section: string;
+    TeacherName: string;
+    CompleteRate: number;
+}
+
+const classStatus = ref<ClassStatue[]>([]);
+
+const getClassStatus = async () => {
+    try {
+        const response = await axios.get('http://localhost:5000/VSS/ClassStatue');
+        classStatus.value = response.data.classes;
+    } catch (error) {
+        console.error("Failed to fetch class status:", error);
+    }
+}
+
+onMounted(getClassStatus);
 </script>
