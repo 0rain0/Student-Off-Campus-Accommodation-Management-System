@@ -1542,5 +1542,150 @@ def getUserType():
         print(f"Error: {ex}")
         traceback.print_exc()
 
+
+@app.route('/api/ad/edit-post', methods=['POST'])
+def edit_post():
+    data = request.get_json()
+    pid = data.get('PID')
+    content = data.get('content')
+    Post_File = data.get('file')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("UPDATE post SET Content = '"+content + "', Post_File = '"+Post_File + "' WHERE PID = '"+pid + "'")
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+@app.route('/api/ad/delete-post', methods=['POST'])
+def delete_post():
+    data = request.get_json()
+    pid = data.get('PID')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("DELETE FROM post WHERE PID = '"+pid + "'")
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+@app.route('/api/ad/edit-AD', methods=['POST'])
+def edit_AD():
+    data = request.get_json()
+    adid = data.get('ADID')
+    Name = data.get('Name')
+    HouseAge = data.get('HouseAge')
+    HouseType = data.get('HouseType')
+    RoomType = data.get('RoomType')
+    Address = data.get('Address')
+    RentLimit = data.get('RentLimit')
+    Price = data.get('Price')
+    ContactName = data.get('ContactName')
+    ContactTel = data.get('ContactTel')
+    Start = data.get('Start')
+    End = data.get('End')
+    AD_File = data.get('AD_File')
+    AD_Des = data.get('AD_Des')
+    Start = format_date(Start)
+    End = format_date(End)
+    connection = connect.connect_to_db()
+    print(Start, End)
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("UPDATE advertisement SET HouseAge = '"+str(HouseAge) + "', HouseType = '"+str(HouseType) + "', RoomType = '"+str(RoomType) + "', Address = '"+Address + "', RentLimit = '"+RentLimit + "', Price = '"+str(Price) + "', ContactName = '"+ContactName + "', ContactTel = '"+ContactTel + "', Start = '"+Start + "', End = '"+End + "', AD_File = '"+AD_File + "', AD_Des = '"+AD_Des + "', Name = '"+ Name + "' WHERE ADID = '"+adid + "'")
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+def format_date(date_str):
+    date_obj = datetime.strptime(date_str, "%a, %d %b %Y %H:%M:%S %Z")
+    return date_obj.strftime("%Y-%m-%d")
+
+@app.route('/api/ad/add-AD', methods=['POST'])
+def addAD():
+    data = request.get_json()
+    LID = data.get('LID')
+    Name = data.get('Name')
+    HouseAge = data.get('HouseAge')
+    HouseType = data.get('HouseType')
+    RoomType = data.get('RoomType')
+    Address = data.get('Address')
+    RentLimit = data.get('RentLimit')
+    Price = data.get('Price')
+    ContactName = data.get('ContactName')
+    ContactTel = data.get('ContactTel')
+    Start = data.get('Start')
+    End = data.get('End')
+    AD_File = data.get('AD_File')
+    AD_Des = data.get('AD_Des')
+    Start = Start[:10]
+    End = End[:10]
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT COUNT(*) FROM advertisement")
+                connection.commit()
+                count = cursor.fetchone()[0]
+                if count == 0:
+                    adid = 1
+                else:
+                    cursor.execute("SELECT MAX(ADID) FROM advertisement")
+                    connection.commit()
+                    adid = int(cursor.fetchone()[0]) + 1
+                cursor.execute("INSERT INTO advertisement (ADID, LID, Name, HouseAge, HouseType, RoomType, Address, RentLimit, Price, ContactName, ContactTel, Start, End, AD_File, AD_Des, Validated) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s, %s, %s)", (adid, LID, Name, HouseAge, HouseType, RoomType, Address, RentLimit, Price, ContactName, ContactTel, Start, End, AD_File, AD_Des, 1))
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+@app.route('/api/ad/add-post', methods=['POST'])
+def addPost():
+    data = request.get_json()
+    ID = data.get('ID')
+    Name = data.get('Name')
+    Content = data.get('Content')
+    Post_File = data.get('Post_File')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT COUNT(*) FROM post")
+                connection.commit()
+                count = cursor.fetchone()[0]
+                if count == 0:
+                    pid = 1
+                else:
+                    cursor.execute("SELECT MAX(PID) FROM post")
+                    connection.commit()
+                    pid = int(cursor.fetchone()[0]) + 1
+                cursor.execute("INSERT INTO post (PID, ID, Name, Content, Post_File) VALUES (%s, %s, %s, %s, %s)", (pid, ID, Name, Content, Post_File))
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+
 if __name__ == '__main__':
     app.run(debug=True)

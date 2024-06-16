@@ -358,6 +358,8 @@ let background = ref(false);
 let dialogFormVisible = ref(false);
 let dialogFormVisible2 = ref(false);
 let dialogFormVisibleAD = ref(false);
+let dialogFormVisibleAddAD = ref(false);
+let dialogFormVisibleAddPost = ref(false);
 const formLabelWidth = ref('120px');
 let edit_rate = ref(0);
 let edit_content = ref('');
@@ -377,6 +379,7 @@ let edit_contactName = ref('');
 let edit_contactTel = ref('');
 let edit_AD_Des = ref('');
 let edit_date = ref('');
+let edit_Name = ref('');
 
 let houseType = ref(['透天', '公寓', '大樓', '學舍', '其他']);
 let roomType = ref(['套房', '雅房']);
@@ -424,8 +427,17 @@ const editPost = (item) => {
     edit_file.value = item.Post_File;
 }
 
+const addPost = () => {
+    dialogFormVisibleAddPost.value = true;
+    edit_PID.value = '';
+    edit_content.value = '';
+    edit_file.value = '';
+    edit_Name.value = '';
+}
+
 const editAD = (item) => {
     dialogFormVisibleAD.value = true;
+    edit_Name.value = item.Name;
     edit_ADID.value = item.ADID;
     edit_houseAge.value = item.HouseAge;
     edit_houseType.value = item.HouseType;
@@ -439,6 +451,23 @@ const editAD = (item) => {
     edit_date.value = item.Date;
     edit_file.value = item.AD_File;
     edit_date.value = [item.Start, item.End];
+}
+
+const addAD = () => {
+    dialogFormVisibleAddAD.value = true;
+    edit_ADID.value = '';
+    edit_Name.value = '';
+    edit_houseAge.value = '';
+    edit_houseType.value = '';
+    edit_roomType.value = '';
+    edit_address.value = '';
+    edit_rentLimit.value = '';
+    edit_price.value = '';
+    edit_contactName.value = '';
+    edit_contactTel.value = '';
+    edit_AD_Des.value = '';
+    edit_date.value = '';
+    edit_file.value = '';
 }
 
 const sentEditPost = () => {
@@ -469,7 +498,7 @@ const sentEditPost = () => {
 }
 
 const sentEditAD = () => {
-    axios.post('http://127.0.0.1:5000/api/ad/edit-AD', { ADID: edit_ADID.value, HouseAge: edit_houseAge.value, HouseType: edit_houseType.value, RoomType: edit_roomType.value, Address: edit_address.value, RentLimit: edit_rentLimit.value, Price: edit_price.value, ContactName: edit_contactName.value, ContactTel: edit_contactTel.value, AD_Des: edit_AD_Des.value, AD_File: edit_file.value, Start: edit_date.value[0], End: edit_date.value[1]})
+    axios.post('http://127.0.0.1:5000/api/ad/edit-AD', { ADID: edit_ADID.value, HouseAge: edit_houseAge.value, HouseType: edit_houseType.value, RoomType: edit_roomType.value, Address: edit_address.value, RentLimit: edit_rentLimit.value, Price: edit_price.value, ContactName: edit_contactName.value, ContactTel: edit_contactTel.value, AD_Des: edit_AD_Des.value, AD_File: edit_file.value, Start: edit_date.value[0], End: edit_date.value[1], Name: edit_Name.value })
         .then(res => {
             console.log("Response data:", res.data)
             if (res.data.status === 'success') {
@@ -492,6 +521,60 @@ const sentEditAD = () => {
             }
             console.error("Error config:", error.config)
             alert('編輯出現錯誤');
+        });
+}
+
+const sentAddAD = () => {
+    axios.post('http://127.0.0.1:5000/api/ad/add-AD', { LID: localStorage.getItem('userID'), HouseAge: edit_houseAge.value, HouseType: edit_houseType.value, RoomType: edit_roomType.value, Address: edit_address.value, RentLimit: edit_rentLimit.value, Price: edit_price.value, ContactName: edit_contactName.value, ContactTel: edit_contactTel.value, AD_Des: edit_AD_Des.value, AD_File: edit_file.value, Start: edit_date.value[0], End: edit_date.value[1], Name: edit_Name.value })
+        .then(res => {
+            console.log("Response data:", res.data)
+            if (res.data.status === 'success') {
+                alert('新增成功');
+                dialogFormVisibleAddAD.value = false
+                handleSelect('1');
+            } else {
+                alert('新增失敗');
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                console.error("Error response data:", error.response.data)
+                console.error("Error response status:", error.response.status)
+                console.error("Error response headers:", error.response.headers)
+            } else if (error.request) {
+                console.error("Error request data:", error.request)
+            } else {
+                console.error("Error message:", error.message)
+            }
+            console.error("Error config:", error.config)
+            alert('新增出現錯誤');
+        });
+}
+
+const sentAddPost = () => {
+    axios.post('http://127.0.0.1:5000/api/ad/add-post', { ID: localStorage.getItem('userID'), Content: edit_content.value, Post_File: edit_file.value, Name: edit_Name.value})
+        .then(res => {
+            console.log("Response data:", res.data)
+            if (res.data.status === 'success') {
+                alert('新增成功');
+                dialogFormVisibleAddPost.value = false
+                handleSelect('2');
+            } else {
+                alert('新增失敗');
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                console.error("Error response data:", error.response.data)
+                console.error("Error response status:", error.response.status)
+                console.error("Error response headers:", error.response.headers)
+            } else if (error.request) {
+                console.error("Error request data:", error.request)
+            } else {
+                console.error("Error message:", error.message)
+            }
+            console.error("Error config:", error.config)
+            alert('新增出現錯誤');
         });
 }
 
@@ -696,7 +779,8 @@ const deletePost = (PID) => {
                                     </template>
                                 </el-card>
                             </div>
-                            <el-button style="justify-content: center;" :icon="Plus" size="large" circle />
+                            <el-button style="justify-content: center;" :icon="Plus" size="large" circle
+                                @click="addAD"></el-button>
                         </div>
 
                         <div class="pagination-block">
@@ -707,60 +791,66 @@ const deletePost = (PID) => {
                         </div>
                     </div>
                     <div class="message_board" hidden>
-                        <div class="message_cards">
-                            <div class="ad-cards" style="display: flex; flex-direction: row; flex-wrap: wrap;">
-                                <el-card v-for="(item, k) in paginatedData2" :key="k"
-                                    style="max-width: 480px; margin: 10px 10px; width: 18vw;">
-                                    <template #header>
-                                        <div class="card-header" style="display: flex;justify-content: space-between;">
-                                            <span>{{ item.Name }}</span>
-                                            <div class="edit-delete" v-if="isAuthor(item.ID)">
-                                                <el-button type="primary" size="small" :icon="Edit"
-                                                    style="margin-right: 5px;" @click="editPost(item)"
-                                                    circle></el-button>
-                                                <el-button type="danger" size="small" :icon="Delete"
-                                                    @click="deletePost(item.PID)" style="margin-left: auto;"
-                                                    circle></el-button>
+                        <div class="message_cards"
+                            style="display: flex; flex-direction: row; flex-wrap: wrap; align-items: center;">
+                            <div class="ad-cards">
+                                <div style="display: flex; flex-direction: row; flex-wrap: wrap; ">
+                                    <el-card v-for="(item, k) in paginatedData2" :key="k"
+                                        style="max-width: 480px; margin: 10px 10px; width: 18vw;">
+                                        <template #header>
+                                            <div class="card-header"
+                                                style="display: flex;justify-content: space-between;">
+                                                <span>{{ item.Name }}</span>
+                                                <div class="edit-delete" v-if="isAuthor(item.ID)">
+                                                    <el-button type="primary" size="small" :icon="Edit"
+                                                        style="margin-right: 5px;" @click="editPost(item)"
+                                                        circle></el-button>
+                                                    <el-button type="danger" size="small" :icon="Delete"
+                                                        @click="deletePost(item.PID)" style="margin-left: auto;"
+                                                        circle></el-button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </template>
-                                    <img :src="item.Post_File" style="width: 100%;">
-                                    <p class="text item">Author: {{ item.ID }}</p>
-                                    <p class="text item">{{ item.Content }}</p>
-                                    <template #footer>
-                                        <el-collapse>
-                                            <el-collapse-item title="留言" name="1">
-                                                <div class="comment-block">
+                                        </template>
+                                        <img :src="item.Post_File" style="width: 100%;">
+                                        <p class="text item">Author: {{ item.ID }}</p>
+                                        <p class="text item">{{ item.Content }}</p>
+                                        <template #footer>
+                                            <el-collapse>
+                                                <el-collapse-item title="留言" name="1">
+                                                    <div class="comment-block">
 
-                                                    <el-card v-for="(comment, j) in item.comment" :key="j"
-                                                        style="margin: 10px 10px;">
-                                                        <div class="edit-delete" v-if="isAuthor(comment.ID)">
-                                                            <el-button type="primary" size="small" :icon="Edit"
-                                                                style="margin-right: 5px;"
-                                                                @click="editComment(comment.CID, comment.Content)"
-                                                                circle></el-button>
-                                                            <el-button type="danger" size="small" :icon="Delete"
-                                                                @click="deleteComment(comment.CID)"
-                                                                style="margin-left: auto;" circle></el-button>
-                                                        </div>
-                                                        <p>{{ comment.ID }}</p>
-                                                        <p>{{ comment.Content }}</p>
-                                                    </el-card>
-                                                </div>
-                                                <div>
-                                                    <el-input v-model="comment_content[k]" style="max-width: 600px"
-                                                        placeholder="留言" class="input-with-icon">
-                                                        <template #append>
-                                                            <el-button :icon="Promotion"
-                                                                @click="sentComment(item.PID, comment_content[k])" />
-                                                        </template>
-                                                    </el-input>
-                                                </div>
-                                            </el-collapse-item>
-                                        </el-collapse>
-                                    </template>
-                                </el-card>
+                                                        <el-card v-for="(comment, j) in item.comment" :key="j"
+                                                            style="margin: 10px 10px;">
+                                                            <div class="edit-delete" v-if="isAuthor(comment.ID)">
+                                                                <el-button type="primary" size="small" :icon="Edit"
+                                                                    style="margin-right: 5px;"
+                                                                    @click="editComment(comment.CID, comment.Content)"
+                                                                    circle></el-button>
+                                                                <el-button type="danger" size="small" :icon="Delete"
+                                                                    @click="deleteComment(comment.CID)"
+                                                                    style="margin-left: auto;" circle></el-button>
+                                                            </div>
+                                                            <p>{{ comment.ID }}</p>
+                                                            <p>{{ comment.Content }}</p>
+                                                        </el-card>
+                                                    </div>
+                                                    <div>
+                                                        <el-input v-model="comment_content[k]" style="max-width: 600px"
+                                                            placeholder="留言" class="input-with-icon">
+                                                            <template #append>
+                                                                <el-button :icon="Promotion"
+                                                                    @click="sentComment(item.PID, comment_content[k])" />
+                                                            </template>
+                                                        </el-input>
+                                                    </div>
+                                                </el-collapse-item>
+                                            </el-collapse>
+                                        </template>
+                                    </el-card>
+                                </div>
                             </div>
+                            <el-button style="justify-content: center;" :icon="Plus" size="large" circle
+                                @click="addPost"></el-button>
                         </div>
                         <div class="pagination-block">
                             <el-pagination v-model:current-page="currentPage2" v-model:page-size="pageSize2"
@@ -862,13 +952,16 @@ const deletePost = (PID) => {
                             </div>
                         </template>
                     </el-dialog>
-                    <el-dialog v-model="dialogFormVisibleAD" title="編輯貼文" width="500">
+                    <el-dialog v-model="dialogFormVisibleAD" title="編輯廣告" width="500">
                         <el-form>
                             <div hidden>
                                 <el-form-item label="ADID" :label-width="formLabelWidth">
                                     <el-input v-model="edit_ADID" style="width: 240px" :rows="2" />
                                 </el-form-item>
                             </div>
+                            <el-form-item label="標題" :label-width="formLabelWidth">
+                                <el-input v-model="edit_Name" style="width: 240px" />
+                            </el-form-item>
                             <el-form-item label="屋齡" :label-width="formLabelWidth">
                                 <el-input-number v-model="edit_houseAge" :min="0" />
                             </el-form-item>
@@ -914,6 +1007,91 @@ const deletePost = (PID) => {
                             <div class="dialog-footer">
                                 <el-button @click="dialogFormVisibleAD = false">Cancel</el-button>
                                 <el-button type="primary" @click="sentEditAD">
+                                    Confirm
+                                </el-button>
+                            </div>
+                        </template>
+                    </el-dialog><el-dialog v-model="dialogFormVisibleAddAD" title="新增廣告" width="500">
+                        <el-form>
+                            <div hidden>
+                                <el-form-item label="ADID" :label-width="formLabelWidth">
+                                    <el-input v-model="edit_ADID" style="width: 240px" :rows="2" />
+                                </el-form-item>
+                            </div>
+                            <el-form-item label="標題" :label-width="formLabelWidth">
+                                <el-input v-model="edit_Name" style="width: 240px" />
+                            </el-form-item>
+                            <el-form-item label="屋齡" :label-width="formLabelWidth">
+                                <el-input-number v-model="edit_houseAge" :min="0" />
+                            </el-form-item>
+                            <el-form-item label="房屋類型" :label-width="formLabelWidth">
+                                <el-select v-model="edit_houseType" placeholder="Select" style="width: 240px">
+                                    <el-option v-for="(item, index) in houseType" :key="index" :label="item"
+                                        :value="index" />
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="房間類型" :label-width="formLabelWidth">
+                                <el-select v-model="edit_roomType" placeholder="Select" style="width: 240px">
+                                    <el-option v-for="(item, index) in roomType" :key="index" :label="item"
+                                        :value="index" />
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="房屋地址" :label-width="formLabelWidth">
+                                <el-input v-model="edit_address" style="width: 240px" />
+                            </el-form-item>
+                            <el-form-item label="限租條件" :label-width="formLabelWidth">
+                                <el-input v-model="edit_rentLimit" style="width: 240px" />
+                            </el-form-item>
+                            <el-form-item label="租金(月)" :label-width="formLabelWidth">
+                                <el-input-number v-model="edit_price" :min="0" />
+                            </el-form-item>
+                            <el-form-item label="聯絡人" :label-width="formLabelWidth">
+                                <el-input v-model="edit_contactName" style="width: 240px" />
+                            </el-form-item>
+                            <el-form-item label="連絡電話" :label-width="formLabelWidth">
+                                <el-input v-model="edit_contactTel" style="width: 240px" />
+                            </el-form-item>
+                            <el-form-item label="詳細資訊" :label-width="formLabelWidth">
+                                <el-input v-model="edit_AD_Des" style="width: 240px" :rows="2" type="textarea" />
+                            </el-form-item>
+                            <el-form-item label="刊登起訖日" :label-width="formLabelWidth">
+                                <el-date-picker v-model="edit_date" type="daterange" range-separator="To"
+                                    start-placeholder="Start date" end-placeholder="End date" :size="size" />
+                            </el-form-item>
+                            <el-form-item label="檔案連結" :label-width="formLabelWidth">
+                                <el-input v-model="edit_file" style="width: 240px" :rows="2" />
+                            </el-form-item>
+                        </el-form>
+                        <template #footer>
+                            <div class="dialog-footer">
+                                <el-button @click="dialogFormVisibleAddAD = false">Cancel</el-button>
+                                <el-button type="primary" @click="sentAddAD">
+                                    Confirm
+                                </el-button>
+                            </div>
+                        </template>
+                    </el-dialog>
+                    <el-dialog v-model="dialogFormVisibleAddPost" title="新增貼文" width="500">
+                        <el-form>
+                            <div hidden>
+                                <el-form-item label="PID" :label-width="formLabelWidth">
+                                    <el-input v-model="edit_PID" style="width: 240px" :rows="2" />
+                                </el-form-item>
+                            </div>
+                            <el-form-item label="標題" :label-width="formLabelWidth">
+                                <el-input v-model="edit_Name" style="width: 240px" />
+                            </el-form-item>
+                            <el-form-item label="內文" :label-width="formLabelWidth">
+                                <el-input v-model="edit_content" style="width: 240px" :rows="2" type="textarea" />
+                            </el-form-item>
+                            <el-form-item label="檔案連結" :label-width="formLabelWidth">
+                                <el-input v-model="edit_file" style="width: 240px" :rows="2" />
+                            </el-form-item>
+                        </el-form>
+                        <template #footer>
+                            <div class="dialog-footer">
+                                <el-button @click="dialogFormVisibleAddPost = false">Cancel</el-button>
+                                <el-button type="primary" @click="sentAddPost">
                                     Confirm
                                 </el-button>
                             </div>
