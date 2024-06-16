@@ -1,5 +1,11 @@
 import { pa } from "element-plus/es/locale/index.mjs";
 import { createRouter, createWebHistory } from "vue-router";  //导入路由
+/*
+GolbalRouter
+SAS
+VSS
+RAS
+*/ 
 const routes = [
     {
         path:'/', // 要路由到的url路径
