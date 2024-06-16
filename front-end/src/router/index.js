@@ -27,6 +27,10 @@ const routes = [
         name:'Login',
         component:()=>import('../components/login.vue'), //导入路由页面的路径
     },
+    {        path: '/EditPersonFile',
+        name: 'EditPersonFile',
+        component: () => import('../components/EditPersonFile.vue')
+    },
     {
         path:'/AccountManage', // 要路由到的url路径
         name:'AccountManage',

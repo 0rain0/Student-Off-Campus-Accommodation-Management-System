@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, redirect
 from flask_cors import CORS
 import traceback
+import traceback
 import connect
 
 app = Flask(__name__)
@@ -32,6 +33,7 @@ def generate_new_cid(cursor):
 @app.route('/')
 def index():
     return jsonify({"message": "Hello, this is a CORS-enabled Flask application!"})
+
 
 
 @app.route('/login', methods=['POST'])
@@ -226,7 +228,6 @@ def get_accounts_data():
         else:
             return [{"AccountManage": 'sql connection fail'}]
     except Exception as ex:
-        print(f"Error: {ex}")
         traceback.print_exc()  # 打印完整的堆棧追踪
         return [{"AccountManage": 'error', "message": str(ex)}]
     finally:
@@ -262,7 +263,6 @@ def delete_account():
                     
                     return jsonify({"status": "success"})
                 except Exception as ex:
-                    print(ex)
                     return jsonify({"status": "fail", "message": str(ex)})
                 finally:
                 # 关闭数据库连接
@@ -295,7 +295,7 @@ def update_account():
                 try:
                     if permission == "管理員":
                         if account == "" or password == "" or permission == "" or name == "" or email == "":
-                            return jsonify({"status": "fail", "message": "請輸入空欄位(除了電話)"})
+                            return jsonify({"status": "fail", "message": "請輸入空欄位"})
                         sql = "UPDATE ACCOUNT SET Password = %s, UserType = %s WHERE ID = %s"
                         cursor.execute(sql, (password, permission_mapping.get(permission), account))
                         sql = "UPDATE administrator SET Name = %s, Email = %s WHERE AID = %s"
@@ -304,7 +304,7 @@ def update_account():
                         return jsonify({"status": "success", "message": "編輯成功(管理員無電話欄位)"})
                     elif permission == "房東":
                         if account == "" or password == "" or permission == "" or name == "" or phone == "" or email == "":
-                            return jsonify({"status": "fail", "message": "請輸入空欄位(除了電話)"})
+                            return jsonify({"status": "fail", "message": "請輸入空欄位"})
                         sql = "UPDATE ACCOUNT SET Password = %s, UserType = %s WHERE ID = %s"
                         cursor.execute(sql, (password, permission_mapping.get(permission), account))
                         sql = "UPDATE landlord SET Name = %s, Tel = %s, Email = %s WHERE LID = %s"
@@ -312,7 +312,7 @@ def update_account():
                         connection.commit()
                     elif permission == "學生":
                         if account == "" or password == "" or permission == "" or name == "" or phone == "" or email == "":
-                            return jsonify({"status": "fail", "message": "請輸入空欄位(除了電話)"})
+                            return jsonify({"status": "fail", "message": "請輸入空欄位"})
                         sql = "UPDATE ACCOUNT SET Password = %s, UserType = %s WHERE ID = %s"
                         cursor.execute(sql, (password, permission_mapping.get(permission), account))
                         sql = "UPDATE student SET Name = %s, Tel = %s, Email = %s WHERE SID = %s"
@@ -320,7 +320,7 @@ def update_account():
                         connection.commit()
                     elif permission == "老師":
                         if account == "" or password == "" or permission == "" or name == "" or phone == "" or email == "":
-                            return jsonify({"status": "fail", "message": "請輸入空欄位(除了電話)"})
+                            return jsonify({"status": "fail", "message": "請輸入空欄位"})
                         sql = "UPDATE ACCOUNT SET Password = %s, UserType = %s WHERE ID = %s"
                         cursor.execute(sql, (password, permission_mapping.get(permission), account))
                         sql = "UPDATE teacher SET Name = %s, Tel = %s, Email = %s WHERE TID = %s"
@@ -328,7 +328,6 @@ def update_account():
                         connection.commit()
                     return jsonify({"status": "success", "message": "編輯成功"})
                 except Exception as ex:
-                    print(ex)
                     return jsonify({"status": "fail", "message": str(ex)})
                 finally:
                 # 关闭数据库连接
@@ -346,14 +345,27 @@ def new_accounts():
         "學生": 3,
         "老師": 4
     }
+    # 通用資料
     account = data.get('account')
     password = data.get('password')
     permission = data.get('permission')
     name = data.get('name')
     phone = data.get('phone')
     email = data.get('email')
-    Teacher = data.get('Teacher') # 學生需要
-    Class = data.get('Class') # 學生需要
+
+    # 學生
+    Grade = data.get('Grade')
+    Gender = data.get('Gender')
+    Address = data.get('Address')
+    HomeTel = data.get('HomeTel')
+    ContactName = data.get('ContactName')
+    ConTel = data.get('ConTel')
+
+    # 老師
+    Rank = data.get('Rank')
+    OfficeAddr = data.get('OfficeAddr')
+    OfficeTel = data.get('OfficeTel')
+    
     if account == '':
         return jsonify({"status": "fail", "message": "請輸入帳號!"})
     elif password == '':
@@ -367,16 +379,30 @@ def new_accounts():
     elif email == '':
         return jsonify({"status": "fail", "message": "請輸入電子信箱!"})
     elif permission == "學生":
-        if Teacher == '':
-            return jsonify({"status": "fail", "message": "請輸入老師!"})
-        elif Class == '':
-            return jsonify({"status": "fail", "message": "請輸入班級!"})
-        
+        if Grade == '':
+            return jsonify({"status": "fail", "message": "請選擇年級!"})
+        elif Gender == '':
+            return jsonify({"status": "fail", "message": "請選擇性別!"})
+        elif Address == '':
+            return jsonify({"status": "fail", "message": "請輸入家中地址!"})
+        elif HomeTel == '':
+            return jsonify({"status": "fail", "message": "請輸入家中電話!"})
+        elif ContactName == '':
+            return jsonify({"status": "fail", "message": "請輸入聯絡人姓名!"})
+        elif ConTel == '':
+            return jsonify({"status": "fail", "message": "請輸入聯絡人電話!"})
+    elif permission == "老師":
+        if Rank == '':
+            return jsonify({"status": "fail", "message": "請選擇職級!"})
+        elif OfficeAddr == '':
+            return jsonify({"status": "fail", "message": "請輸入辦公室位址!"})
+        elif OfficeTel == '':
+            return jsonify({"status": "fail", "message": "請輸入辦公室電話!"})
+
     connection = connect.connect_to_db()
     if connection is not None:
         with connection.cursor() as cursor:
             try:
-                print("Test")
                 cursor.execute("SELECT * FROM account WHERE ID = %s", (account,))
                 existing_account = cursor.fetchone()
                 if existing_account:
@@ -395,30 +421,19 @@ def new_accounts():
                     cursor.execute(insert_query, (account, name, phone, email))
                     connection.commit()
                 elif permission == "學生":
-                    cursor.execute("SELECT * FROM teacher WHERE TID = %s", (Teacher,))
-                    existing_account = cursor.fetchone()
-                    if not existing_account:
-                        return jsonify({"status": "fail", "message": "老師ID不存在!"})
-                    
-                    cursor.execute("SELECT * FROM class WHERE CID = %s", (Class,))
-                    existing_account = cursor.fetchone()
-                    if not existing_account:
-                        return jsonify({"status": "fail", "message": "班級ID不存在!"})
-                    
                     insert_query = "INSERT INTO account (ID, Password, UserType) VALUES (%s, %s, %s)"
                     cursor.execute(insert_query, (account, password, "3"))
-                    insert_query = "INSERT INTO student (SID, Name, Tel, Email, TEACHER, CLASS) VALUES (%s, %s, %s, %s, %s, %s)"
-                    cursor.execute(insert_query, (account, name, phone, email, Teacher, Class))
+                    insert_query = "INSERT INTO student (SID, Name, Grade, Gender, CLASS, Tel, Email, Address, HomeTel, ContactName, ConTel) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                    cursor.execute(insert_query, (account, name, int(Grade), int(Gender), None, phone, email, Address, HomeTel, ContactName, ConTel))
                     connection.commit()
                 elif permission == "老師":
                     insert_query = "INSERT INTO account (ID, Password, UserType) VALUES (%s, %s, %s)"
                     cursor.execute(insert_query, (account, password, "4"))
-                    insert_query = "INSERT INTO teacher (TID, Name, Tel, Email) VALUES (%s, %s, %s, %s)"
-                    cursor.execute(insert_query, (account, name, phone, email))
+                    insert_query = "INSERT INTO teacher (TID, Name, Rank, Tel, Email, OfficeAddr, OfficeTel) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                    cursor.execute(insert_query, (account, name, Rank, phone, email, OfficeAddr, OfficeTel))
                     connection.commit()
                 return jsonify({"status": "success", "message": "新增成功"})
             except Exception as ex:
-                print(ex)
                 return jsonify({"status": "fail", "message": str(ex)})
             finally:
                 # 关闭数据库连接
@@ -450,63 +465,201 @@ def bulk_add_accounts():
             with connection.cursor() as cursor:
                 for row in rows:
                     columns = row.split(',')
-                    if len(columns) >= 6:
+                    if len(columns) >= 5:
                         if columns[2] not in permission_mapping:
-                            return jsonify({"status": "fail", "message": "未知的權限: " + columns[2]})
+                            return jsonify({"status": "fail", "message": "未知的權限稱謂: " + columns[2]})
                         elif columns[2] == "管理員":
-                            if columns[0] == "" or columns[1] == "" or columns[2] == "" or columns[3] == "" or columns[5] == "":
-                                return jsonify({"status": "fail", "message": "資料格式錯誤: " + str(columns)})
+                            if columns[0] == "" or columns[1] == "" or columns[2] == "" or columns[3] == "" or columns[4] == "":
+                                return jsonify({"status": "fail", "message": "管理員資料有空: " + str(columns)})
                             insert_query = "INSERT INTO account (ID, Password, UserType) VALUES (%s, %s, %s)"
                             cursor.execute(insert_query, (columns[0], columns[1], "1"))
                             insert_query = "INSERT INTO administrator (AID, Name, Email) VALUES (%s, %s, %s)"
-                            cursor.execute(insert_query, (columns[0], columns[3], columns[5]))
+                            cursor.execute(insert_query, (columns[0], columns[3], columns[4]))
                         elif columns[2] == "房東":
+                            if len(columns) < 6:
+                                return jsonify({"status": "fail", "message": "房東欄位有缺: " + str(columns)})
                             if columns[0] == "" or columns[1] == "" or columns[2] == "" or columns[3] == "" or columns[4] == "" or columns[5] == "":
-                                return jsonify({"status": "fail", "message": "資料格式錯誤: " + str(columns)})
+                                return jsonify({"status": "fail", "message": "房東資料有空: " + str(columns)})
                             insert_query = "INSERT INTO account (ID, Password, UserType) VALUES (%s, %s, %s)"
                             cursor.execute(insert_query, (columns[0], columns[1], "2"))
                             insert_query = "INSERT INTO landlord (LID, Name, Tel, Email) VALUES (%s, %s, %s, %s)"
-                            cursor.execute(insert_query, (columns[0], columns[3], columns[4], columns[5]))
+                            cursor.execute(insert_query, (columns[0], columns[3], columns[5], columns[4]))
                         elif columns[2] == "學生":
-                            if len(columns) < 8:
-                                return jsonify({"status": "fail", "message": "學生欄位錯誤!"})
-                            if columns[0] == "" or columns[1] == "" or columns[2] == "" or columns[3] == "" or columns[4] == "" or columns[5] == "" or columns[6] == "" or columns[7] == "":
-                                return jsonify({"status": "fail", "message": "資料格式錯誤: " + str(columns)})
+                            if len(columns) < 12:
+                                return jsonify({"status": "fail", "message": "學生欄位有缺: " + str(columns)})
                             
-                            cursor.execute("SELECT * FROM teacher WHERE TID = %s", (columns[6],))
-                            existing_account = cursor.fetchone()
-                            if not existing_account:
-                                return jsonify({"status": "fail", "message": "老師ID不存在: " + columns[6]})
+                            if columns[0] == "" or columns[1] == "" or columns[2] == "" or columns[3] == "" or columns[4] == "" or columns[5] == "" or columns[6] == "" or columns[7] == "" or columns[8] == "" or columns[9] == "" or columns[10] == "" or columns[11] == "":
+                                return jsonify({"status": "fail", "message": "學生資料有空: " + str(columns)})
                             
-                            cursor.execute("SELECT * FROM class WHERE CID = %s", (columns[7],))
-                            existing_account = cursor.fetchone()
-                            if not existing_account:
-                                return jsonify({"status": "fail", "message": "班級ID不存在: " + columns[7]})
+                            grade_list = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+                            if columns[6] not in grade_list:
+                                return jsonify({"status": "fail", "message": "學生年級錯誤: " + str(columns) + "\n錯誤的年級: " + columns[6]})
                             
+                            gender_mapping = {"男": "0", "女": "1", "其他": "2"}
+                            if columns[7] not in gender_mapping:
+                                return jsonify({
+                                    "status": "fail", 
+                                    "message": f"學生性別錯誤: {columns}\n錯誤的性別: {columns[7]}"
+                                })
+                            columns[7] = gender_mapping[columns[7]]
+
                             insert_query = "INSERT INTO account (ID, Password, UserType) VALUES (%s, %s, %s)"
                             cursor.execute(insert_query, (columns[0], columns[1], "3"))
-                            insert_query = "INSERT INTO student (SID, Name, Tel, Email, TEACHER, CLASS) VALUES (%s, %s, %s, %s, %s, %s)"
-                            cursor.execute(insert_query, (columns[0], columns[3], columns[4], columns[5], columns[6], columns[7]))
+                            insert_query = "INSERT INTO student (SID, Name, Grade, Gender, CLASS, Tel, Email, Address, HomeTel, ContactName, ConTel) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                            cursor.execute(insert_query, (columns[0], columns[3], columns[6], columns[7], None, columns[5], columns[4], columns[8], columns[9], columns[10], columns[11]))
                         elif columns[2] == "老師":
-                            if columns[0] == "" or columns[1] == "" or columns[2] == "" or columns[3] == "" or columns[4] == "" or columns[5] == "":
-                                return jsonify({"status": "fail", "message": "資料格式錯誤: " + str(columns)})
+                            if len(columns) < 9:
+                                return jsonify({"status": "fail", "message": "老師欄位有缺: " + str(columns)})
+                            
+                            if columns[0] == "" or columns[1] == "" or columns[2] == "" or columns[3] == "" or columns[4] == "" or columns[5] == "" or columns[6] == "" or columns[7] == "" or columns[8] == "":
+                                return jsonify({"status": "fail", "message": "老師資料有空: " + str(columns)})
+                            
+                            rank_mapping = {"教授": "0", "副教授": "1", "助理教授": "2"}
+                            if columns[6] not in rank_mapping:
+                                return jsonify({
+                                    "status": "fail", 
+                                    "message": f"老師職級錯誤: {columns}\n錯誤的職級: {columns[6]}"
+                                })
+                            columns[6] = rank_mapping[columns[6]]
+
                             insert_query = "INSERT INTO account (ID, Password, UserType) VALUES (%s, %s, %s)"
                             cursor.execute(insert_query, (columns[0], columns[1], "4"))
-                            insert_query = "INSERT INTO teacher (TID, Name, Tel, Email) VALUES (%s, %s, %s, %s)"
-                            cursor.execute(insert_query, (columns[0], columns[3], columns[4], columns[5]))
-
-                    else:return jsonify({"status": "fail", "message": "檔案格式錯誤"})
+                            insert_query = "INSERT INTO teacher (TID, Name, Rank, Tel, Email, OfficeAddr, OfficeTel) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                            cursor.execute(insert_query, (columns[0], columns[3], columns[6], columns[5], columns[4], columns[7], columns[8]))
+                    else:
+                        return jsonify({"status": "fail", "message": "資料格式錯誤"})
             connection.commit()
             return jsonify({"status": "success", "message": "批量新增成功"})
         else:
             return jsonify({"status": "fail", "message": "SQL connection fail"})
     except Exception as e:
-        print(e)
-        return jsonify({"status": "fail", "message": "Failed to process file"})
+        return jsonify({"status": "fail", "message": str(e)})
     finally:
         # 关闭数据库连接
         connection.close()
 
+# 驗證編輯個人資料權限
+@app.route('/EditLogin', methods=['POST'])
+def Edit_login():
+    try:
+        data = request.get_json()
+        if data['account'] == '':
+            return jsonify({"status": 'fail', "message": "請輸入帳號"})
+        elif data['password'] == '':
+            return jsonify({"status": 'fail', "message": "請輸入密碼"})
+        print("Received data:", data)  # 打印接收到的數據
+        connection = connect.connect_to_db()
+        if connection is not None:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM account WHERE ID = %s AND PassWord = %s"
+                cursor.execute(sql, (data['account'], data['password']))
+                result = cursor.fetchone()
+                result2 = None
+                if result is not None:
+                    if result[2] == 1: # 管理員身分
+                        sql = "SELECT * FROM administrator WHERE AID = %s"
+                        cursor.execute(sql, (data['account']))
+                        result2 = cursor.fetchone()
+                    elif result[2] == 2: # 房東身分
+                        sql = "SELECT * FROM landlord WHERE LID = %s"
+                        cursor.execute(sql, (data['account']))
+                        result2 = cursor.fetchone()
+                    elif result[2] == 3: # 學生身分
+                        sql = "SELECT * FROM student WHERE SID = %s"
+                        cursor.execute(sql, (data['account']))
+                        result2 = cursor.fetchone()
+                    elif result[2] == 4: # 老師身分
+                        sql = "SELECT * FROM teacher WHERE TID = %s"
+                        cursor.execute(sql, (data['account']))
+                        result2 = cursor.fetchone()
+                    else:
+                        return jsonify({"status": 'fail', "message": "驗證錯誤"})
+                    
+                    if result2 is not None:
+                        return jsonify({"status": 'success', "message": "驗證成功", "result": result, "result2": result2})
+                    else:
+                        return jsonify({"status": 'fail', "message": "驗證錯誤"})
+                else:
+                    return jsonify({"status": 'fail', "message": "帳號或密碼錯誤"})
+        else:
+            return jsonify({"login": 'sql connection fail'})
+    except Exception as ex:
+        print(f"Error: {ex}")
+        traceback.print_exc()  # 打印完整的堆棧追踪
+        return jsonify({"login": 'error', "message": str(ex)})
+    
+# 編輯個人資料
+@app.route('/SaveChanges', methods=['POST'])
+def SaveChanges():
+    data = request.get_json()
+    permission_mapping = {
+        "管理員": 1,
+        "房東": 2,
+        "學生": 3,
+        "老師": 4
+    }
+    account = data.get('account')
+    password = data.get('password')
+    permission = data.get('permission')
+    name = data.get('name')
+    phone = data.get('Tel')
+    email = data.get('email')
+    address = data.get('address')
+    Grade = data.get('Grade')
+    Gender = data.get('Gender')
+    HomeTel = data.get('HomeTel')
+    ContactName = data.get('ContactName')
+    ConTel = data.get('ConTel')
+    Rank = data.get('Rank')
+    OfficeAddr = data.get('OfficeAddr')
+    OfficeTel = data.get('OfficeTel')
+    if permission not in permission_mapping:
+        return jsonify({"status": "fail", "message": "未知的權限: '"+permission + "'，合法的權限(管理員, 房東, 學生, 老師)"})
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                if permission == "管理員":
+                    if account == "" or password == "" or permission == "" or name == "" or email == "":
+                        return jsonify({"status": "fail", "message": "請輸入空欄位"})
+                    sql = "UPDATE ACCOUNT SET Password = %s, UserType = %s WHERE ID = %s"
+                    cursor.execute(sql, (password, permission_mapping.get(permission), account))
+                    sql = "UPDATE administrator SET Name = %s, Email = %s WHERE AID = %s"
+                    cursor.execute(sql, (name, email, account))
+                    connection.commit()
+                    return jsonify({"status": "success", "message": "編輯成功(管理員無電話欄位)"})
+                elif permission == "房東":
+                    if account == "" or password == "" or permission == "" or name == "" or phone == "" or email == "":
+                        return jsonify({"status": "fail", "message": "請輸入空欄位"})
+                    sql = "UPDATE ACCOUNT SET Password = %s, UserType = %s WHERE ID = %s"
+                    cursor.execute(sql, (password, permission_mapping.get(permission), account))
+                    sql = "UPDATE landlord SET Name = %s, Tel = %s, Email = %s WHERE LID = %s"
+                    cursor.execute(sql, (name, phone, email, account))
+                    connection.commit()
+                elif permission == "學生":
+                    if account == "" or password == "" or permission == "" or name == "" or phone == "" or email == "" or address == "" or Grade == "" or Gender == "" or HomeTel == "" or ContactName == "" or ConTel == "":
+                        return jsonify({"status": "fail", "message": "請輸入空欄位"})
+                    sql = "UPDATE ACCOUNT SET Password = %s, UserType = %s WHERE ID = %s"
+                    cursor.execute(sql, (password, permission_mapping.get(permission), account))
+                    sql = "UPDATE student SET Name = %s, Grade = %s, Gender = %s, Tel = %s, Email = %s, Address = %s, HomeTel = %s, ContactName = %s, ConTel = %s WHERE SID = %s"
+                    cursor.execute(sql, (name, Grade, Gender, phone, email, address, HomeTel, ContactName, ConTel, account))
+                    connection.commit()
+                elif permission == "老師":
+                    if account == "" or password == "" or permission == "" or name == "" or phone == "" or email == "" or Rank == "" or OfficeAddr == "" or OfficeTel == "":
+                        return jsonify({"status": "fail", "message": "請輸入空欄位"})
+                    sql = "UPDATE ACCOUNT SET Password = %s, UserType = %s WHERE ID = %s"
+                    cursor.execute(sql, (password, permission_mapping.get(permission), account))
+                    sql = "UPDATE teacher SET Name = %s, Rank = %s, Tel = %s, Email = %s, OfficeAddr = %s, OfficeTel = %s WHERE TID = %s"
+                    cursor.execute(sql, (name, Rank, phone, email, OfficeAddr, OfficeTel, account))
+                    connection.commit()
+                return jsonify({"status": "success", "message": "編輯成功"})
+            except Exception as ex:
+                return jsonify({"status": "fail", "message": str(ex)})
+            finally:
+            # 关闭数据库连接
+                connection.close()
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
 # Class編輯頁面用於獲取班級內student資訊
 @app.route('/api/students', methods=['GET'])
 def get_students():
