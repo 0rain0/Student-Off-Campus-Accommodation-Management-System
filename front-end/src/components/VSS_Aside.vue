@@ -11,8 +11,6 @@ onMounted(() => {
 })
 
 </script>
-
-
 <template>
     <el-aside id="aside" width="200px">
       <el-menu default-active="1" class="el-menu-vertical-demo">
@@ -41,3 +39,6 @@ onMounted(() => {
     }
   }
 </script>
+<style>
+@import "@/assets/VSS.css";
+</style>
