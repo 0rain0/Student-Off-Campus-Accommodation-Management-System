@@ -8,10 +8,12 @@ from flask import make_response
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}}, supports_credentials=True)
 
+
 def convert_to_dict(tuples_list):
     keys = ["id", "department", "grade", "class", "teacher", "number"]
     dict_list = [dict(zip(keys, row)) for row in tuples_list]
     return dict_list
+
 
 def generate_new_cid(cursor):
     print("hi")
@@ -45,7 +47,7 @@ def login():
         connection = connect.connect_to_db()
         if connection is not None:
             with connection.cursor() as cursor:
-                sql = "SELECT * FROM account WHERE ID = %s AND PassWord = %s"
+                sql = "SELECT * FROM ACCOUNT WHERE ID = %s AND PassWord = %s"
                 cursor.execute(sql, (data['username'], data['password']))
                 result = cursor.fetchone()
                 if result is not None:
@@ -685,11 +687,11 @@ def get_students():
     grade = request.args.get('grade')
     section = request.args.get('section')
     page = request.args.get('page', 1, type=int)
-    
+
     page = request.args.get('page', 1, type=int)
-    per_page = 10  
+    per_page = 10
     offset = (page - 1) * per_page
-    
+
     connection = connect.connect_to_db()
     if connection is not None:
         with connection.cursor() as cursor:
@@ -698,39 +700,42 @@ def get_students():
                     cursor.execute("SELECT sid, name FROM STUDENT")
                     students = cursor.fetchall()
                     student_list = [{"sid": student[0], "name": student[1]} for student in students]
-                    
+
                     cursor.execute("SELECT COUNT(*) FROM STUDENT")
                     total = cursor.fetchone()[0]
-                    
-                    cursor.execute("SELECT cid FROM CLASS WHERE department=%s and grade=%s and section=%s", (department, grade, section,))
+
+                    cursor.execute("SELECT cid FROM CLASS WHERE department=%s and grade=%s and section=%s",
+                                   (department, grade, section,))
                     cid = cursor.fetchone()[0]
-                    
-                    cursor.execute("SELECT sid, name FROM STUDENT WHERE CLASS = %s LIMIT %s OFFSET %s", (cid, per_page, offset))
+
+                    cursor.execute("SELECT sid, name FROM STUDENT WHERE CLASS = %s LIMIT %s OFFSET %s",
+                                   (cid, per_page, offset))
                     students = cursor.fetchall()
-                    
+
                     # 将数据转换为字典列表
                     student_selected = [{"sid": student[0], "name": student[1]} for student in students]
                     print(student_selected)
-                    
-                    return jsonify({"status": "success", "student_all": student_list, "total": total, "student_selected": student_selected})
-            
+
+                    return jsonify({"status": "success", "student_all": student_list, "total": total,
+                                    "student_selected": student_selected})
+
                 else:
                     cursor.execute("SELECT sid, name FROM STUDENT")
                     students = cursor.fetchall()
                     student_list = [{"sid": student[0], "name": student[1]} for student in students]
-                    
+
                     cursor.execute("SELECT COUNT(*) FROM STUDENT")
                     total = cursor.fetchone()[0]
-                    
+
                     return jsonify({"status": "success", "student_all": student_list, "total": total})
-                
+
             except Exception as ex:
                 print(ex)
                 return jsonify({"status": "fail", "message": str(ex)})
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
-        
-        
+
+
 # 用於回傳所有teacher資訊
 @app.route('/api/teachers', methods=['GET'])
 def get_teachers():
@@ -748,10 +753,11 @@ def get_teachers():
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
 
-        
-        
+
 # 提交class修改
 import re
+
+
 @app.route('/api/classes/update', methods=['POST'])
 def update_class():
     data = request.get_json()
@@ -768,7 +774,6 @@ def update_class():
     new_grade = new_data.get('grade')
     new_section = new_data.get('section')
     new_teacher = new_data.get('teacher')
-    
 
     connection = connect.connect_to_db()
     if connection is not None:
@@ -783,7 +788,7 @@ def update_class():
                 if not cid:
                     return jsonify({"status": "fail", "message": "Class not found"})
                 cid = cid[0]
-                
+
                 if str(original_teacher) == str(new_teacher):
                     cursor.execute("SELECT tid FROM CLASS WHERE cid=%s", (cid,))
                     new_teacher = cursor.fetchone()[0]
@@ -816,7 +821,7 @@ def update_class():
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
 
-    
+
 # 提交AddNewClass的班級創建
 @app.route('/api/classes/create', methods=['POST'])
 def create_class():
@@ -836,20 +841,20 @@ def create_class():
                 # 生成新的 CID
                 new_cid = generate_new_cid(cursor)
                 print(new_cid)
-                
+
                 # 插入新的班级
                 cursor.execute(
                     "INSERT INTO CLASS (cid, department, grade, section, tid) VALUES (%s, %s, %s, %s, %s)",
                     (new_cid, department, grade, section, teacher)
                 )
-                
+
                 # 更新學生的班级信息
                 for student in selected_students:
                     cursor.execute(
                         "UPDATE STUDENT SET class=%s WHERE sid=%s",
                         (new_cid, student['sid'])
                     )
-                
+
                 connection.commit()
                 return jsonify({"status": "success"})
         except Exception as ex:
@@ -946,7 +951,7 @@ def receive_form_s():
 
         sql = sql.replace("'None'", "Null").replace("None", "Null")
         connect.update(sql)
-        return redirect("http://localhost:5175/Successform")
+        return redirect("http://localhost:5173/Successform")
     else:
         #未存在訪視紀錄，新增表單
         #需要有學號在資料庫內才能新增
@@ -967,11 +972,11 @@ def receive_form_s():
 
         sql = sql.replace("'None'", "Null").replace("None", "Null")
         connect.update(sql)
-        return redirect("http://localhost:5175/Successform")
+        return redirect("http://localhost:5173/Successform")
 
 
 #老師編輯表單
-@app.route('/receive_form_t',methods = ['GET','POST'])
+@app.route('/receive_form_t', methods=['GET', 'POST'])
 def receive_form_t():
     user = request.form
     print(user)
@@ -986,7 +991,7 @@ def receive_form_t():
     month = request.form.get("month", '00')
     day = request.form.get("day", '00')
     hour = request.form.get("hour", '00')
-    visit = year + "-" + month + "-" + day + " " + hour + ":00:00"
+    visit = f"{year}-{month}-{day} {hour}:00:00"
     EN_01 = request.form.get("EN_01")
     EN_02 = request.form.get("EN_02")
     EN_03 = request.form.get("EN_03")
@@ -1008,79 +1013,83 @@ def receive_form_t():
 
     # 確認該學號是否存在訪視紀錄
     sql = f"""
-            select * from visit_form where SID= '{SID}'
-            """
+        SELECT * FROM visit_form WHERE SID = '{SID}'
+    """
     datas = connect.query_data(sql)
 
-    if (datas != ()):
+    if datas:
         # 已存在訪視紀錄，更新表單
         sql = f"""
-                UPDATE visit_form
-                SET DG = '{DG}',
-                    SID = '{SID}',
-                    S_Name = '{S_Name}',
-                    S_Tel = '{S_Tel}',
-                    T_Name = '{T_Name}',
-                    V_Time = '{visit}',
-                    State = 1,
-                    EN_01 = {EN_01},
-                    EN_02 = {EN_02},
-                    EN_03 = {EN_03},
-                    EN_04 = {EN_04},
-                    VI_01 = {VI_01},
-                    VI_02 = {VI_02},
-                    Result = {Result},
-                    DI_01 = {DI_01},
-                    DI_02 = {DI_02},
-                    DI_03 = {DI_03},
-                    DI_04 = {DI_04},
-                    DI_05 = {DI_05},
-                    EN_03_Des = '{EN_03_Des}',
-                    EN_04_Des = '{EN_04_Des}',
-                    VI_01_Des = '{VI_01_Des}',
-                    RE_Des = '{RE_Des}',
-                    RE_Memo = '{RE_Memo}',
-                    DI_05_Des = '{DI_05_Des}'
-                WHERE SID = '{SID}'
-            """
-
-        sql = sql.replace("'None'", "Null").replace("None", "Null")
+            UPDATE visit_form
+            SET DG = '{DG}',
+                S_Name = '{S_Name}',
+                S_Tel = '{S_Tel}',
+                T_Name = '{T_Name}',
+                V_Time = '{visit}',
+                State = 1,
+                EN_01 = {EN_01 if EN_01 else 'NULL'},
+                EN_02 = {EN_02 if EN_02 else 'NULL'},
+                EN_03 = {EN_03 if EN_03 else 'NULL'},
+                EN_04 = {EN_04 if EN_04 else 'NULL'},
+                VI_01 = {VI_01 if VI_01 else 'NULL'},
+                VI_02 = {VI_02 if VI_02 else 'NULL'},
+                Result = {Result if Result else 'NULL'},
+                DI_01 = {DI_01 if DI_01 else 'NULL'},
+                DI_02 = {DI_02 if DI_02 else 'NULL'},
+                DI_03 = {DI_03 if DI_03 else 'NULL'},
+                DI_04 = {DI_04 if DI_04 else 'NULL'},
+                DI_05 = {DI_05 if DI_05 else 'NULL'},
+                EN_03_Des = {f"'{EN_03_Des}'" if EN_03_Des else 'NULL'},
+                EN_04_Des = {f"'{EN_04_Des}'" if EN_04_Des else 'NULL'},
+                VI_01_Des = {f"'{VI_01_Des}'" if VI_01_Des else 'NULL'},
+                RE_Des = {f"'{RE_Des}'" if RE_Des else 'NULL'},
+                RE_Memo = {f"'{RE_Memo}'" if RE_Memo else 'NULL'},
+                DI_05_Des = {f"'{DI_05_Des}'" if DI_05_Des else 'NULL'}
+            WHERE SID = '{SID}'
+        """
+        print("Generated SQL:", sql)  # 打印SQL語句
+        sql = sql.replace("'None'", "NULL").replace("None", "NULL")
         connect.update(sql)
-        return redirect("http://localhost:5175/Successform")
-
+        return redirect("http://localhost:5173/Successform")
     else:
         # 未存在訪視紀錄，新增表單
-        # 需要有學號在資料庫內才能新增
         sql = f"""
-        insert into visit_form
-                (State,DG,SID,S_Name,S_Tel,T_Name,V_Time,
-                EN_01,EN_02,EN_03,EN_04,VI_01,VI_02,Result,
-                DI_01,DI_02,DI_03,DI_04,DI_05,EN_03_Des,
-                EN_04_Des,VI_01_Des,RE_Des,RE_Memo,DI_05_Des)
-                values (1,'{DG}','{SID}','{S_Name}','{S_Tel}','{T_Name}',
-                        '{visit}','{EN_01}','{EN_02}','{EN_03}','{EN_04}',
-                        '{VI_01}',{VI_02},'{EN_03_Des}','{EN_04_Des}','{VI_01_Des}',
-                        '{RE_Des}','{RE_Memo}','{DI_05_Des}')
-                """
-
-        sql = sql.replace("'None'", "Null").replace("None", "Null")
+            INSERT INTO visit_form
+                (State, DG, SID, S_Name, S_Tel, T_Name, V_Time,
+                EN_01, EN_02, EN_03, EN_04, VI_01, VI_02, Result,
+                DI_01, DI_02, DI_03, DI_04, DI_05, EN_03_Des,
+                EN_04_Des, VI_01_Des, RE_Des, RE_Memo, DI_05_Des)
+            VALUES (1, '{DG}', '{SID}', '{S_Name}', '{S_Tel}', '{T_Name}', 
+                    '{visit}', {EN_01 if EN_01 else 'NULL'}, {EN_02 if EN_02 else 'NULL'}, 
+                    {EN_03 if EN_03 else 'NULL'}, {EN_04 if EN_04 else 'NULL'}, 
+                    {VI_01 if VI_01 else 'NULL'}, {VI_02 if VI_02 else 'NULL'}, {Result if Result else 'NULL'}, 
+                    {DI_01 if DI_01 else 'NULL'}, {DI_02 if DI_02 else 'NULL'}, {DI_03 if DI_03 else 'NULL'}, 
+                    {DI_04 if DI_04 else 'NULL'}, {DI_05 if DI_05 else 'NULL'}, 
+                    {f"'{EN_03_Des}'" if EN_03_Des else 'NULL'}, {f"'{EN_04_Des}'" if EN_04_Des else 'NULL'}, 
+                    {f"'{VI_01_Des}'" if VI_01_Des else 'NULL'}, {f"'{RE_Des}'" if RE_Des else 'NULL'}, 
+                    {f"'{RE_Memo}'" if RE_Memo else 'NULL'}, {f"'{DI_05_Des}'" if DI_05_Des else 'NULL'})
+        """
+        print("Generated SQL:", sql)  # 打印SQL語句
+        sql = sql.replace("'None'", "NULL").replace("None", "NULL")
         connect.update(sql)
-        return redirect("http://localhost:5175/Successform")
+        return redirect("http://localhost:5173/Successform")
+
     
-@app.route('/VSS/students', methods=['GET'])
+@app.route('/VSS/studentStatue', methods=['GET'])
 def get_VSS_students():
     page = request.args.get('page', 1, type=int)
     pageSize = request.args.get('pageSize', 10, type=int)
     sid = request.args.get('SID', None)
     name = request.args.get('Name', None)
+    cid = request.args.get('CID', None)
     offset = (page - 1) * pageSize
-    
+
     connection = connect.connect_to_db()
     if connection is not None:
         try:
             with connection.cursor() as cursor:
                 count_query = "SELECT COUNT(*) FROM student"
-                select_query = "SELECT SID, Name, Tel, Email FROM student"
+                select_query = "SELECT SID, Name, CLASS, Tel, Email FROM student"
                 conditions = []
                 params = []
 
@@ -1090,6 +1099,9 @@ def get_VSS_students():
                 if name:
                     conditions.append("Name LIKE %s")
                     params.append(f"%{name}%")
+                if cid:
+                    conditions.append("CLASS LIKE %s")
+                    params.append(f"%{cid}%")
 
                 if conditions:
                     count_query += " WHERE " + " AND ".join(conditions)
@@ -1100,10 +1112,10 @@ def get_VSS_students():
 
                 cursor.execute(count_query, params[:-2])
                 total = cursor.fetchone()[0]
-                
+
                 cursor.execute(select_query, params)
                 students = cursor.fetchall()
-                
+
                 student_list = []
                 for student in students:
                     sid = student[0]
@@ -1118,7 +1130,7 @@ def get_VSS_students():
                         "Status": status
                     }
                     student_list.append(student_info)
-                
+
                 return jsonify({"students": student_list, "total": total, "status": "success"})
         except Exception as ex:
             print(ex)
@@ -1128,6 +1140,90 @@ def get_VSS_students():
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
 
+
+@app.route('/VSS/ClassStatue', methods=['GET'])
+def get_VSS_classes():
+    page = request.args.get('page', 1, type=int)
+    pageSize = request.args.get('pageSize', 10, type=int)
+    department = request.args.get('department', None)
+    grade = request.args.get('grade', None)
+    section = request.args.get('section', None)
+    offset = (page - 1) * pageSize
+
+    connection = connect.connect_to_db()
+    if connection is not None:
+        try:
+            with connection.cursor() as cursor:
+                count_query = "SELECT COUNT(*) FROM class"
+                select_query = """SELECT class.CID, class.Department, class.Grade, class.Section, 
+                                  class.TID, teacher.Name, COUNT(student.SID) AS StudentCount, 
+                                  SUM(CASE WHEN visit_form.SID IS NOT NULL THEN 1 ELSE 0 END) AS VisitCount
+                                  FROM class
+                                  LEFT JOIN teacher ON class.TID = teacher.TID
+                                  LEFT JOIN student ON class.CID = student.CLASS
+                                  LEFT JOIN visit_form ON student.SID = visit_form.SID"""
+                conditions = []
+                params = []
+
+                if department:
+                    conditions.append("class.Department = %s")
+                    params.append(department)
+                if grade:
+                    conditions.append("class.Grade = %s")
+                    params.append(grade)
+                if section:
+                    conditions.append("class.Section = %s")
+                    params.append(section)
+
+                if conditions:
+                    condition_str = " WHERE " + " AND ".join(conditions)
+                else:
+                    condition_str = ""
+
+                count_query += condition_str
+                select_query += condition_str + " GROUP BY class.CID, class.Department, class.Grade, class.Section, class.TID, teacher.Name"
+                select_query += " LIMIT %s OFFSET %s"
+                params.extend([pageSize, offset])
+
+                cursor.execute(count_query, params[:-2])
+                total = cursor.fetchone()[0]
+
+                cursor.execute(select_query, params)
+                classes = cursor.fetchall()
+
+                class_list = [{'CID': cl[0], 'Department': cl[1], 'Grade': cl[2],
+                               'Section': cl[3], 'TID': cl[4], 'teacherName': cl[5],
+                               'CompleteRate': (cl[7] / cl[6] * 100) if cl[6] > 0 else 0}  # 轉換為百分比
+                              for cl in classes]
+
+                return jsonify({"classes": class_list, "total": total, "status": "success"})
+        except Exception as ex:
+            print(ex)
+            return jsonify({"status": "fail", "message": str(ex)})
+        finally:
+            connection.close()
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+    
+@app.route('/VSS/CheckForm_S/<sid>', methods=['GET'])
+def check_form_s(sid):
+    connection = connect.connect_to_db()
+    if connection is not None:
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM visit_form WHERE SID = %s", (sid,))
+                form = cursor.fetchone()
+                if form:
+                    return jsonify({"status": "success", "form": form})
+                else:
+                    return jsonify({"status": "fail", "message": "No form found"})
+        except Exception as ex:
+            print(ex)
+            return jsonify({"status": "fail", "message": str(ex)})
+        finally:
+            connection.close()
+    else:
+        return jsonify({"status": "fail", "message": "SQL connection failed"})
 
 
 if __name__ == '__main__':

@@ -5,13 +5,16 @@
             <VSS_Aside />
             <el-main>
                 <el-row :gutter="20" class="mb-3">
-                    <el-col :span="8">
+                    <el-col :span="6">
                         <el-input v-model="searchSID" placeholder="輸入學號"></el-input>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="6">
                         <el-input v-model="searchName" placeholder="輸入姓名"></el-input>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="6">
+                        <el-input v-model="searchCID" placeholder="輸入班級CID"></el-input>
+                    </el-col>
+                    <el-col :span="6">
                         <el-button type="primary" @click="handleSearch">搜尋</el-button>
                         <el-button @click="handleReset">重置</el-button>
                     </el-col>
@@ -31,12 +34,12 @@
                     <el-table-column label="操作" width="100">
                         <template #default="scope">
                             <el-button 
-                                @click="handleFill(scope.$index, scope.row)" 
+                                @click="handleFill(scope.row.SID)" 
                                 type="primary" 
                                 size="small"
                                 :disabled="scope.row.Status !== '已填寫'"
                             >
-                                查看
+                                填寫
                             </el-button>
                         </template>
                     </el-table-column>
@@ -52,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, defineProps } from 'vue'
 import router from '../router'
 import axios from 'axios'
 
@@ -70,10 +73,11 @@ const pageSize = 10
 const currentPage = ref(1)
 const searchSID = ref('')
 const searchName = ref('')
+const searchCID = ref('')
 
 const fetchStudents = async (params = {}) => {
     try {
-        const response = await axios.get('http://127.0.0.1:5000/VSS/students', {
+        const response = await axios.get('http://127.0.0.1:5000/VSS/studentStatue', {
             params: {
                 page: currentPage.value,
                 pageSize,
@@ -96,81 +100,34 @@ const handleSearch = () => {
     const params: any = {}
     if (searchSID.value) params.SID = searchSID.value
     if (searchName.value) params.Name = searchName.value
+    if (searchCID.value) params.CID = searchCID.value
     fetchStudents(params)
 }
 
 const handleReset = () => {
     searchSID.value = ''
     searchName.value = ''
+    searchCID.value = ''
     fetchStudents()
 }
 
-const handleFill = (index: number, row: Student) => {
-    if (row.Status === '已填寫') {
-        // 執行查看操作
-        console.log(`查看學生 ${row.SID} 的詳細信息`)
-    }
+const handleFill = (sid: string) => {
+    router.push({ name: 'CheckStudentForm', params: { id: sid } })
 }
 
-const visit_form_s = () => {
-    router.push('/EditRentalSurveyForm_S');
-};
-
-const visit_form_t = () => {
-    router.push('/EditRentalSurveyForm_T');
-};
-
+const props = defineProps({
+  id: {
+    type: String,
+    default: null
+  }
+})
 
 onMounted(() => {
-    fetchStudents()
+    if (props.id) {
+        searchCID.value = props.id
+        handleSearch()
+    } else {
+        fetchStudents()
+    }
 })
 </script>
-
-<style>
-#common-layout .el-container {
-    height: 100vh;
-    width: 100%;
-}
-
-#header {
-    background-color: #409eff;
-    color: #fff;
-    line-height: 60px;
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-}
-
-#aside {
-    background-color: #c3e1ff;
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-}
-
-.aside-button {
-    width: 100%;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-    text-align: center;
-}
-
-.el-page-header__breadcrumb {
-    margin-bottom: 0px;
-}
-
-.el-icon {
-    padding-top: 0px;
-}
-
-body {
-    margin: 0;
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-}
-
-.pagination {
-    margin-top: 20px;
-}
-</style>

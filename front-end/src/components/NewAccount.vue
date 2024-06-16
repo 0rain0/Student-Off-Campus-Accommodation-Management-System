@@ -23,18 +23,11 @@
                     <!-- 表单开始 -->
                 <el-form label-width="100px">
                     <el-form-item label="帳號">
-                        <el-input v-model="newAccount.account" placeholder="請輸入帳號" maxlength="15"></el-input>
+                        <el-input v-model="newAccount.account" placeholder="請輸入帳號"></el-input>
                     </el-form-item>
                     <el-form-item label="密碼">
-                        <el-input v-model="newAccount.password" placeholder="請輸入密碼" maxlength="15"></el-input>
+                        <el-input v-model="newAccount.password" placeholder="請輸入密碼"></el-input>
                     </el-form-item>
-                    <el-form-item label="姓名">
-                        <el-input v-model="newAccount.name" placeholder="請輸入姓名" maxlength="15"></el-input>
-                    </el-form-item>
-                    <el-form-item label="電子信箱">
-                        <el-input v-model="newAccount.email" placeholder="請輸入電子信箱" maxlength="30"></el-input>
-                    </el-form-item>
-
                     <el-form-item label="權限">
                         <el-select v-model="newAccount.permission" placeholder="請選擇權限">
                             <el-option label="管理員" value="管理員"></el-option>
@@ -43,76 +36,27 @@
                             <el-option label="老師" value="老師"></el-option>
                         </el-select>
                     </el-form-item>
-
+                    <el-form-item v-if="newAccount.permission !== '管理員'">
+                        <el-form-item label="電話">
+                            <el-input v-model="newAccount.phone" placeholder="請輸入電話"></el-input>
+                        </el-form-item>
+                    </el-form-item>
                     <!-- 根据权限显示不同的表单项 -->
-                    <!-- 房東 -->
-                    <el-form-item v-if="newAccount.permission === '房東'">
-                        <el-form-item label="電話">
-                            <el-input v-model="newAccount.phone" placeholder="請輸入電話" maxlength="15"></el-input>
-                        </el-form-item>
-                    </el-form-item>
-
-                    <!-- 學生 -->
                     <el-form-item v-if="newAccount.permission === '學生'">
-                        <el-form-item label="電話">
-                            <el-input v-model="newAccount.phone" placeholder="請輸入電話" maxlength="15"></el-input>
+                        <el-form-item label="老師ID">
+                            <el-input v-model="newAccount.Teacher" placeholder="請輸入老師ID"></el-input>
                         </el-form-item>
-                        <el-form-item label="年級">
-                            <el-select v-model="newAccount.Grade" placeholder="請選擇年級" class="select-class">
-                                <el-option label="1" value="1"></el-option>
-                                <el-option label="2" value="2"></el-option>
-                                <el-option label="3" value="3"></el-option>
-                                <el-option label="4" value="4"></el-option>
-                                <el-option label="5" value="5"></el-option>
-                                <el-option label="6" value="6"></el-option>
-                                <el-option label="7" value="7"></el-option>
-                                <el-option label="8" value="8"></el-option>
-                                <el-option label="9" value="9"></el-option>
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="性別">
-                            <el-select v-model="newAccount.Gender" placeholder="請選擇性別" class="select-class">
-                                <el-option label="男" value="0"></el-option>
-                                <el-option label="女" value="1"></el-option>
-                                <el-option label="其他" value="2"></el-option>
-                            </el-select>
+                        <el-form-item label="班級ID">
+                            <el-input v-model="newAccount.Class" placeholder="請輸入班級ID"></el-input>
                         </el-form-item>
                     </el-form-item>
-                    <el-form-item v-if="newAccount.permission === '學生'">
-                        <el-form-item label="家中地址">
-                            <el-input v-model="newAccount.Address" placeholder="請輸入家中地址" maxlength="30"></el-input>
-                        </el-form-item>
-                        <el-form-item label="家中電話">
-                            <el-input v-model="newAccount.HomeTel" placeholder="請輸入家中電話" maxlength="15"></el-input>
-                        </el-form-item>
-                        <el-form-item label="聯絡人姓名">
-                            <el-input v-model="newAccount.ContactName" placeholder="請輸入聯絡人姓名" maxlength="15"></el-input>
-                        </el-form-item>
-                        <el-form-item label="聯絡人電話">
-                            <el-input v-model="newAccount.ConTel" placeholder="請輸入聯絡人電話" maxlength="15"></el-input>
-                        </el-form-item>
+                    <el-form-item label="姓名">
+                        <el-input v-model="newAccount.name" placeholder="請輸入姓名"></el-input>
                     </el-form-item>
-
-                    <!-- 老師 -->
-                    <el-form-item v-if="newAccount.permission === '老師'">
-                        <el-form-item label="電話">
-                            <el-input v-model="newAccount.phone" placeholder="請輸入電話" maxlength="15"></el-input>
-                        </el-form-item>
-                        <el-form-item label="職級">
-                            <el-select v-model="newAccount.Rank" placeholder="請選擇職級" class="select-class">
-                                <el-option label="教授" value="0"></el-option>
-                                <el-option label="副教授" value="1"></el-option>
-                                <el-option label="助理教授" value="2"></el-option>
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="辦公室位址">
-                            <el-input v-model="newAccount.OfficeAddr" placeholder="請輸入辦公室位址" maxlength="30"></el-input>
-                        </el-form-item>
-                        <el-form-item label="辦公室電話">
-                            <el-input v-model="newAccount.OfficeTel" placeholder="請輸入辦公室電話" maxlength="15"></el-input>
-                        </el-form-item>
+                    <el-form-item label="電子信箱">
+                        <el-input v-model="newAccount.email" placeholder="請輸入電子信箱"></el-input>
                     </el-form-item>
-
+                    
                     <el-form-item>
                         <el-button type="primary" @click="submitForm">確認新增</el-button>
                     </el-form-item>
@@ -130,7 +74,6 @@ import router from '../router'
 import axios from 'axios'
 
 interface Account {
-    // 通用資料
     account: string
     password: string
     permission: string
@@ -138,44 +81,21 @@ interface Account {
     phone: string
     email: string
 
-    // 學生
-    Grade: string
-    Gender: string
-    Address: string
-    HomeTel: string
-    ContactName: string
-    ConTel: string
-
-    // 老師
-    Rank: string
-    OfficeAddr: string
-    OfficeTel: string
+    Teacher: string
+    Class: string
 }
 
 export default {
     setup() {
         const newAccount = ref<Account>({
-            // 通用資料
             account: '',
             password: '',
             permission: '',
             name: '',
             phone: '',
             email: '',
-
-            // 學生
-            Grade: '',
-            Gender: '',
-            Class: '',
-            Address: '',
-            HomeTel: '',
-            ContactName: '',
-            ConTel: '',
-
-            // 老師
-            Rank: '',
-            OfficeAddr: '',
-            OfficeTel: ''
+            Teacher: '',
+            Class: ''
         })
 
         const addLargeNumberOfAccounts = () => {
@@ -202,8 +122,7 @@ export default {
                         message: response.data.message,
                         type: 'success',
                     });
-                    resetForm();
-                    manageAccounts();
+                    resetForm()
                 } else {
                     ElMessage({
                         message: response.data.message,
@@ -219,27 +138,14 @@ export default {
         const resetForm = () => {
             // 重置表单数据
             newAccount.value = {
-                // 通用資料
                 account: '',
                 password: '',
                 permission: '',
                 name: '',
                 phone: '',
                 email: '',
-
-                // 學生
-                Grade: '',
-                Gender: '',
-                Class: '',
-                Address: '',
-                HomeTel: '',
-                ContactName: '',
-                ConTel: '',
-
-                // 老師
-                Rank: '',
-                OfficeAddr: '',
-                OfficeTel: ''
+                Teacher: '',
+                Class: ''
             }
         }
 
@@ -300,9 +206,5 @@ body {
 
 .pagination {
     margin-top: 20px;
-}
-
-.select-class {
-    width: 150px;
 }
 </style>

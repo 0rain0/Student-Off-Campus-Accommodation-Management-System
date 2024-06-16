@@ -2,8 +2,10 @@
 
 ## 新網頁模板
 ```vue
+<style>
+@import "@/assets/VSS.css";
+</style>
 <template>
-    <link rel="stylesheet" href="VSS.css">
     <div id="common-layout">
         <VSS_Header />
         <el-container>
@@ -24,3 +26,5 @@ import axios from 'axios'
 ```
 <VSS_Header />是Header模組
 <VSS_Aside />是側欄模組
+
+Form_T都暫時不用了

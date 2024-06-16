@@ -1,13 +1,7 @@
-<script setup>
-import { ref, reactive } from 'vue'
-import router from '../router';
-const visit_form = () => {
-    router.push('/EditRentalSurveyForm');
-};
-
-</script>
+<style>
+@import "@/assets/VSS.css";
+</style>
 <template>
-    <link rel="stylesheet" href="VSS.css">
     <div id="common-layout">
         <VSS_Header />
         <el-container>
