@@ -1174,10 +1174,8 @@ def get_VSS_classes():
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
     
-@app.route('/VSS/CheckForm_S', methods=['GET'])
-def check_form_s():
-    sid = request.args.get('SID')
-    
+@app.route('/VSS/CheckForm_S/<sid>', methods=['GET'])
+def check_form_s(sid):
     connection = connect.connect_to_db()
     if connection is not None:
         try:
@@ -1194,8 +1192,7 @@ def check_form_s():
         finally:
             connection.close()
     else:
-        return jsonify({"status": "fail", "message": "sql connection fail"})
-
+        return jsonify({"status": "fail", "message": "SQL connection failed"})
 
 
 
