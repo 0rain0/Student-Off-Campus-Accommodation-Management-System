@@ -1482,7 +1482,24 @@ def edit_review():
                 return jsonify({"status": "fail", "message": str(ex)})
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
-    
+
+@app.route('/api/ad/delete-comment', methods=['POST'])
+def delete_comment():
+    data = request.get_json()
+    cid = data.get('CMID')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("DELETE FROM comment WHERE CMID = '"+cid + "'")
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
 @app.route('/api/ad/edit-comment', methods=['POST'])
 def edit_comment():
     data = request.get_json()
@@ -1502,22 +1519,7 @@ def edit_comment():
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
 
-@app.route('/api/ad/delete-comment', methods=['POST'])
-def delete_comment():
-    data = request.get_json()
-    cid = data.get('CMID')
-    connection = connect.connect_to_db()
-    if connection is not None:
-        with connection.cursor() as cursor:
-            try:
-                cursor.execute("DELETE FROM comment WHERE CMID = '"+cid + "'")
-                connection.commit()
-                return jsonify({"status": "success"})
-            except Exception as ex:
-                print(ex)
-                return jsonify({"status": "fail", "message": str(ex)})
-    else:
-        return jsonify({"status": "fail", "message": "sql connection fail"})
+
 
 @app.route('/api/getUserType', methods=['POST'])
 def getUserType():
