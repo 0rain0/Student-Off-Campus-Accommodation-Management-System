@@ -85,11 +85,6 @@ const fetchStudent = async (id) => {
         console.error("Error fetching student data:", error)
     }
 }
-const submitFormS = () => {
-    if (formS.value && formS.value.handleSubmit) {
-        formS.value.handleSubmit()
-    }
-}
 onMounted(() => {
     const id = route.params.id
     fetchStudent(id)

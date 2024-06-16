@@ -945,7 +945,7 @@ def receive_form_s():
 
         sql = sql.replace("'None'", "Null").replace("None", "Null")
         connect.update(sql)
-        return redirect("http://localhost:5175/Successform")
+        return redirect("http://localhost:5173/Successform")
     else:
         #未存在訪視紀錄，新增表單
         #需要有學號在資料庫內才能新增
@@ -966,11 +966,11 @@ def receive_form_s():
 
         sql = sql.replace("'None'", "Null").replace("None", "Null")
         connect.update(sql)
-        return redirect("http://localhost:5175/Successform")
+        return redirect("http://localhost:5173/Successform")
 
 
 #老師編輯表單
-@app.route('/receive_form_t',methods = ['GET','POST'])
+@app.route('/receive_form_t', methods=['GET', 'POST'])
 def receive_form_t():
     user = request.form
     print(user)
@@ -985,7 +985,7 @@ def receive_form_t():
     month = request.form.get("month", '00')
     day = request.form.get("day", '00')
     hour = request.form.get("hour", '00')
-    visit = year + "-" + month + "-" + day + " " + hour + ":00:00"
+    visit = f"{year}-{month}-{day} {hour}:00:00"
     EN_01 = request.form.get("EN_01")
     EN_02 = request.form.get("EN_02")
     EN_03 = request.form.get("EN_03")
@@ -1007,64 +1007,67 @@ def receive_form_t():
 
     # 確認該學號是否存在訪視紀錄
     sql = f"""
-            select * from visit_form where SID= '{SID}'
-            """
+        SELECT * FROM visit_form WHERE SID = '{SID}'
+    """
     datas = connect.query_data(sql)
 
-    if (datas != ()):
+    if datas:
         # 已存在訪視紀錄，更新表單
         sql = f"""
-                UPDATE visit_form
-                SET DG = '{DG}',
-                    SID = '{SID}',
-                    S_Name = '{S_Name}',
-                    S_Tel = '{S_Tel}',
-                    T_Name = '{T_Name}',
-                    V_Time = '{visit}',
-                    State = 1,
-                    EN_01 = {EN_01},
-                    EN_02 = {EN_02},
-                    EN_03 = {EN_03},
-                    EN_04 = {EN_04},
-                    VI_01 = {VI_01},
-                    VI_02 = {VI_02},
-                    Result = {Result},
-                    DI_01 = {DI_01},
-                    DI_02 = {DI_02},
-                    DI_03 = {DI_03},
-                    DI_04 = {DI_04},
-                    DI_05 = {DI_05},
-                    EN_03_Des = '{EN_03_Des}',
-                    EN_04_Des = '{EN_04_Des}',
-                    VI_01_Des = '{VI_01_Des}',
-                    RE_Des = '{RE_Des}',
-                    RE_Memo = '{RE_Memo}',
-                    DI_05_Des = '{DI_05_Des}'
-                WHERE SID = '{SID}'
-            """
-
-        sql = sql.replace("'None'", "Null").replace("None", "Null")
+            UPDATE visit_form
+            SET DG = '{DG}',
+                S_Name = '{S_Name}',
+                S_Tel = '{S_Tel}',
+                T_Name = '{T_Name}',
+                V_Time = '{visit}',
+                State = 1,
+                EN_01 = {EN_01 if EN_01 else 'NULL'},
+                EN_02 = {EN_02 if EN_02 else 'NULL'},
+                EN_03 = {EN_03 if EN_03 else 'NULL'},
+                EN_04 = {EN_04 if EN_04 else 'NULL'},
+                VI_01 = {VI_01 if VI_01 else 'NULL'},
+                VI_02 = {VI_02 if VI_02 else 'NULL'},
+                Result = {Result if Result else 'NULL'},
+                DI_01 = {DI_01 if DI_01 else 'NULL'},
+                DI_02 = {DI_02 if DI_02 else 'NULL'},
+                DI_03 = {DI_03 if DI_03 else 'NULL'},
+                DI_04 = {DI_04 if DI_04 else 'NULL'},
+                DI_05 = {DI_05 if DI_05 else 'NULL'},
+                EN_03_Des = {f"'{EN_03_Des}'" if EN_03_Des else 'NULL'},
+                EN_04_Des = {f"'{EN_04_Des}'" if EN_04_Des else 'NULL'},
+                VI_01_Des = {f"'{VI_01_Des}'" if VI_01_Des else 'NULL'},
+                RE_Des = {f"'{RE_Des}'" if RE_Des else 'NULL'},
+                RE_Memo = {f"'{RE_Memo}'" if RE_Memo else 'NULL'},
+                DI_05_Des = {f"'{DI_05_Des}'" if DI_05_Des else 'NULL'}
+            WHERE SID = '{SID}'
+        """
+        print("Generated SQL:", sql)  # 打印SQL語句
+        sql = sql.replace("'None'", "NULL").replace("None", "NULL")
         connect.update(sql)
-        return redirect("http://localhost:5175/Successform")
-
+        return redirect("http://localhost:5173/Successform")
     else:
         # 未存在訪視紀錄，新增表單
-        # 需要有學號在資料庫內才能新增
         sql = f"""
-        insert into visit_form
-                (State,DG,SID,S_Name,S_Tel,T_Name,V_Time,
-                EN_01,EN_02,EN_03,EN_04,VI_01,VI_02,Result,
-                DI_01,DI_02,DI_03,DI_04,DI_05,EN_03_Des,
-                EN_04_Des,VI_01_Des,RE_Des,RE_Memo,DI_05_Des)
-                values (1,'{DG}','{SID}','{S_Name}','{S_Tel}','{T_Name}',
-                        '{visit}','{EN_01}','{EN_02}','{EN_03}','{EN_04}',
-                        '{VI_01}',{VI_02},'{EN_03_Des}','{EN_04_Des}','{VI_01_Des}',
-                        '{RE_Des}','{RE_Memo}','{DI_05_Des}')
-                """
-
-        sql = sql.replace("'None'", "Null").replace("None", "Null")
+            INSERT INTO visit_form
+                (State, DG, SID, S_Name, S_Tel, T_Name, V_Time,
+                EN_01, EN_02, EN_03, EN_04, VI_01, VI_02, Result,
+                DI_01, DI_02, DI_03, DI_04, DI_05, EN_03_Des,
+                EN_04_Des, VI_01_Des, RE_Des, RE_Memo, DI_05_Des)
+            VALUES (1, '{DG}', '{SID}', '{S_Name}', '{S_Tel}', '{T_Name}', 
+                    '{visit}', {EN_01 if EN_01 else 'NULL'}, {EN_02 if EN_02 else 'NULL'}, 
+                    {EN_03 if EN_03 else 'NULL'}, {EN_04 if EN_04 else 'NULL'}, 
+                    {VI_01 if VI_01 else 'NULL'}, {VI_02 if VI_02 else 'NULL'}, {Result if Result else 'NULL'}, 
+                    {DI_01 if DI_01 else 'NULL'}, {DI_02 if DI_02 else 'NULL'}, {DI_03 if DI_03 else 'NULL'}, 
+                    {DI_04 if DI_04 else 'NULL'}, {DI_05 if DI_05 else 'NULL'}, 
+                    {f"'{EN_03_Des}'" if EN_03_Des else 'NULL'}, {f"'{EN_04_Des}'" if EN_04_Des else 'NULL'}, 
+                    {f"'{VI_01_Des}'" if VI_01_Des else 'NULL'}, {f"'{RE_Des}'" if RE_Des else 'NULL'}, 
+                    {f"'{RE_Memo}'" if RE_Memo else 'NULL'}, {f"'{DI_05_Des}'" if DI_05_Des else 'NULL'})
+        """
+        print("Generated SQL:", sql)  # 打印SQL語句
+        sql = sql.replace("'None'", "NULL").replace("None", "NULL")
         connect.update(sql)
-        return redirect("http://localhost:5175/Successform")
+        return redirect("http://localhost:5173/Successform")
+
     
 @app.route('/VSS/studentStatue', methods=['GET'])
 def get_VSS_students():
