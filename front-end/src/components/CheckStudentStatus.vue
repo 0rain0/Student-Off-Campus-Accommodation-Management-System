@@ -33,7 +33,7 @@
                     </el-table-column>
                     <el-table-column label="操作" width="100">
                         <template #default="scope">
-                            <el-button v-if="isUserType('3')"
+                            <el-button v-if="isUserType('4')"
                                 @click="handleFill(scope.row.SID)" 
                                 type="primary" 
                                 size="small"
@@ -41,7 +41,7 @@
                             >
                                 填寫
                             </el-button>
-                            <br v-if="isUserType('3')">
+                            <br v-if="isUserType('4')">
                             <el-button
                                 @click="handleQ(scope.row.SID)"
                                 type="primary"
