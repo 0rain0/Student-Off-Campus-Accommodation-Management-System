@@ -1,3 +1,6 @@
+<style>
+@import "@/assets/VSS.css";
+</style>
 <template>
   <div id="common-layout">
       <VSS_Header />
