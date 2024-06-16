@@ -18,6 +18,7 @@ const login = () => {
                 alert(`歡迎${res.data.usertype === '1' ? '管理員' : '登入'}`)
                 Cookies.set('UserType', res.data.usertype)
                 Cookies.set('username', loginForm.username)
+                localStorage.setItem('userID', loginForm.username)
                 router.push('/menu')
             } else {
                 alert('登入失敗')
