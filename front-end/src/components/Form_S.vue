@@ -379,125 +379,113 @@
                         </tr>
                     </table>
 
-                    <table>
-            <tr>
-                <th colspan="2" class="line">環境及作息評估（導師填寫）</th>
-            </tr>
-            <tr>
-                <th class="evaluate">押金要求</th>
-                <td>
-                    <div class="radio-group">
-                        <label><input type="radio" name="EN_01" value="0" v-model="student.EN_01"> 合理</label>
-                        <label><input type="radio" name="EN_01" value="1" v-model="student.EN_01"> 不合理（2個月以上之租金）</label>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th class="evaluate">水電費要求</th>
-                <td>
-                    <div class="radio-group">
-                        <label><input type="radio" name="EN_02" value="0" v-model="student.EN_02"> 合理</label>
-                        <label><input type="radio" name="EN_02" value="1" v-model="student.EN_02"> 不合理</label>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th class="evaluate">居住環境</th>
-                <td>
-                    <div class="radio-group">
-                        <label><input type="radio" name="EN_03" value="0" v-model="student.EN_03"> 佳</label>
-                        <label><input type="radio" name="EN_03" value="1" v-model="student.EN_03"> 適中</label>
-                        <label>
-                            <input type="radio" name="EN_03" value="2" v-model="student.EN_03"> 欠佳，說明：
-                            <input type="text" name="EN_03_Des" size="20" v-model="student.EN_03_Des">
-                        </label>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th class="evaluate">生活設施</th>
-                <td>
-                    <div class="radio-group">
-                        <label><input type="radio" name="EN_04" value="0" v-model="student.EN_04"> 佳</label>
-                        <label><input type="radio" name="EN_04" value="1" v-model="student.EN_04"> 適中</label>
-                        <label>
-                            <input type="radio" name="EN_04" value="2" v-model="student.EN_04"> 欠佳，說明：
-                            <input type="text" name="EN_04_Des" size="20" v-model="student.EN_04_Des">
-                        </label>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th class="evaluate">訪視現況</th>
-                <td colspan="3">
-                    <div class="radio-group">
-                        <label><input type="radio" name="VI_01" value="0" v-model="student.VI_01"> 生活規律</label>
-                        <label><input type="radio" name="VI_01" value="1" v-model="student.VI_01"> 適中</label>
-                        <label>
-                            <input type="radio" name="VI_01" value="2" v-model="student.VI_01"> 待加強，說明：
-                            <input type="text" name="VI_01_Des" size="20" v-model="student.VI_01_Des">
-                        </label>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th class="evaluate">主客相處</th>
-                <td colspan="3">
-                    <div class="radio-group">
-                        <label><input type="radio" name="VI_02" value="0" v-model="student.VI_02"> 和睦</label>
-                        <label><input type="radio" name="VI_02" value="1" v-model="student.VI_02"> 欠佳</label>
-                    </div>
-                </td>
-            </tr>
-        </table>
+                        <table>
+                            <tr>
+                                <th colspan="2" class="line">環境及作息評估（導師填寫）</th>
+                            </tr>
+                            <tr>
+                                <th class="evaluate">押金要求</th>
+                                <td>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="EN_01" value="0"> 合理</label>
+                                        <label><input type="radio" name="EN_01" value="1"> 不合理（2個月以上之租金）</label>
+                                    </div>
+                                </td>
+                            </tr>
 
-        <table>
-            <tr>
-                <th colspan="4" class="line">訪視結果（導師填寫）</th>
-            </tr>
-            <tr>
-                <th colspan="4">
-                    <div class="radio-group">
-                        <label><input type="radio" name="Result" value="0" v-model="student.Result"> 整體賃居狀況良好</label>
-                        <label><input type="radio" name="Result" value="1" v-model="student.Result"> 聯繫家長關注</label>
-                        <label><input type="radio" name="Result" value="2" v-model="student.Result"> 安全堪慮請協助</label>
-                        <label>
-                            <input type="radio" name="Result" value="3" v-model="student.Result"> 其他，說明：
-                            <input type="text" name="RE_Des" size="20" v-model="student.RE_Des">
-                        </label>
-                    </div>
-                </th>
-            </tr>
-            <tr>
-                <th colspan="4">其他記載或建議事項：<input type="text" size="20" name="RE_Memo" v-model="student.RE_Memo"></th>
-            </tr>
+                            <tr>
+                                <th class="evaluate">水電費要求</th>
+                                <td>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="EN_02" value="0"> 合理</label>
+                                        <label><input type="radio" name="EN_02" value="1"> 不合理</label>
+                                    </div>
+                                </td>
+                            </tr>
 
-            <tr>
-                <th colspan="4" class="line">關懷宣導項目（懇請導師賃居訪視時多予關懷叮嚀）</th>
-            </tr>
-            <tr>
-                <td colspan="4">
-                    <div class="radio-group">
-                        <label><input type="checkbox" name="DI_01" v-model="student.DI_01" true-value="0" false-value="1"> 交通安全</label>
-                        <label><input type="checkbox" name="DI_02" v-model="student.DI_02" true-value="0" false-value="1"> 拒絕菸害</label>
-                        <label><input type="checkbox" name="DI_03" v-model="student.DI_03" true-value="0" false-value="1"> 拒絕毒品</label>
-                        <label><input type="checkbox" name="DI_04" v-model="student.DI_04" true-value="0" false-value="1"> 登革熱防治</label>
-                        <label>
-                            <input type="checkbox" name="DI_05" v-model="student.DI_05" true-value="0" false-value="1"> 其他，說明：
-                            <input type="text" name="DI_05_Des" size="20" v-model="student.DI_05_Des">
-                        </label>
-                    </div>
-                </td>
-            </tr>
-        </table>
+                            <tr>
+                                <th class="evaluate">居住環境</th>
+                                <td>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="EN_03" value="0"> 佳</label>
+                                        <label><input type="radio" name="EN_03" value="1"> 適中</label>
+                                        <label><input type="radio" name="EN_03" value="2"> 欠佳，說明：<input type="text" name="EN_03_Des" size="20"></label>
+                                    </div>
+                                </td>
+                            </tr>
 
-        <div align="center">
-            <br>
-            <input type="reset" value="清除表單" name="reset" class="styled-button">
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="submit" value="提交表單" name="submit" class="styled-button">
-        </div>
-    </form>
+                            <tr>
+                                <th class="evaluate">生活設施</th>
+                                <td>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="EN_04" value="0"> 佳</label>
+                                        <label><input type="radio" name="EN_04" value="1"> 適中</label>
+                                        <label><input type="radio" name="EN_04" value="2"> 欠佳，說明：<input type="text" name="EN_04_Des" size="20"></label>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th class="evaluate">訪視現況</th>
+                                <td colspan="3">
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="VI_01" value="0"> 生活規律</label>
+                                        <label><input type="radio" name="VI_01" value="1"> 適中</label>
+                                        <label><input type="radio" name="VI_01" value="2"> 待加強，說明：<input type="text" name="VI_01_Des" size="20"></label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="evaluate">主客相處</th>
+                                <td colspan="3">
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="VI_02" value="0"> 和睦</label>
+                                        <label><input type="radio" name="VI_02" value="1"> 欠佳</label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table>
+                            <tr>
+                                <th colspan="4" class="line">訪視結果（導師填寫）</th>
+                            </tr>
+                            <tr>
+                                <th colspan="4">
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="Result" value="0"> 整體賃居狀況良好</label>
+                                        <label><input type="radio" name="Result" value="1"> 聯繫家長關注</label>
+                                        <label><input type="radio" name="Result" value="2"> 安全堪慮請協助</label>
+                                        <label><input type="radio" name="Result" value="3"> 其他，說明：<input type="text" name="RE_Des" size="20"></label>
+                                    </div>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th colspan="4">其他記載或建議事項：<input type="text" size="20" name="RE_Memo"></th>
+                            </tr>
+
+                            <tr>
+                                <th colspan="4" class="line">關懷宣導項目（懇請導師賃居訪視時多予關懷叮嚀）</th>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <div class="radio-group">
+                                        <label><input type="checkbox" name="DI_01" value="0"> 交通安全</label>
+                                        <label><input type="checkbox" name="DI_02" value="0"> 拒絕菸害</label>
+                                        <label><input type="checkbox" name="DI_03" value="0"> 拒絕毒品</label>
+                                        <label><input type="checkbox" name="DI_04" value="0"> 登革熱防治</label>
+                                        <label><input type="checkbox" name="DI_05" value="0"> 其他，說明：<input type="text" name="DI_05_Des" size="20"></label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+          <div align="center">
+                <br>
+                <input type="reset" value="清除表單" name="reset" class="styled-button">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="submit" value="提交表單" name="submit" class="styled-button">
+          </div>
+        </form>
 </template>
 
 <script setup lang="ts">
