@@ -6,7 +6,7 @@
         <VSS_Header />
         <el-container>
             <el-container>
-                <el-aside id="aside" width="200px"> </el-aside>
+                <VSS_Aside />
                 <el-main id="main">
                    <el-button size="large" round @click="visit_form">新增/編輯表單</el-button>
                 </el-main>
