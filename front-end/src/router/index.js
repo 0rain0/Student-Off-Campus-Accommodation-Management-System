@@ -7,6 +7,17 @@ const routes = [
         component:()=>import('../components/login.vue'), //导入路由页面的路径
     },
     {
+        path: '/menu',
+        name: 'menu',
+        component: () => import('../components/menu.vue')
+    },
+    // SAS
+    {
+        path: '/SAS',
+        name: 'SAS',
+        component: () => import('../components/SAS.vue')
+    },
+    {
         path:'/register', // 要路由到的url路径
         name:'Landlord_register',
         component:()=>import('../components/Landlord_register.vue'), //导入路由页面的路径
@@ -15,6 +26,10 @@ const routes = [
         path:'/login', // 要路由到的url路径
         name:'Login',
         component:()=>import('../components/login.vue'), //导入路由页面的路径
+    },
+    {        path: '/EditPersonFile',
+        name: 'EditPersonFile',
+        component: () => import('../components/EditPersonFile.vue')
     },
     {
         path:'/AccountManage', // 要路由到的url路径
@@ -37,55 +52,56 @@ const routes = [
         component:()=>import('../components/ClassManage.vue'), //导入路由页面的路径
     },
     {
+        path:'/AddNewClass', // 要路由到的url路径
+        name:'AddNewClass',
+        component:()=>import('../components/AddNewClass.vue'), //导入路由页面的路径
+    },
+    {
         path:'/EditClass', // 要路由到的url路径
         name:'EditClass',
         component:()=>import('../components/EditClass.vue'), //导入路由页面的路径
     },
-    {
-        path: '/menu',
-        name: 'menu',
-        component: () => import('../components/menu.vue')
-    },
-    {
-        path: '/SAS',
-        name: 'SAS',
-        component: () => import('../components/SAS.vue')
-    },
+    //VSS 
     {
         path: '/VSS',
         name: 'VSS',
         component: () => import('../components/VSS.vue')
     },
-    {
+    {//????????不知幹麼的????
         path: '/back_vss',
         name: 'back_vss',
         component: () => import('../components/VSS.vue')
     },
     {
-        path: '/RAS',
-        name: 'RAS',
-        component: () => import('../components/RAS.vue')
+        path: '/EditRentalSurveyForm_S',
+        name: 'EditRentalSurveyForm_S',
+        component: () => import('../components/EditRentalSurveyForm_S.vue')
     },
     {
-        path: '/EditPersonFile',
-        name: 'EditPersonFile',
-        component: () => import('../components/EditPersonFile.vue')
+        path: '/EditRentalSurveyForm_T',
+        name: 'EditRentalSurveyForm_T',
+        component: () => import('../components/EditRentalSurveyForm_T.vue')
     },
-    {
-        path: '/EditRentalSurveyForm',
-        name: 'EditRentalSurveyForm',
-        component: () => import('../components/EditRentalSurveyForm.vue')
-    }
-    ,
     {
         path: '/Successform',
         name: 'Successform',
         component: () => import('../components/Successform.vue')
     },
     {
-        path:'/AddNewClass', // 要路由到的url路径
-        name:'AddNewClass',
-        component:()=>import('../components/AddNewClass.vue'), //导入路由页面的路径
+        path: '/CheckStudentStatus',
+        name: 'CheckStudentStatus',
+        component: () => import('../components/CheckStudentStatus.vue')
+    },
+    {
+        path: '/CheckClassStatus',
+        name: 'CheckClassStatus',
+        component: () => import('../components/CheckClassStatus.vue')
+    },
+    //RAS
+    {
+        path: '/RAS',
+        name: 'RAS',
+        component: () => import('../components/RAS.vue')
     }
 ];
 

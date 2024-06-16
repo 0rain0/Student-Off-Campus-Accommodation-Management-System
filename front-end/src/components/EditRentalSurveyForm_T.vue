@@ -1,22 +1,16 @@
 <template>
   <div id="common-layout">
-      <el-header id="header" style="display: flex;">
-        <el-page-header @click="router.push('/menu');">
-          <template #content>
-            <span class="text-large font-600 mr-3" style="color: white;"> 學生訪視 </span>
-          </template>
-        </el-page-header>
-      </el-header>
+      <VSS_Header />
   </div>
 
   <div>
     <el-container>
-      <el-aside id="aside" width="200px"></el-aside>
+        <VSS_Aside />
         <el-main id="main">
-          <form action="http://127.0.0.1:5000/receive_form" method="POST">
+          <form action="http://127.0.0.1:5000/receive_form_t" method="POST">
                           <table>
                             <tr>
-                                <th colspan="8" class="center"><h1>校外賃居訪視記錄</h1></th>
+                                <th colspan="8" class="center"><h1>校外賃居訪視記錄-導師填寫</h1></th>
                             </tr>
                             <tr>
                                 <th>系級：</th>
@@ -40,7 +34,7 @@
                             </tr>
                           </table>
 
-                        <table>
+                        <table style="display:none">
                             <tr>
                                 <th colspan="6" class="line">校外賃居資料（學生填寫）</th>
                             </tr>
@@ -93,7 +87,7 @@
                             </tr>
                         </table>
 
-                        <table>
+                        <table style="display:none">
                             <tr>
                                 <th colspan="4" class="line">賃居安全自主管理檢視資料（學生填寫）</th>
                             </tr>
@@ -317,8 +311,8 @@
 </template>
 
 <script setup>
-
 import router from "../router/index.js";
+
 </script>
 
 <style>
