@@ -1,6 +1,7 @@
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive } from 'vue'
 import router from '../router';
+
 import axios from 'axios'
 import { Promotion, Plus, Edit, Delete } from '@element-plus/icons-vue';
 
@@ -515,235 +516,29 @@ const deletePost = (PID) => {
         });
 }
 
-</script>
 
+</script>
 <template>
     <div id="common-layout">
         <el-container>
             <el-header id="header" style="display: flex;">
                 <el-page-header @click="router.push('/menu');">
+                    <!-- <template #breadcrumb>
+                        <el-breadcrumb separator="/">
+                            <el-breadcrumb-item :to="{ path: './menu' }">
+                                Menu
+                            </el-breadcrumb-item>
+                            <el-breadcrumb-item>系統管理</el-breadcrumb-item>
+                        </el-breadcrumb>
+                    </template> -->
                     <template #content>
                         <span class="text-large font-600 mr-3" style="color: white;"> 租屋廣告/留言板 </span>
                     </template>
                 </el-page-header>
-                <el-button type="info" bg text @click="router.push('/login')" style="margin-left: auto;">登出</el-button>
             </el-header>
             <el-container>
-                <el-aside id="aside" width="200px">
-                    <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect">
-                        <el-menu-item index="1">租屋廣告</el-menu-item>
-                        <el-menu-item index="2">留言板</el-menu-item>
-                        <div class="verify">
-                            <el-menu-item index="3">租屋廣告審核</el-menu-item>
-                        </div>
-                    </el-menu>
-                </el-aside>
-                <el-main id="main">
-                    <div class="ad" hidden>
-                        <div class="ad-cards"
-                            style="display: flex; flex-direction: row; flex-wrap: wrap; align-items: center;">
-                            <div style="display: flex; flex-direction: row; flex-wrap: wrap; ">
-                                <el-card v-for="(item, k) in paginatedData" :key="k"
-                                    style="max-width: 480px; margin: 10px 10px; width: 18vw;">
-                                    <template #header>
-                                        <div class="card-header" style="display: flex;justify-content: space-between;">
-                                            <span>{{ item.Name }}</span>
-                                            <div class="edit-delete" v-if="isAuthor(item.ID)">
-                                                <el-button type="primary" size="small" :icon="Edit"
-                                                    style="margin-right: 5px;"
-                                                    @click="editAD(item)"
-                                                    circle></el-button>
-                                                <el-button type="danger" size="small" :icon="Delete"
-                                                    @click="deleteAD(item.ADID)" style="margin-left: auto;"
-                                                    circle></el-button>
-                                            </div>
-                                        </div>
-                                    </template>
-                                    <img :src="item.AD_File" style="width: 100%;">
-                                    <p v-for="(o, i) in ad_subtitle" :key="i" class="text item">{{ o + ": " + item[i] }}
-                                    </p>
-                                    <template #footer>
-                                        <el-collapse>
-                                            <el-collapse-item title="評論" name="1">
-                                                <div class="review-block">
-                                                    <el-card v-for="(review, j) in item.reviews" :key="j"
-                                                        style="margin: 10px 10px; ">
-                                                        <div class="edit-delete" v-if="isAuthor(review.ID)">
-                                                            <el-button type="primary" size="small" :icon="Edit"
-                                                                style="margin-right: 5px;"
-                                                                @click="editReview(review.RID, review.Content, review.Rate)"
-                                                                circle></el-button>
-                                                            <el-button type="danger" size="small" :icon="Delete"
-                                                                @click="deleteReview(review.RID)"
-                                                                style="margin-left: auto;" circle></el-button>
-                                                        </div>
-                                                        <p>{{ review.ID }}</p>
-                                                        <p>{{ review.Content }}</p>
-                                                        <el-rate v-model="review.Rate" disabled />
-                                                    </el-card>
-                                                </div>
-                                                <div class="input-group">
-                                                    <el-input v-model="review_content[k]" style="max-width: 600px"
-                                                        placeholder="評論" class="input-with-icon">
-                                                        <template #prepend>
-                                                            <el-rate v-model="rateValue[k]" />
-                                                        </template>
-                                                        <template #append>
-                                                            <el-button :icon="Promotion"
-                                                                @click="sentReview(item.ADID, review_content[k], rateValue[k])" />
-                                                        </template>
-                                                    </el-input>
-                                                </div>
-                                            </el-collapse-item>
-                                        </el-collapse>
-                                    </template>
-                                </el-card>
-                            </div>
-                            <el-button style="justify-content: center;" :icon="Plus" size="large" circle />
-                        </div>
-
-                        <div class="pagination-block">
-                            <el-pagination v-model:current-page="currentPage1" v-model:page-size="pageSize1"
-                                :small="small" :disabled="disabled" :background="background"
-                                layout="prev, pager, next, jumper" :total="AD_size" @size-change="handleSizeChange1"
-                                @current-change="handleCurrentChange1" />
-                        </div>
-                    </div>
-                    <div class="message_board" hidden>
-                        <div class="message_cards">
-                            <div class="ad-cards" style="display: flex; flex-direction: row; flex-wrap: wrap;">
-                                <el-card v-for="(item, k) in paginatedData2" :key="k"
-                                    style="max-width: 480px; margin: 10px 10px; width: 18vw;">
-                                    <template #header>
-                                        <div class="card-header" style="display: flex;justify-content: space-between;">
-                                            <span>{{ item.Name }}</span>
-                                            <div class="edit-delete" v-if="isAuthor(item.ID)">
-                                                <el-button type="primary" size="small" :icon="Edit"
-                                                    style="margin-right: 5px;"
-                                                    @click="editPost(item)"
-                                                    circle></el-button>
-                                                <el-button type="danger" size="small" :icon="Delete"
-                                                    @click="deletePost(item.PID)" style="margin-left: auto;"
-                                                    circle></el-button>
-                                            </div>
-                                        </div>
-                                    </template>
-                                    <img :src="item.Post_File" style="width: 100%;">
-                                    <p class="text item">Author: {{ item.ID }}</p>
-                                    <p class="text item">{{ item.Content }}</p>
-                                    <template #footer>
-                                        <el-collapse>
-                                            <el-collapse-item title="留言" name="1">
-                                                <div class="comment-block">
-
-                                                    <el-card v-for="(comment, j) in item.comment" :key="j"
-                                                        style="margin: 10px 10px;">
-                                                        <div class="edit-delete" v-if="isAuthor(comment.ID)">
-                                                            <el-button type="primary" size="small" :icon="Edit"
-                                                                style="margin-right: 5px;"
-                                                                @click="editComment(comment.CID, comment.Content)"
-                                                                circle></el-button>
-                                                            <el-button type="danger" size="small" :icon="Delete"
-                                                                @click="deleteComment(comment.CID)"
-                                                                style="margin-left: auto;" circle></el-button>
-                                                        </div>
-                                                        <p>{{ comment.ID }}</p>
-                                                        <p>{{ comment.Content }}</p>
-                                                    </el-card>
-                                                </div>
-                                                <div>
-                                                    <el-input v-model="comment_content[k]" style="max-width: 600px"
-                                                        placeholder="留言" class="input-with-icon">
-                                                        <template #append>
-                                                            <el-button :icon="Promotion"
-                                                                @click="sentComment(item.PID, comment_content[k])" />
-                                                        </template>
-                                                    </el-input>
-                                                </div>
-                                            </el-collapse-item>
-                                        </el-collapse>
-                                    </template>
-                                </el-card>
-                            </div>
-                        </div>
-                        <div class="pagination-block">
-                            <el-pagination v-model:current-page="currentPage2" v-model:page-size="pageSize2"
-                                :small="small" :disabled="disabled" :background="background"
-                                layout="prev, pager, next, jumper" :total="AD_size" @size-change="handleSizeChange2"
-                                @current-change="handleCurrentChange2" />
-                        </div>
-                    </div>
-                    <div class="ad-verify" hidden>
-                        <div class="ad-cards" style="display: flex; flex-direction: row; flex-wrap: wrap;">
-                            <el-card v-for="(item, k) in paginatedData3" :key="k"
-                                style="max-width: 480px; margin: 10px 10px; width: 18vw;">
-                                <template #header>
-                                    <div class="card-header">
-                                        <span>{{ item.Name }}</span>
-                                    </div>
-                                </template>
-                                <img :src="item.AD_File" style="width: 100%;">
-                                <p v-for="(o, i) in ad_subtitle" :key="i" class="text item">{{ o + ": " + item[i] }}
-                                </p>
-                                <template #footer>
-                                    <el-button type="success" size="mini"
-                                        @click="ad_verify(item.ADID, 'accept')">通過</el-button>
-                                    <el-button type="danger" size="mini"
-                                        @click="ad_verify(item.ADID, 'reject')">不通過</el-button>
-                                </template>
-                            </el-card>
-                        </div>
-                        <div class="pagination-block">
-                            <el-pagination v-model:current-page="currentPage3" v-model:page-size="pageSize3"
-                                :small="small" :disabled="disabled" :background="background"
-                                layout="prev, pager, next, jumper" :total="AD_size" @size-change="handleSizeChange3"
-                                @current-change="handleCurrentChange3" />
-                        </div>
-                    </div>
-                    <el-dialog v-model="dialogFormVisible" title="編輯評論" width="500">
-                        <el-form :model="form">
-                            <div hidden>
-                                <el-form-item label="RID" :label-width="formLabelWidth">
-                                    <el-input v-model="edit_RID" style="width: 240px" :rows="2" />
-                                </el-form-item>
-                            </div>
-                            <el-form-item label="content" :label-width="formLabelWidth">
-                                <el-input v-model="edit_content" style="width: 240px" :rows="2" type="textarea" />
-                            </el-form-item>
-                            <el-form-item label="rate" :label-width="formLabelWidth">
-                                <el-rate v-model="edit_rate" />
-                            </el-form-item>
-                        </el-form>
-                        <template #footer>
-                            <div class="dialog-footer">
-                                <el-button @click="dialogFormVisible = false">Cancel</el-button>
-                                <el-button type="primary" @click="sentEdit">
-                                    Confirm
-                                </el-button>
-                            </div>
-                        </template>
-                    </el-dialog>
-                    <el-dialog v-model="dialogFormVisible2" title="編輯留言" width="500">
-                        <el-form :model="form2">
-                            <div hidden>
-                                <el-form-item label="CMID" :label-width="formLabelWidth">
-                                    <el-input v-model="edit_CMID" style="width: 240px" :rows="2" />
-                                </el-form-item>
-                            </div>
-                            <el-form-item label="content" :label-width="formLabelWidth">
-                                <el-input v-model="edit_content" style="width: 240px" :rows="2" type="textarea" />
-                            </el-form-item>
-                        </el-form>
-                        <template #footer>
-                            <div class="dialog-footer">
-                                <el-button @click="dialogFormVisible2 = false">Cancel</el-button>
-                                <el-button type="primary" @click="sentEditComment">
-                                    Confirm
-                                </el-button>
-                            </div>
-                        </template>
-                    </el-dialog>
-                </el-main>
+                <el-aside id="aside" width="200px"> </el-aside>
+                <el-main id="main"> </el-main>
             </el-container>
         </el-container>
     </div>
@@ -779,10 +574,5 @@ const deletePost = (PID) => {
 body {
     margin: 0;
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
-}
-
-.input-group>.el-input-group {
-    display: flex;
-    flex-direction: column;
 }
 </style>

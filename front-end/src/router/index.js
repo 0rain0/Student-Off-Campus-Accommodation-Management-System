@@ -13,16 +13,6 @@ const routes = [
         component:()=>import('../components/login.vue'), //导入路由页面的路径
     },
     {
-        path:'/home_example', // 要路由到的url路径
-        name:'home_example',
-        component:()=>import('../components/HelloWorld_example.vue'), //导入路由页面的路径
-    },
-    {
-        path:'/login_example', // 要路由到的url路径
-        name:'login_example',
-        component:()=>import('../components/login_example.vue'), //导入路由页面的路径
-    },
-    {
         path: '/menu',
         name: 'menu',
         component: () => import('../components/menu.vue')
@@ -46,6 +36,21 @@ const routes = [
     {        path: '/EditPersonFile',
         name: 'EditPersonFile',
         component: () => import('../components/EditPersonFile.vue')
+    },
+    {
+        path:'/AccountManage', // 要路由到的url路径
+        name:'AccountManage',
+        component:()=>import('../components/AccountManage.vue'), //导入路由页面的路径
+    },
+    {
+        path:'/NewAccount', // 要路由到的url路径
+        name:'NewAccount',
+        component:()=>import('../components/NewAccount.vue'), //导入路由页面的路径
+    },
+    {
+        path:'//AddLargeAccount', // 要路由到的url路径
+        name:'AddLargeAccount',
+        component:()=>import('../components/AddLargeAccount.vue'), //导入路由页面的路径
     },
     {
         path:'/AccountManage', // 要路由到的url路径
@@ -104,27 +109,14 @@ const routes = [
         component: () => import('../components/Successform.vue')
     },
     {
-        path: '/CheckStudentStatus/:id?',
+        path: '/CheckStudentStatus',
         name: 'CheckStudentStatus',
-        props: true,
         component: () => import('../components/CheckStudentStatus.vue')
     },
     {
         path: '/CheckClassStatus',
         name: 'CheckClassStatus',
         component: () => import('../components/CheckClassStatus.vue')
-    },
-    {
-        path: '/CheckStudentForm/:id',
-        name: 'CheckStudentForm',
-        props: true,
-        component: () => import('../components/CheckStudentForm.vue')
-    },
-    {
-        path: '/QueryStudentForm/:id',
-        name: 'QueryStudentForm',
-        props: true,
-        component: () => import('../components/QueryStudentForm.vue')
     },
     //RAS
     {

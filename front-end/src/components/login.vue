@@ -85,7 +85,6 @@ const logout = () => {
 
 body {
     background-color: white;
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
 }
 
 #username,
