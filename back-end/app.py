@@ -1130,5 +1130,410 @@ def get_VSS_students():
 
 
 
+@app.route('/VSS/ClassStatue', methods=['GET'])
+def get_VSS_classes():
+    page = request.args.get('page', 1, type=int)
+    pageSize = request.args.get('pageSize', 10, type=int)
+    department = request.args.get('department', None)
+    grade = request.args.get('grade', None)
+    section = request.args.get('section', None)
+    offset = (page - 1) * pageSize
+
+    connection = connect.connect_to_db()
+    if connection is not None:
+        try:
+            with connection.cursor() as cursor:
+                count_query = "SELECT COUNT(*) FROM class"
+                select_query = """SELECT class.CID, class.Department, class.Grade, class.Section, 
+                                  class.TID, teacher.Name, COUNT(student.SID) AS StudentCount, 
+                                  SUM(CASE WHEN visit_form.SID IS NOT NULL THEN 1 ELSE 0 END) AS VisitCount
+                                  FROM class
+                                  LEFT JOIN teacher ON class.TID = teacher.TID
+                                  LEFT JOIN student ON class.CID = student.CLASS
+                                  LEFT JOIN visit_form ON student.SID = visit_form.SID"""
+                conditions = []
+                params = []
+
+                if department:
+                    conditions.append("class.Department = %s")
+                    params.append(department)
+                if grade:
+                    conditions.append("class.Grade = %s")
+                    params.append(grade)
+                if section:
+                    conditions.append("class.Section = %s")
+                    params.append(section)
+
+                if conditions:
+                    condition_str = " WHERE " + " AND ".join(conditions)
+                else:
+                    condition_str = ""
+
+                count_query += condition_str
+                select_query += condition_str + " GROUP BY class.CID, class.Department, class.Grade, class.Section, class.TID, teacher.Name"
+                select_query += " LIMIT %s OFFSET %s"
+                params.extend([pageSize, offset])
+
+                cursor.execute(count_query, params[:-2])
+                total = cursor.fetchone()[0]
+
+                cursor.execute(select_query, params)
+                classes = cursor.fetchall()
+
+                class_list = [{'CID': cl[0], 'Department': cl[1], 'Grade': cl[2],
+                               'Section': cl[3], 'TID': cl[4], 'teacherName': cl[5],
+                               'CompleteRate': (cl[7] / cl[6] * 100) if cl[6] > 0 else 0}  # 轉換為百分比
+                              for cl in classes]
+
+                return jsonify({"classes": class_list, "total": total, "status": "success"})
+        except Exception as ex:
+            print(ex)
+            return jsonify({"status": "fail", "message": str(ex)})
+        finally:
+            connection.close()
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+    
+@app.route('/VSS/CheckForm_S/<sid>', methods=['GET'])
+def check_form_s(sid):
+    connection = connect.connect_to_db()
+    if connection is not None:
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM visit_form WHERE SID = %s", (sid,))
+                form = cursor.fetchone()
+                if form:
+                    return jsonify({"status": "success", "form": form})
+                else:
+                    return jsonify({"status": "fail", "message": "No form found"})
+        except Exception as ex:
+            print(ex)
+            return jsonify({"status": "fail", "message": str(ex)})
+        finally:
+            connection.close()
+    else:
+        return jsonify({"status": "fail", "message": "SQL connection failed"})
+    
+@app.route('/VSS/TIDtoCID', methods=['GET'])
+def tid_to_cid():
+    try:
+        tid = request.args.get('TID')
+        connection = connect.connect_to_db()
+        if connection is not None:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT CID FROM CLASS WHERE TID = %s", (tid,))
+                cid = cursor.fetchone()
+                if cid:
+                    return jsonify({"cid": {"CID": cid[0], "status": "success"}})
+                else:
+                    return jsonify({"cid": {"CID": "", "status": "fail"}})
+        else:
+            return jsonify({"status": "sql connection fail"})
+    except Exception as ex:
+        print(ex)
+        return jsonify({"status": "fail", "message": str(ex)})
+
+@app.route('/VSS/CheckForm_query/<sid>', methods=['GET'])
+def check_form_query(sid):
+    connection = connect.connect_to_db()
+    if connection is not None:
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM visit_form WHERE SID = %s", (sid,))
+                form = cursor.fetchone()
+                if form:
+                    return jsonify({"status": "success", "form": form})
+                else:
+                    return jsonify({"status": "fail", "message": "No form found"})
+        except Exception as ex:
+            print(ex)
+            return jsonify({"status": "fail", "message": str(ex)})
+        finally:
+            connection.close()
+    else:
+        return jsonify({"status": "fail", "message": "SQL connection failed"})
+
+# AD
+house_type = ['透天','公寓','大樓','學舍','其他']
+room_type = ['套房','雅房']
+@app.route('/api/ad/get_verify', methods=['GET'])
+def get_verify_ad():
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT * FROM `advertisement` WHERE `Validated` = 1")
+                ads = cursor.fetchall()
+                # ADID
+                # LID
+                # Name
+                # HouseAge
+                # HouseType
+                # RoomType
+                # Address
+                # RentLimit
+                # Price
+                # ContactName
+                # ContactTel
+                # Start
+                # End
+                # AD_File
+                # AD_Des
+                # Validated
+                ad_list = [ {"ADID": ad[0], "LID": ad[1], "Name": ad[2], "HouseAge": ad[3], "HouseType": house_type[ad[4]], "RoomType": room_type[ad[5]], "Address": ad[6], "RentLimit": ad[7], "Price": ad[8], "ContactName": ad[9], "ContactTel": ad[10], "Start": ad[11], "End": ad[12], "AD_Des": ad[13], "AD_File": ad[14], "Validated": ad[15]} for ad in ads]
+                return jsonify({"status": "success", "data": ad_list})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+@app.route('/api/ad/verify', methods=['POST'])
+def verify_ad():
+    data = request.get_json()
+    adid = data.get('ADID')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                if data.get('verify_result') == "reject":
+                    cursor.execute("UPDATE `advertisement` SET `Validated` = 2 WHERE `ADID` = %s", (adid,))
+                elif data.get('verify_result') == "accept":
+                    cursor.execute("UPDATE `advertisement` SET `Validated` = 0 WHERE `ADID` = %s", (adid,))
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+@app.route('/api/ad/get-all-approved', methods=['GET'])
+def get_all_approved_ad():
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT * FROM `advertisement` WHERE `Validated` = 0 AND `Start` <= CURDATE() AND `End` >= CURDATE()")
+                ads = cursor.fetchall()
+                ad_list = [ {"ADID": ad[0], "LID": ad[1], "Name": ad[2], "HouseAge": ad[3], "HouseType": house_type[ad[4]], "RoomType": room_type[ad[5]], "Address": ad[6], "RentLimit": ad[7], "Price": ad[8], "ContactName": ad[9], "ContactTel": ad[10], "Start": ad[11], "End": ad[12], "AD_Des": ad[13], "AD_File": ad[14], "Validated": ad[15]} for ad in ads]
+                return jsonify({"status": "success", "data": ad_list})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+@app.route('/api/ad/sent-ad-review', methods=['POST'])
+def sent_review():
+    data = request.get_json()
+    adid = data.get('ADID')
+    userID = data.get('userID')
+    content = data.get('content')
+    rate = data.get('rate')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT COUNT(*) FROM review")
+                connection.commit()
+                count = cursor.fetchone()[0]
+                if count == 0:
+                    commentID = 1
+                else:
+                    cursor.execute("SELECT MAX(RID) FROM review")
+                    connection.commit()
+                    commentID = int(cursor.fetchone()[0]) + 1
+                cursor.execute("INSERT INTO review (RID, ADID, ID, Rate, Content) VALUES (%s, %s, %s, %s, %s)", (commentID, adid, userID, rate, content))
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+@app.route('/api/ad/get-ad-review', methods=['POST'])
+def get_review():
+    data = request.get_json()
+    adid = data.get('ADID')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT * FROM review WHERE ADID = '"+adid + "'")
+                comments = cursor.fetchall()
+                comment_list = [ {"RID": comment[0], "ADID": comment[1], "ID": comment[2], "Content": comment[3], "Rate": comment[4]} for comment in comments]
+                return jsonify({"status": "success", "data": comment_list})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+    
+@app.route('/api/ad/get-post', methods=['GET'])
+def get_post():
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT * FROM `post`")
+                posts = cursor.fetchall()
+                # PID
+                # ID  
+                # Name
+                # Content
+                # Post_File
+                post_list = [ {"PID": post[0], "ID": post[1], "Name": post[2], "Content": post[3], "Post_File": post[4]} for post in posts]
+                return jsonify({"status": "success", "data": post_list})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+@app.route('/api/ad/sent-comment', methods=['POST'])
+def sent_comment():
+    data = request.get_json()
+    postid = data.get('PID')
+    userID = data.get('ID')
+    content = data.get('content')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT COUNT(*) FROM comment")
+                connection.commit()
+                count = cursor.fetchone()[0]
+                if count == 0:
+                    commentID = 1
+                else:
+                    cursor.execute("SELECT MAX(CMID) FROM comment")
+                    connection.commit()
+                    commentID = int(cursor.fetchone()[0]) + 1
+                cursor.execute("INSERT INTO comment (CMID, PID, ID, Content) VALUES (%s, %s, %s, %s)", (commentID, postid, userID, content))
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+@app.route('/api/ad/get-post-comment', methods=['POST'])
+def get_comment():
+    data = request.get_json()
+    postid = data.get('PID')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT * FROM comment WHERE PID = '"+postid + "'")
+                comments = cursor.fetchall()
+                comment_list = [ {"CID": comment[0], "PID": comment[1], "ID": comment[2], "Content": comment[3]} for comment in comments]
+                return jsonify({"status": "success", "data": comment_list})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+
+@app.route('/api/ad/delete-review', methods=['POST'])
+def delete_review():
+    data = request.get_json()
+    rid = data.get('RID')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("DELETE FROM review WHERE RID = '"+rid + "'")
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+    
+@app.route('/api/ad/edit-review', methods=['POST'])
+def edit_review():
+    data = request.get_json()
+    rid = data.get('RID')
+    content = data.get('content')
+    rate = data.get('rate')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("UPDATE review SET Content = '"+content + "', Rate = '"+str(rate) + "' WHERE RID = '"+rid + "'")
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+@app.route('/api/ad/delete-comment', methods=['POST'])
+def delete_comment():
+    data = request.get_json()
+    cid = data.get('CMID')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("DELETE FROM comment WHERE CMID = '"+cid + "'")
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+@app.route('/api/ad/edit-comment', methods=['POST'])
+def edit_comment():
+    data = request.get_json()
+    cid = data.get('CMID')
+    content = data.get('content')
+    print(cid, content)
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("UPDATE comment SET Content = '"+content + "' WHERE CMID = '"+cid + "'")
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+
+
+@app.route('/api/getUserType', methods=['POST'])
+def getUserType():
+    try:
+        data = request.get_json()
+        print("Received data:", data)  # 打印接收到的數據
+        connection = connect.connect_to_db()
+        if connection is not None:
+            with connection.cursor() as cursor:
+                sql = "SELECT UserType FROM ACCOUNT WHERE ID = %s"
+                cursor.execute(sql, (data['userID'],))
+                result = cursor.fetchone()
+                if result is not None:
+                    return jsonify({"status": "success", "data": result[0]})
+                else:
+                    return jsonify({"status": "fail", "message": "User not found"})
+        else:
+            return jsonify({"status": "fail", "message":  'sql connection fail'})
+    except Exception as ex:
+        print(f"Error: {ex}")
+        traceback.print_exc()
+
+
 if __name__ == '__main__':
     app.run(debug=True)
