@@ -1,6 +1,3 @@
-<style>
-@import "@/assets/VSS.css";
-</style>
 <template>
     <div id="common-layout">
         <VSS_Header />
@@ -34,7 +31,7 @@
                     <el-table-column label="操作" width="100">
                         <template #default="scope">
                             <el-button 
-                                @click="handleFill(scope.$index, scope.row)" 
+                                @click="handleFill(scope.row.SID)" 
                                 type="primary" 
                                 size="small"
                                 :disabled="scope.row.Status !== '已填寫'"
@@ -108,11 +105,8 @@ const handleReset = () => {
     fetchStudents()
 }
 
-const handleFill = (index: number, row: Student) => {
-    if (row.Status === '已填寫') {
-        // 執行查看操作
-        console.log(`查看學生 ${row.SID} 的詳細信息`)
-    }
+const handleFill = (sid: string) => {
+    router.push({ name: 'CheckStudentForm', params: { id: sid } })
 }
 onMounted(() => {
     fetchStudents()

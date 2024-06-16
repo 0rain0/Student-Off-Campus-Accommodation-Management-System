@@ -98,9 +98,10 @@ const routes = [
         component: () => import('../components/CheckClassStatus.vue')
     },
     {
-        path: '/CheckStudentStatus',
-        name: 'CheckStudentStatus',
-        component: () => import('../components/CheckStudentStatus.vue')
+        path: '/CheckStudentForm/:id',
+        name: 'CheckStudentForm',
+        props: true,
+        component: () => import('../components/CheckStudentForm.vue')
     },
     //RAS
     {
