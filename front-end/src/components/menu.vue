@@ -67,7 +67,6 @@ const logout = () => {
       </el-button>
     </div>
   </div>
-  
 </template>
 
 <style>
