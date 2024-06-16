@@ -53,6 +53,21 @@ const routes = [
         component:()=>import('../components/AddLargeAccount.vue'), //导入路由页面的路径
     },
     {
+        path:'/AccountManage', // 要路由到的url路径
+        name:'AccountManage',
+        component:()=>import('../components/AccountManage.vue'), //导入路由页面的路径
+    },
+    {
+        path:'/NewAccount', // 要路由到的url路径
+        name:'NewAccount',
+        component:()=>import('../components/NewAccount.vue'), //导入路由页面的路径
+    },
+    {
+        path:'//AddLargeAccount', // 要路由到的url路径
+        name:'AddLargeAccount',
+        component:()=>import('../components/AddLargeAccount.vue'), //导入路由页面的路径
+    },
+    {
         path:'/ClassManage', // 要路由到的url路径
         name:'ClassManage',
         component:()=>import('../components/ClassManage.vue'), //导入路由页面的路径
