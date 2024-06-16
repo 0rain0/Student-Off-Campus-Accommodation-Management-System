@@ -780,5 +780,52 @@ def get_all_approved_ad():
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
 
+@app.route('/api/ad/sent-ad-review', methods=['POST'])
+def sent_review():
+    data = request.get_json()
+    adid = data.get('ADID')
+    userID = data.get('userID')
+    content = data.get('content')
+    rate = data.get('rate')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT COUNT(*) FROM review")
+                connection.commit()
+                count = cursor.fetchone()[0]
+                if count == 0:
+                    commentID = 1
+                else:
+                    cursor.execute("SELECT MAX(RID) FROM review")
+                    connection.commit()
+                    commentID = int(cursor.fetchone()[0]) + 1
+                cursor.execute("INSERT INTO review (RID, ADID, ID, Rate, Content) VALUES (%s, %s, %s, %s, %s)", (commentID, adid, userID, rate, content))
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+@app.route('/api/ad/get-ad-review', methods=['POST'])
+def get_review():
+    data = request.get_json()
+    adid = data.get('ADID')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT * FROM review WHERE ADID = '"+adid + "'")
+                comments = cursor.fetchall()
+                comment_list = [ {"RID": comment[0], "ADID": comment[1], "ID": comment[2], "Content": comment[3], "Rate": comment[4]} for comment in comments]
+                print(comment_list)
+                return jsonify({"status": "success", "data": comment_list})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
 if __name__ == '__main__':
     app.run(debug=True)

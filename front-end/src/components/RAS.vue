@@ -6,13 +6,41 @@ import { Promotion } from '@element-plus/icons-vue';
 
 let AD_data = ref([]); // Initialize as an empty array
 let AD_size = ref(0);
-const rateValue = ref(0);
+const rateValue = ref([0, 0, 0, 0]);
+const review_content = ref(['', '', '', '']);
 let paginatedData = computed(() => {
     if (!AD_data.value || AD_data.value.length === 0) {
         return [];
     }
     const start = (currentPage3.value - 1) * pageSize3.value;
     const end = start + pageSize3.value;
+    for (let AD of AD_data.value) {
+        if (AD.reviews === undefined) {
+            AD.reviews = [];
+            axios.post('http://127.0.0.1:5000/api/ad/get-ad-review', { ADID: AD.ADID })
+                .then(res => {
+                    console.log("Response data:", res.data)
+                    if (res.data.status === 'success') {
+                        AD.reviews = res.data.data;
+                    } else {
+                        alert('取得租屋廣告評論資料失敗');
+                    }
+                })
+                .catch(error => {
+                    if (error.response) {
+                        console.error("Error response data:", error.response.data)
+                        console.error("Error response status:", error.response.status)
+                        console.error("Error response headers:", error.response.headers)
+                    } else if (error.request) {
+                        console.error("Error request data:", error.request)
+                    } else {
+                        console.error("Error message:", error.message)
+                    }
+                    console.error("Error config:", error.config)
+                    alert('取得租屋廣告評論資料出現錯誤');
+                });
+        }
+    }
     return AD_data.value.slice(start, end);
 });
 
@@ -105,6 +133,35 @@ const ad_verify = (ADID, verify_result) => {
 
 }
 
+const sentReview = (ADID, content, rate) => {
+    let review_form = { ADID: ADID, content: content, rate: rate, userID: localStorage.getItem('userID') };
+    axios.post('http://127.0.0.1:5000/api/ad/sent-ad-review', review_form)
+        .then(res => {
+            console.log("Response data:", res.data)
+            if (res.data.status === 'success') {
+                alert('評論成功');
+                handleSelect('1');
+                rateValue.value = [0, 0, 0, 0];
+                review_content.value = ['', '', '', ''];
+            } else {
+                alert('評論失敗');
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                console.error("Error response data:", error.response.data)
+                console.error("Error response status:", error.response.status)
+                console.error("Error response headers:", error.response.headers)
+            } else if (error.request) {
+                console.error("Error request data:", error.request)
+            } else {
+                console.error("Error message:", error.message)
+            }
+            console.error("Error config:", error.config)
+            alert('評論出現錯誤');
+        });
+}
+
 let currentPage1 = ref(1);
 let pageSize1 = ref(4);
 
@@ -166,25 +223,26 @@ const handleCurrentChange3 = (val) => {
                                 <template #footer>
                                     <el-collapse>
                                         <el-collapse-item title="評論" name="1">
-                                            <div>
-                                                Consistent with real life: in line with the process and logic of real
-                                                life, and comply with languages and habits that the users are used to;
-                                            </div>
-                                            <div>
-                                                Consistent within interface: all elements should be consistent, such
-                                                as: design style, icons and texts, position of elements, etc.
+                                            <div class="review-block">
+                                                <el-card v-for="(review, j) in item.reviews" :key="j"
+                                                    style="margin: 10px 10px;">
+                                                    <p>{{ review.ID }}</p>
+                                                    <p>{{ review.Content }}</p>
+                                                    <el-rate v-model="review.Rate" disabled />
+                                                </el-card>
                                             </div>
                                             <div class="input-group">
-                                            <el-input v-model="input3" style="max-width: 600px" placeholder="評論"
-                                                class="input-with-icon">
-                                                <template #prepend>
-                                                    <el-rate v-model="rateValue" />
-                                                </template>
-                                                <template #append>
-                                                    <el-button :icon="Promotion" />
-                                                </template>
-                                            </el-input>
-                                        </div>
+                                                <el-input v-model="review_content[k]" style="max-width: 600px"
+                                                    placeholder="評論" class="input-with-icon">
+                                                    <template #prepend>
+                                                        <el-rate v-model="rateValue[k]" />
+                                                    </template>
+                                                    <template #append>
+                                                        <el-button :icon="Promotion"
+                                                            @click="sentReview(item.ADID, review_content[k], rateValue[k])" />
+                                                    </template>
+                                                </el-input>
+                                            </div>
                                         </el-collapse-item>
                                     </el-collapse>
                                 </template>
@@ -264,7 +322,7 @@ body {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
 }
 
-.input-group {
+.input-group>.el-input-group {
     display: flex;
     flex-direction: column;
 }
