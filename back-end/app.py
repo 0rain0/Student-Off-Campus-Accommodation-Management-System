@@ -3,6 +3,7 @@ from flask_cors import CORS
 import traceback
 import connect
 from flask import make_response
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}}, supports_credentials=True)
@@ -1541,6 +1542,62 @@ def getUserType():
     except Exception as ex:
         print(f"Error: {ex}")
         traceback.print_exc()
+
+@app.route('/api/ad/edit-post', methods=['POST'])
+def edit_post():
+    data = request.get_json()
+    pid = data.get('PID')
+    content = data.get('content')
+    Post_File = data.get('file')
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("UPDATE post SET Content = '"+content + "', Post_File = '"+Post_File + "' WHERE PID = '"+pid + "'")
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+@app.route('/api/ad/edit-AD', methods=['POST'])
+def edit_AD():
+    data = request.get_json()
+    adid = data.get('ADID')
+    HouseAge = data.get('HouseAge')
+    HouseType = data.get('HouseType')
+    RoomType = data.get('RoomType')
+    Address = data.get('Address')
+    RentLimit = data.get('RentLimit')
+    Price = data.get('Price')
+    ContactName = data.get('ContactName')
+    ContactTel = data.get('ContactTel')
+    Start = data.get('Start')
+    End = data.get('End')
+    AD_File = data.get('AD_File')
+    AD_Des = data.get('AD_Des')
+    # Tue, 11 Jun 2024 00:00:00 GMT to 2024-06-11
+    Start = format_date(Start)
+    End = format_date(End)
+    connection = connect.connect_to_db()
+    print(Start, End)
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("UPDATE advertisement SET HouseAge = '"+str(HouseAge) + "', HouseType = '"+str(HouseType) + "', RoomType = '"+str(RoomType) + "', Address = '"+Address + "', RentLimit = '"+RentLimit + "', Price = '"+str(Price) + "', ContactName = '"+ContactName + "', ContactTel = '"+ContactTel + "', Start = '"+Start + "', End = '"+End + "', AD_File = '"+AD_File + "', AD_Des = '"+AD_Des + "' WHERE ADID = '"+adid + "'")
+                connection.commit()
+                return jsonify({"status": "success"})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
+
+def format_date(date_str):
+    date_obj = datetime.strptime(date_str, "%a, %d %b %Y %H:%M:%S %Z")
+    return date_obj.strftime("%Y-%m-%d")
 
 if __name__ == '__main__':
     app.run(debug=True)
