@@ -764,6 +764,21 @@ def verify_ad():
     else:
         return jsonify({"status": "fail", "message": "sql connection fail"})
 
+@app.route('/api/ad/get-all-approved', methods=['GET'])
+def get_all_approved_ad():
+    connection = connect.connect_to_db()
+    if connection is not None:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT * FROM `advertisement` WHERE `Validated` = 0")
+                ads = cursor.fetchall()
+                ad_list = [ {"ADID": ad[0], "LID": ad[1], "Name": ad[2], "HouseAge": ad[3], "HouseType": house_type[ad[4]], "RoomType": room_type[ad[5]], "Address": ad[6], "RentLimit": ad[7], "Price": ad[8], "ContactName": ad[9], "ContactTel": ad[10], "Start": ad[11], "End": ad[12], "AD_Des": ad[13], "AD_File": ad[14], "Validated": ad[15]} for ad in ads]
+                return jsonify({"status": "success", "data": ad_list})
+            except Exception as ex:
+                print(ex)
+                return jsonify({"status": "fail", "message": str(ex)})
+    else:
+        return jsonify({"status": "fail", "message": "sql connection fail"})
 
 if __name__ == '__main__':
     app.run(debug=True)
