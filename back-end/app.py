@@ -1122,8 +1122,8 @@ def get_VSS_students():
                     student_info = {
                         "SID": student[0],
                         "Name": student[1],
-                        "Phone": student[2],
-                        "Email": student[3],
+                        "Phone": student[3],
+                        "Email": student[4],
                         "Status": status
                     }
                     student_list.append(student_info)
