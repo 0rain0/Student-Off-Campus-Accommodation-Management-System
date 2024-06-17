@@ -395,6 +395,14 @@ const handleCurrentChange1 = (val) => {
     currentPage1.value = val;
 };
 
+const handleSizeChange2 = (val) => {
+    pageSize2.value = val;
+};
+
+const handleCurrentChange2 = (val) => {
+    currentPage2.value = val;
+};
+
 const handleSizeChange3 = (val) => {
     pageSize3.value = val;
 };
@@ -856,7 +864,7 @@ const deletePost = (PID) => {
                         <div class="pagination-block">
                             <el-pagination v-model:current-page="currentPage2" v-model:page-size="pageSize2"
                                 :small="small" :disabled="disabled" :background="background"
-                                layout="prev, pager, next, jumper" :total="AD_size" @size-change="handleSizeChange2"
+                                layout="prev, pager, next, jumper" :total="post_size" @size-change="handleSizeChange2"
                                 @current-change="handleCurrentChange2" />
                         </div>
                     </div>
